@@ -3,8 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ionic/react": "^4.9.0-rc.2",
+    "@ionic/react-router": "^4.9.0-rc.2",
+    "ionicons": "^4.6.3",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-router": "^5.0.1",
+    "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1"
   },
   "scripts": {
