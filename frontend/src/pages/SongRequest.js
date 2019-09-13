@@ -9,7 +9,7 @@ import {
 } from '@ionic/react';
 import React from 'react';
 
-const NewItem = () => {
+const SongRequest = () => {
   return (
     <IonPage>
       <IonHeader>
@@ -17,11 +17,11 @@ const NewItem = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/home" />
           </IonButtons>
-          <IonTitle>New Item</IonTitle>
+          <IonTitle>Search</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent></IonContent>
     </IonPage>
   );
 };
-export default NewItem;
+export default SongRequest;
