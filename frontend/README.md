@@ -3,6 +3,13 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Setup
 ### Install Node and Yarn then run `yarn` to install dependencies
 
+## Adding a new page
+1. Create the component in `src/pages`.
+2. In `src/App.js`, import the component and add a new `Route` which renders it.
+
+## Adding a new component (used inside pages)
+Create new components in `src/components`.
+
 ## Available Scripts
 
 In the project directory, you can run:
