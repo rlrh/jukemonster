@@ -11,16 +11,37 @@ import {
   IonFabButton,
   IonIcon,
   IonListHeader,
+  IonButtons,
+  IonButton,
+  IonFooter,
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
+
+import { useAuth } from '../hooks/useAuth';
+
 import QueueSong from '../components/QueueSong';
 
 const Room = props => {
+  const { user } = useAuth();
+
+  console.log(`Your token is: ${user}`);
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Room</IonTitle>
+          <IonTitle>{`Room ${props.match.params.roomId}`}</IonTitle>
+          <IonButtons slot="primary">
+            {user ? (
+              <IonButton href={`/signout/${props.match.params.roomId}`}>
+                Sign Out
+              </IonButton>
+            ) : (
+              <IonButton href={`/signin/${props.match.params.roomId}`}>
+                Sign In
+              </IonButton>
+            )}
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent>
@@ -34,13 +55,20 @@ const Room = props => {
           />
         </IonList>
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton
-            onClick={() => props.history.push(`${props.match.url}/request`)}
-          >
+          <IonFabButton href={`${props.match.url}/request`}>
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>
       </IonContent>
+      <IonFooter>
+        <IonToolbar>
+          <IonTitle>
+            {user
+              ? `Your Spotify token is: ${user}`
+              : 'Sign in to provide a Spotify token'}
+          </IonTitle>
+        </IonToolbar>
+      </IonFooter>
     </IonPage>
   );
 };

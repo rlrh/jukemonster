@@ -2,9 +2,6 @@ import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { setupConfig, IonApp, IonRouterOutlet } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import Home from './pages/Home';
-import Room from './pages/Room';
-import SongRequest from './pages/SongRequest';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -25,6 +22,16 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
+/* Authentication context */
+import { AuthProvider } from './hooks/useAuth';
+
+/* Pages */
+import Home from './pages/Home';
+import SignIn from './pages/SignIn';
+import SignOut from './pages/SignOut';
+import Room from './pages/Room';
+import SongRequest from './pages/SongRequest';
+
 const App = () => {
   setupConfig({
     rippleEffect: false,
@@ -32,16 +39,20 @@ const App = () => {
   });
 
   return (
-    <IonApp>
-      <IonReactRouter>
-        <IonRouterOutlet>
-          <Route exact path="/" render={() => <Redirect to="/room/1" />} />
-          <Route exact path="/home" component={Home} />
-          <Route exact path="/room/:roomId" component={Room} />
-          <Route path="/room/:roomId/request" component={SongRequest} />
-        </IonRouterOutlet>
-      </IonReactRouter>
-    </IonApp>
+    <AuthProvider>
+      <IonApp>
+        <IonReactRouter>
+          <IonRouterOutlet>
+            <Route exact path="/" render={() => <Redirect to="/room/1" />} />
+            <Route exact path="/home" component={Home} />
+            <Route exact path="/signin/:roomId" component={SignIn} />
+            <Route exact path="/signout/:roomId" component={SignOut} />
+            <Route exact path="/room/:roomId" component={Room} />
+            <Route path="/room/:roomId/request" component={SongRequest} />
+          </IonRouterOutlet>
+        </IonReactRouter>
+      </IonApp>
+    </AuthProvider>
   );
 };
 
