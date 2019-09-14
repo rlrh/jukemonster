@@ -16,6 +16,7 @@ import {
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
 import Queue from '../components/Queue';
+import NowPlaying from '../components/NowPlaying';
 
 const Room = props => {
   const { user } = useAuth();
@@ -38,6 +39,9 @@ const Room = props => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
+      <IonContent>
+        <NowPlaying />
+      </IonContent>
       <IonContent>
         <IonList>
           <Queue />
