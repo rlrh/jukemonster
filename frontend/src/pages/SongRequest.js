@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   IonBackButton,
   IonButtons,
@@ -7,20 +8,26 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
-import React from 'react';
+
+import { useAuth } from '../state/useAuth';
+import Search from '../components/Search';
 
 const SongRequest = () => {
+  const { user } = useAuth();
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/home" />
+            <IonBackButton defaultHref="/" />
           </IonButtons>
           <IonTitle>Search</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent></IonContent>
+      <IonContent>
+        {user ? <Search /> : <h1>You are not signed in to Spotify.</h1>}
+      </IonContent>
     </IonPage>
   );
 };

@@ -6,25 +6,19 @@ import {
   IonTitle,
   IonToolbar,
   IonList,
-  IonLabel,
   IonFab,
   IonFabButton,
   IonIcon,
-  IonListHeader,
   IonButtons,
   IonButton,
   IonFooter,
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
-
-import { useAuth } from '../hooks/useAuth';
-
-import QueueSong from '../components/QueueSong';
+import { useAuth } from '../state/useAuth';
+import Queue from '../components/Queue';
 
 const Room = props => {
   const { user } = useAuth();
-
-  console.log(`Your token is: ${user}`);
 
   return (
     <IonPage>
@@ -46,13 +40,7 @@ const Room = props => {
       </IonHeader>
       <IonContent>
         <IonList>
-          <IonListHeader>
-            <IonLabel>Queue</IonLabel>
-          </IonListHeader>
-          <QueueSong
-            title="There's A Song For Everything"
-            artist="Maren Morris"
-          />
+          <Queue />
         </IonList>
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
           <IonFabButton href={`${props.match.url}/request`}>

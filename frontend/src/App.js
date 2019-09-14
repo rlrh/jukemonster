@@ -23,10 +23,10 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 
 /* Authentication context */
-import { AuthProvider } from './hooks/useAuth';
+import { AuthProvider } from './state/useAuth';
+import { QueueProvider } from './state/useQueue';
 
 /* Pages */
-import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import SignOut from './pages/SignOut';
 import Room from './pages/Room';
@@ -40,18 +40,19 @@ const App = () => {
 
   return (
     <AuthProvider>
-      <IonApp>
-        <IonReactRouter>
-          <IonRouterOutlet>
-            <Route exact path="/" render={() => <Redirect to="/room/1" />} />
-            <Route exact path="/home" component={Home} />
-            <Route exact path="/signin/:roomId" component={SignIn} />
-            <Route exact path="/signout/:roomId" component={SignOut} />
-            <Route exact path="/room/:roomId" component={Room} />
-            <Route path="/room/:roomId/request" component={SongRequest} />
-          </IonRouterOutlet>
-        </IonReactRouter>
-      </IonApp>
+      <QueueProvider>
+        <IonApp>
+          <IonReactRouter>
+            <IonRouterOutlet>
+              <Route exact path="/" render={() => <Redirect to="/room/1" />} />
+              <Route exact path="/signin/:roomId" component={SignIn} />
+              <Route exact path="/signout/:roomId" component={SignOut} />
+              <Route exact path="/room/:roomId" component={Room} />
+              <Route path="/room/:roomId/request" component={SongRequest} />
+            </IonRouterOutlet>
+          </IonReactRouter>
+        </IonApp>
+      </QueueProvider>
     </AuthProvider>
   );
 };

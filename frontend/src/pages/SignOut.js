@@ -1,7 +1,7 @@
 import { Redirect } from 'react-router';
 import React from 'react';
 
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../state/useAuth';
 
 const SignOut = ({ match }) => {
   const { signOut } = useAuth();
