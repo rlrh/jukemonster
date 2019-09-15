@@ -9,6 +9,7 @@ const SignInCallback = ({ location }) => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const accessToken = searchParams.get('access_token');
+    console.log('Your Spotify access token is: ' + accessToken);
     signIn(accessToken);
   }, []);
 
