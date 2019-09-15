@@ -1,12 +1,10 @@
 import React from 'react';
 import {
-  IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
-  IonContent,
   IonProgressBar,
   IonImg,
   IonGrid,

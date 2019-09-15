@@ -30,6 +30,8 @@ import { QueueProvider } from './state/useQueue';
 import SignIn from './pages/SignIn';
 import SignOut from './pages/SignOut';
 import Room from './pages/Room';
+import Rooms from './pages/Rooms';
+import AddRoom from './pages/AddRoom';
 import SongRequest from './pages/SongRequest';
 
 const App = () => {
@@ -44,7 +46,9 @@ const App = () => {
         <IonApp>
           <IonReactRouter>
             <IonRouterOutlet>
-              <Route exact path="/" render={() => <Redirect to="/room/1" />} />
+              <Route exact path="/" render={() => <Redirect to="/rooms" />} />
+              <Route exact path="/rooms" component={Rooms} />
+              <Route exact path="/rooms/addRoom" component={AddRoom} />
               <Route exact path="/signin/:roomId" component={SignIn} />
               <Route exact path="/signout/:roomId" component={SignOut} />
               <Route exact path="/room/:roomId" component={Room} />
