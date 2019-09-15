@@ -40,7 +40,7 @@ const Room = props => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <NowPlaying />
+        <NowPlaying songID="6wo37KVqFJhtuxPTpLCcfe" progress="0.28" />
         <IonList>
           <Queue />
         </IonList>
