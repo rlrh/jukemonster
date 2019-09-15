@@ -33,6 +33,7 @@ import Room from './pages/Room';
 import Rooms from './pages/Rooms';
 import AddRoom from './pages/AddRoom';
 import SongRequest from './pages/SongRequest';
+import SignInCallback from './pages/SignInCallback';
 
 const App = () => {
   setupConfig({
@@ -49,8 +50,9 @@ const App = () => {
               <Route exact path="/" render={() => <Redirect to="/rooms" />} />
               <Route exact path="/rooms" component={Rooms} />
               <Route exact path="/rooms/addRoom" component={AddRoom} />
-              <Route exact path="/signin/:roomId" component={SignIn} />
-              <Route exact path="/signout/:roomId" component={SignOut} />
+              <Route exact path="/signin" component={SignIn} />
+              <Route exact path="/signin/callback" component={SignInCallback} />
+              <Route exact path="/signout" component={SignOut} />
               <Route exact path="/room/:roomId" component={Room} />
               <Route path="/room/:roomId/request" component={SongRequest} />
             </IonRouterOutlet>

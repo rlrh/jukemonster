@@ -1,13 +1,13 @@
 import { Redirect } from 'react-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { useAuth } from '../state/useAuth';
 
-const SignOut = ({ match }) => {
+const SignOut = () => {
   const { signOut } = useAuth();
 
-  signOut();
+  useEffect(() => signOut(), []);
 
-  return <Redirect to={`/room/${match.params.roomId}`} />;
+  return <Redirect to="/" />;
 };
 export default SignOut;

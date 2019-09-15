@@ -15,8 +15,6 @@ import {
   IonCardContent,
 } from '@ionic/react';
 
-import { useAuth } from '../state/useAuth';
-
 const AddRoom = () => {
   return (
     <IonPage>

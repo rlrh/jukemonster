@@ -32,13 +32,9 @@ const Room = props => {
           <IonTitle>{`Room ${props.match.params.roomId}`}</IonTitle>
           <IonButtons slot="primary">
             {user ? (
-              <IonButton href={`/signout/${props.match.params.roomId}`}>
-                Sign Out
-              </IonButton>
+              <IonButton href="/signout">Sign Out</IonButton>
             ) : (
-              <IonButton href={`/signin/${props.match.params.roomId}`}>
-                Sign In
-              </IonButton>
+              <IonButton href="/signin">Sign In</IonButton>
             )}
           </IonButtons>
         </IonToolbar>
