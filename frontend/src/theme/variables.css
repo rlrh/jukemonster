@@ -76,6 +76,14 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-tint: #f5f6f9;
 }
 
+ion-grid {
+  --ion-grid-padding: 0;
+}
+
+ion-col {
+  --ion-grid-column-padding: 0;
+}
+
 /*
  * Dark Colors
  * -------------------------------------------

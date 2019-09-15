@@ -1,7 +1,8 @@
 import React, { Fragment, useState } from 'react';
-import { IonItem, IonLabel, IonList, IonToast } from '@ionic/react';
+import { IonItem, IonList, IonToast } from '@ionic/react';
 import { useFetch } from 'react-async';
 import { useAuth } from '../state/useAuth';
+import Track from './Track';
 
 const SearchResults = ({ query, onSearchResultClick }) => {
   const { user } = useAuth();
@@ -27,13 +28,23 @@ const SearchResults = ({ query, onSearchResultClick }) => {
     const renderTracks = () => {
       return tracks.map(track => {
         const id = track.id;
-        const title = track.name;
-        const artists = track.artists.map(artist => artist.name).join(', ');
+        const name = track.name;
+        const artists = track.artists.map(artist => artist.name);
+        const album = track.album.name;
+        const isExplicit = track.explicit;
+        const imageSource = track.album.images.slice(-1)[0].url;
 
         const handleClick = event => {
           try {
-            onSearchResultClick(id, title, artists);
-            setToastMessage(`${title} by ${artists} added to queue!`);
+            onSearchResultClick({
+              id,
+              name,
+              artists,
+              album,
+              isExplicit,
+              imageSource,
+            });
+            setToastMessage(`${name} added to queue!`);
           } catch (err) {
             setToastMessage(err.message);
           } finally {
@@ -43,10 +54,13 @@ const SearchResults = ({ query, onSearchResultClick }) => {
 
         return (
           <IonItem key={id} onClick={handleClick}>
-            <IonLabel>
-              <h2>{title}</h2>
-              <h3>{artists}</h3>
-            </IonLabel>
+            <Track
+              name={name}
+              artists={artists}
+              album={album}
+              isExplicit={isExplicit}
+              imageSource={imageSource}
+            />
           </IonItem>
         );
       });

@@ -1,8 +1,18 @@
 import React from 'react';
-import { IonItem, IonLabel, IonButton, IonIcon, IonBadge } from '@ionic/react';
+import { IonItem, IonButton, IonIcon, IonBadge } from '@ionic/react';
 import { arrowDown, arrowUp, more } from 'ionicons/icons';
+import Track from './Track';
 
-const QueueTrack = ({ title, artist, votes, onUpvote, onDownvote }) => {
+const QueueTrack = ({
+  name,
+  artists,
+  album,
+  isExplicit,
+  imageSource,
+  votes,
+  onUpvote,
+  onDownvote,
+}) => {
   const renderVotes = () => {
     if (votes < 0) {
       return (
@@ -27,10 +37,13 @@ const QueueTrack = ({ title, artist, votes, onUpvote, onDownvote }) => {
 
   return (
     <IonItem>
-      <IonLabel>
-        <h2>{title}</h2>
-        <h3>{artist}</h3>
-      </IonLabel>
+      <Track
+        name={name}
+        artists={artists}
+        album={album}
+        isExplicit={isExplicit}
+        imageSource={imageSource}
+      />
       {renderVotes()}
       <IonButton onClick={() => onUpvote()} fill="clear" slot="end">
         <IonIcon slot="icon-only" icon={arrowUp} />

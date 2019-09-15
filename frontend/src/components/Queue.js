@@ -9,14 +9,25 @@ const Queue = () => {
   const renderQueueTracks = () => {
     const sortedTracks = [...tracks].sort((a, b) => b.votes - a.votes);
     return sortedTracks.map(track => {
-      const { id, title, artist, votes } = track;
+      const {
+        id,
+        name,
+        artists,
+        album,
+        isExplicit,
+        imageSource,
+        votes,
+      } = track;
       const handleUpvote = () => upvote(id);
       const handleDownvote = () => downvote(id);
       return (
         <QueueTrack
           key={id}
-          title={title}
-          artist={artist}
+          name={name}
+          artists={artists}
+          album={album}
+          isExplicit={isExplicit}
+          imageSource={imageSource}
           votes={votes}
           onUpvote={handleUpvote}
           onDownvote={handleDownvote}
@@ -28,7 +39,7 @@ const Queue = () => {
   return (
     <IonList>
       <IonListHeader>
-        <IonLabel>Queue</IonLabel>
+        <IonLabel>Next Up</IonLabel>
       </IonListHeader>
       {renderQueueTracks()}
     </IonList>

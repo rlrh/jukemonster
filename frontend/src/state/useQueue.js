@@ -14,10 +14,13 @@ export function QueueProvider({ children }) {
 function useProvideQueue() {
   const [tracks, setTracks] = useState([]);
 
-  function addTrack(id, title, artist) {
+  function addTrack({ id, name, artists, album, isExplicit, imageSource }) {
     if (tracks.find(track => track.id === id))
-      throw new Error(`${title} by ${artist} already in queue!`);
-    const newTracks = [...tracks, { id, title, artist, votes: 0 }];
+      throw new Error(`${name} already in queue!`);
+    const newTracks = [
+      ...tracks,
+      { id, name, artists, album, isExplicit, imageSource, votes: 0 },
+    ];
     setTracks(newTracks);
   }
 

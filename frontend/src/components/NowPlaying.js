@@ -6,7 +6,7 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonProgressBar,
-  IonImg,
+  IonNote,
   IonGrid,
   IonRow,
   IonCol,
@@ -38,21 +38,24 @@ const NowPlaying = props => {
     return (
       <IonCard>
         <IonCardHeader>
+          <IonCardSubtitle>Now Playing</IonCardSubtitle>
           <IonGrid>
             <IonRow>
-              <IonCol size="5">
-                <IonImg src={data.album.images[1].url} />
+              <IonCol size="3" sizeSm="4" />
+              <IonCol size="6" sizeSm="4">
+                <img src={data.album.images[0].url} className="ion-padding" />
               </IonCol>
-              <IonCol size="7">
-                <IonCardTitle>{data.name}</IonCardTitle>
-                <IonCardSubtitle>{data.album.name}</IonCardSubtitle>
-              </IonCol>
+              <IonCol size="3" sizeSm="4" />
             </IonRow>
           </IonGrid>
-          <IonCardContent>{artists}</IonCardContent>
+          <IonCardTitle>{data.name}</IonCardTitle>
+          <IonNote color="medium">
+            {artists} • {data.album.name}
+          </IonNote>
         </IonCardHeader>
-        <IonProgressBar value={progress}></IonProgressBar>
-        <br />
+        <IonCardContent>
+          <IonProgressBar value={progress}></IonProgressBar>
+        </IonCardContent>
       </IonCard>
     );
   }

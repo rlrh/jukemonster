@@ -5,7 +5,6 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonList,
   IonFab,
   IonFabButton,
   IonIcon,
@@ -13,6 +12,9 @@ import {
   IonButton,
   IonFooter,
   IonBackButton,
+  IonGrid,
+  IonRow,
+  IonCol,
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
@@ -40,10 +42,16 @@ const Room = props => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <NowPlaying songID="6wo37KVqFJhtuxPTpLCcfe" progress="0.28" />
-        <IonList>
-          <Queue />
-        </IonList>
+        <IonGrid>
+          <IonRow>
+            <IonCol size="12" sizeSm="6">
+              <NowPlaying songID="6wo37KVqFJhtuxPTpLCcfe" progress="0.28" />
+            </IonCol>
+            <IonCol size="12" sizeSm="6">
+              <Queue />
+            </IonCol>
+          </IonRow>
+        </IonGrid>
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
           <IonFabButton href={`${props.match.url}/request`}>
             <IonIcon icon={add} />
