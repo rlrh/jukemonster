@@ -38,27 +38,24 @@ const NowPlaying = () => {
   if (data) {
     const artists = data.artists.map(artist => artist.name).join(', ');
     return (
-      <IonContent>
-        <IonCard>
-          <IonCardHeader>
-            <IonGrid>
-              <IonRow>
-                <IonCol size="5">
-                  <IonImg src={data.album.images[1].url} />
-                </IonCol>
-                <IonCol size="7">
-                  <IonCardTitle>{data.name}</IonCardTitle>
-                  <IonCardSubtitle>{data.album.name}</IonCardSubtitle>
-                </IonCol>
-              </IonRow>
-            </IonGrid>
-
-            <IonCardContent>{artists}</IonCardContent>
-          </IonCardHeader>
-          <IonProgressBar value={progress}></IonProgressBar>
-          <br />
-        </IonCard>
-      </IonContent>
+      <IonCard>
+        <IonCardHeader>
+          <IonGrid>
+            <IonRow>
+              <IonCol size="5">
+                <IonImg src={data.album.images[1].url} />
+              </IonCol>
+              <IonCol size="7">
+                <IonCardTitle>{data.name}</IonCardTitle>
+                <IonCardSubtitle>{data.album.name}</IonCardSubtitle>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+          <IonCardContent>{artists}</IonCardContent>
+        </IonCardHeader>
+        <IonProgressBar value={progress}></IonProgressBar>
+        <br />
+      </IonCard>
     );
   }
 };
