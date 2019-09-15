@@ -10,7 +10,7 @@ const SignInCallback = ({ location }) => {
     console.log(location.search);
     const searchParams = new URLSearchParams();
     const accessToken = searchParams.get('access_token');
-    console.log(`Your Spotify access token is: ${accessToken}`);
+    console.log('Your Spotify access token is: ' + accessToken);
     signIn(accessToken);
   }, []);
 
