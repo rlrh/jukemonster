@@ -41,8 +41,6 @@ const Room = props => {
       </IonHeader>
       <IonContent>
         <NowPlaying />
-      </IonContent>
-      <IonContent>
         <IonList>
           <Queue />
         </IonList>
