@@ -1,12 +1,10 @@
 import React from 'react';
 import {
-  IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
-  IonContent,
   IonProgressBar,
   IonImg,
   IonGrid,
@@ -16,12 +14,12 @@ import {
 import { useFetch } from 'react-async';
 import { useAuth } from '../state/useAuth';
 
-const NowPlaying = () => {
+const NowPlaying = props => {
   const { user } = useAuth();
 
   //Hardcoded to be update
-  const trackID = '6wo37KVqFJhtuxPTpLCcfe';
-  const progress = 0.25;
+  const trackID = props.songID;
+  const progress = props.progress;
 
   const headers = {
     Accept: 'application/json',

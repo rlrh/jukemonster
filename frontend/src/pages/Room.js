@@ -12,6 +12,7 @@ import {
   IonButtons,
   IonButton,
   IonFooter,
+  IonBackButton,
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
@@ -25,6 +26,9 @@ const Room = props => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton defaultHref="/rooms" />
+          </IonButtons>
           <IonTitle>{`Room ${props.match.params.roomId}`}</IonTitle>
           <IonButtons slot="primary">
             {user ? (
@@ -40,7 +44,7 @@ const Room = props => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <NowPlaying />
+        <NowPlaying songID="6wo37KVqFJhtuxPTpLCcfe" progress="0.28" />
         <IonList>
           <Queue />
         </IonList>
