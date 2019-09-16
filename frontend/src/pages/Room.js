@@ -18,6 +18,7 @@ import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
 import Queue from '../components/Queue';
 import NowPlaying from '../components/NowPlaying';
+import Devices from '../components/Devices';
 
 const Room = props => {
   const { user } = useAuth();
@@ -51,13 +52,7 @@ const Room = props => {
         </IonFab>
       </IonContent>
       <IonFooter>
-        <IonToolbar>
-          <IonTitle>
-            {user
-              ? `Your Spotify token is: ${user}`
-              : 'Sign in to provide a Spotify token'}
-          </IonTitle>
-        </IonToolbar>
+        <Devices />
       </IonFooter>
     </IonPage>
   );
