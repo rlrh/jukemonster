@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonList, IonListHeader, IonLabel } from '@ionic/react';
+import { IonList, IonListHeader, IonLabel, IonItem } from '@ionic/react';
 import { useQueue } from '../state/useQueue';
 import QueueTrack from './QueueTrack';
 
@@ -7,6 +7,14 @@ const Queue = () => {
   const { tracks, upvote, downvote } = useQueue();
 
   const renderQueueTracks = () => {
+    if (!tracks.length) {
+      return (
+        <IonItem>
+          <IonLabel>Nothing in the queue yet, go add some tracks!</IonLabel>
+        </IonItem>
+      );
+    }
+
     const sortedTracks = [...tracks].sort((a, b) => b.votes - a.votes);
     return sortedTracks.map(track => {
       const {
