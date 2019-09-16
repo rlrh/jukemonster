@@ -39,6 +39,7 @@ const Devices = () => {
         <IonPopover
           isOpen={showPopover}
           onDidDismiss={e => setShowPopover(false)}
+          cssClass="popover"
         >
           <IonCard>
             <IonCardHeader>Not Logged In</IonCardHeader>
@@ -54,6 +55,7 @@ const Devices = () => {
         <IonPopover
           isOpen={showPopover}
           onDidDismiss={e => setShowPopover(false)}
+          cssClass="popover"
         >
           {data.devices.length == 0 ? (
             <IonCard>
