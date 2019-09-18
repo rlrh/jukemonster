@@ -23,22 +23,27 @@ function UseProvideSocket() {
   function openConnection(roomId) {
     if (isOpen) throw new Error(`Connection to ${roomId} already active!`);
 
+    // open connection
     const connection = new W3CWebSocket(
       'ws://127.0.0.1:8000/ws/room/' + roomId + '/',
     );
 
+    // specify callbacks
     connection.onopen = () => {
-      console.log('Websocket Connected');
+      console.log('Websocket connected');
       tracks = [];
       socket = connection;
       roomId = roomId;
       isOpen = true;
     };
+
     connection.onmessage = message => {
       console.log(message);
       const dataFromServer = JSON.parse(message.data);
       if (dataFromServer.type === 'joinevent') {
+        console.log('joinevent message received');
       } else if (dataFromServer.type === 'contentevent') {
+        console.log('contentevent message received');
         const changedTrack = dataFromServer.message;
         const index = tracks.find(track => track.id === changedTrack.id);
         if (typeof index === undefined) {
@@ -50,35 +55,26 @@ function UseProvideSocket() {
         }
       }
     };
+
     connection.onclose = () => {
       console.log('Websocket disconnected');
     };
   }
 
-  function contentChange({
-    id,
-    name,
-    artists,
-    album,
-    isExplicit,
-    imageSource,
-  }) {
-    const changedTrack = {
-      id,
-      name,
-      artists,
-      album,
-      isExplicit,
-      imageSource,
-      votes: 0,
-    };
+  function contentChange(content) {
+    if (!isOpen) throw new Error(`No active connection`);
+
+    var changedTrack = content;
+    if (!changedTrack.has('votes')) {
+      changedTrack.votes = 0;
+    }
 
     // send to server
     const dataToServer = { type: 'contentevent', message: changedTrack };
     socket.send(JSON.stringify(dataToServer));
 
     // update track list
-    const index = tracks.find(track => track.id === id);
+    const index = tracks.find(track => track.id === changedTrack.id);
     if (typeof index === undefined) {
       tracks = [...tracks, changedTrack];
     } else {
@@ -89,6 +85,8 @@ function UseProvideSocket() {
   }
 
   function closeConnection() {
+    if (!isOpen) throw new Error(`No active connection`);
+
     socket.close();
     isOpen = false;
   }
