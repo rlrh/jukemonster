@@ -34,6 +34,7 @@ import Rooms from './pages/Rooms';
 import AddRoom from './pages/AddRoom';
 import SongRequest from './pages/SongRequest';
 import SignInCallback from './pages/SignInCallback';
+import { SocketProvider } from './state/useWebSocket';
 
 const App = () => {
   setupConfig({
@@ -43,22 +44,28 @@ const App = () => {
 
   return (
     <AuthProvider>
-      <QueueProvider>
-        <IonApp>
-          <IonReactRouter>
-            <IonRouterOutlet>
-              <Route exact path="/" render={() => <Redirect to="/rooms" />} />
-              <Route exact path="/rooms" component={Rooms} />
-              <Route exact path="/rooms/addRoom" component={AddRoom} />
-              <Route exact path="/signin" component={SignIn} />
-              <Route exact path="/signin/callback" component={SignInCallback} />
-              <Route exact path="/signout" component={SignOut} />
-              <Route exact path="/room/:roomId" component={Room} />
-              <Route path="/room/:roomId/request" component={SongRequest} />
-            </IonRouterOutlet>
-          </IonReactRouter>
-        </IonApp>
-      </QueueProvider>
+      <SocketProvider>
+        <QueueProvider>
+          <IonApp>
+            <IonReactRouter>
+              <IonRouterOutlet>
+                <Route exact path="/" render={() => <Redirect to="/rooms" />} />
+                <Route exact path="/rooms" component={Rooms} />
+                <Route exact path="/rooms/addRoom" component={AddRoom} />
+                <Route exact path="/signin" component={SignIn} />
+                <Route
+                  exact
+                  path="/signin/callback"
+                  component={SignInCallback}
+                />
+                <Route exact path="/signout" component={SignOut} />
+                <Route exact path="/room/:roomId" component={Room} />
+                <Route path="/room/:roomId/request" component={SongRequest} />
+              </IonRouterOutlet>
+            </IonReactRouter>
+          </IonApp>
+        </QueueProvider>
+      </SocketProvider>
     </AuthProvider>
   );
 };

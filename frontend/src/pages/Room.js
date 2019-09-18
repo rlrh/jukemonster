@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -21,9 +21,16 @@ import { useAuth } from '../state/useAuth';
 import Queue from '../components/Queue';
 import NowPlaying from '../components/NowPlaying';
 import Devices from '../components/Devices';
+import { useWebSocket } from '../state/useWebSocket';
 
 const Room = props => {
   const { user } = useAuth();
+  const { openConnection, contentChange, closeConnection } = useWebSocket();
+
+  useEffect(() => {
+    openConnection(props.match.params.roomId);
+    return closeConnection;
+  }, []);
 
   return (
     <IonPage>
