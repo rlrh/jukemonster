@@ -7,31 +7,33 @@ import { useAuth } from '../state/useAuth';
 
 const SignInCallback = ({ location }) => {
   const { signIn } = useAuth();
-
-  const { data, error, isLoading } = useFetch(
+  const headers = { Accept: 'application/json' };
+  const options = { credentials: 'include' };
+  const { data, error, isLoading, run } = useFetch(
     `http://127.0.0.1:8000/authorize/done/${location.search}`,
+    { headers },
+    options,
   );
-  if (isLoading) return 'Loading...';
+  if (data) {
+    console.log('Your Spotify access token is: ' + data.access_token);
+  }
+  return (
+    <React.Fragment>
+      {isLoading && <div> 'Loading...' </div>}
+      {error && <div> "Something's wrong..." </div>}
+      {data && <Redirect to="/" />}
+    </React.Fragment>
+  );
   /*
   useEffect(() => {
     const values = queryString.parse(location.search);
     const accessToken = values.access_token;
     if (values) {
-      console.log('Your Spotify access token is: ' + accessToken);
     } else {
       console.log('ERROR: could not parse Spotify access token');
     }
     signIn(accessToken);
   }, []);
 */
-
-  if (error) {
-    console.log(error);
-    return "Something's wrong...";
-  }
-  if (data) {
-    console.log(data);
-    return <Redirect to="/" />;
-  }
 };
 export default SignInCallback;
