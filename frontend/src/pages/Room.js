@@ -18,19 +18,20 @@ import {
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
+import useRoomState from '../hooks/useRoomState';
 import Queue from '../components/Queue';
 import NowPlaying from '../components/NowPlaying';
 import Devices from '../components/Devices';
-import { useWebSocket } from '../state/useWebSocket';
 
-const Room = props => {
+const Room = ({ match }) => {
   const { user } = useAuth();
-  const { openConnection, contentChange, closeConnection } = useWebSocket();
-
-  useEffect(() => {
-    openConnection(props.match.params.roomId);
-    return closeConnection;
-  }, []);
+  const {
+    nowPlayingTrack,
+    queuedTracks,
+    addTrack,
+    upvoteTrack,
+    downvoteTrack,
+  } = useRoomState(match.params.roomId);
 
   return (
     <IonPage>
@@ -39,7 +40,7 @@ const Room = props => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/rooms" />
           </IonButtons>
-          <IonTitle>{`Room ${props.match.params.roomId}`}</IonTitle>
+          <IonTitle>{`Room ${match.params.roomId}`}</IonTitle>
           <IonButtons slot="primary">
             {user ? (
               <IonButton href="/signout">Sign Out</IonButton>
@@ -53,15 +54,19 @@ const Room = props => {
         <IonGrid>
           <IonRow>
             <IonCol size="12" sizeSm="6">
-              <NowPlaying songID="6wo37KVqFJhtuxPTpLCcfe" progress="0.28" />
+              <NowPlaying track={nowPlayingTrack} />
             </IonCol>
             <IonCol size="12" sizeSm="6">
-              <Queue />
+              <Queue
+                tracks={queuedTracks}
+                onTrackUpvote={upvoteTrack}
+                onTrackDownvote={downvoteTrack}
+              />
             </IonCol>
           </IonRow>
         </IonGrid>
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton href={`${props.match.url}/request`}>
+          <IonFabButton href={`${match.url}/request`}>
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>

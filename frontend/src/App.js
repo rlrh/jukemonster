@@ -24,7 +24,7 @@ import './theme/variables.css';
 
 /* Authentication context */
 import { AuthProvider } from './state/useAuth';
-import { QueueProvider } from './state/useQueue';
+import { QueueProvider } from './state/useGlobalLocalQueue';
 
 /* Pages */
 import SignIn from './pages/SignIn';
@@ -34,7 +34,7 @@ import Rooms from './pages/Rooms';
 import AddRoom from './pages/AddRoom';
 import SongRequest from './pages/SongRequest';
 import SignInCallback from './pages/SignInCallback';
-import { SocketProvider } from './state/useWebSocket';
+import { SocketProvider } from './hooks/useWebSocket';
 
 const App = () => {
   setupConfig({

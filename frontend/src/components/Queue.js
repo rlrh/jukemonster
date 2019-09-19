@@ -1,11 +1,8 @@
 import React from 'react';
 import { IonList, IonListHeader, IonLabel, IonItem } from '@ionic/react';
-import { useQueue } from '../state/useQueue';
 import QueueTrack from './QueueTrack';
 
-const Queue = () => {
-  const { tracks, upvote, downvote } = useQueue();
-
+const Queue = ({ tracks, onTrackUpvote, onTrackDownvote }) => {
   const renderQueueTracks = () => {
     if (!tracks.length) {
       return (
@@ -26,8 +23,8 @@ const Queue = () => {
         imageSource,
         votes,
       } = track;
-      const handleUpvote = () => upvote(id);
-      const handleDownvote = () => downvote(id);
+      const handleUpvote = () => onTrackUpvote(id);
+      const handleDownvote = () => onTrackDownvote(id);
       return (
         <QueueTrack
           key={id}

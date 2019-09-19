@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { IonSearchbar } from '@ionic/react';
-import { useQueue } from '../state/useQueue';
+import { useQueue } from '../state/useGlobalLocalQueue';
 import SearchResults from './SearchResults';
 
 const Search = () => {
