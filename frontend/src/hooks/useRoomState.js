@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useReducer, useMemo } from 'react';
 import useWebSocket from 'react-use-websocket';
 
 const useRoomState = roomId => {
@@ -7,7 +7,7 @@ const useRoomState = roomId => {
     () => ({
       onOpen: console.log,
       onError: console.log,
-      onMessage: console.log,
+      onMessage: handleMessage,
       onClose: console.log,
     }),
     [],
@@ -17,10 +17,60 @@ const useRoomState = roomId => {
     STATIC_OPTIONS,
   );
 
-  const [nowPlayingTrack, setNowPlayingTrack] = useState({});
-  const [queuedTracks, setQueuedTracks] = useState([]);
+  // TODO: remove placeholder initial queue tracks
+  const initialQueuedTracks = [
+    {
+      id: '11dFghVXANMlKmJXsNCbNl',
+      name: 'Cut To The Feeling',
+      artists: ['Carly Rae Jepsen'],
+      album: 'Cut To The Feeling',
+      isExplicit: false,
+      imageSource:
+        'https://i.scdn.co/image/107819f5dc557d5d0a4b216781c6ec1b2f3c5ab2',
+      votes: 0,
+    },
+    {
+      id: '7xGfFoTpQ2E7fRF5lN10tr',
+      name: 'Run Away With Me',
+      artists: ['Carly Rae Jepsen'],
+      album: 'Emotion (Deluxe)',
+      isExplicit: false,
+      imageSource:
+        'https://i.scdn.co/image/ff347680d9e62ccc144926377d4769b02a1024dc',
+      votes: 0,
+    },
+  ];
 
-  // TODO: send message to websocket
+  // TODO: return new state based on action type and payload
+  const queuedTracksReducer = (state, action) => {
+    switch (action.type) {
+      case 'joinevent':
+        console.log(action.payload);
+        return state;
+      case 'contentevent':
+        console.log(action.payload);
+        return state;
+      default:
+        return state;
+    }
+  };
+
+  // State management
+  const [queuedTracks, dispatch] = useReducer(
+    queuedTracksReducer,
+    initialQueuedTracks,
+  );
+  const [nowPlayingTrack, setNowPlayingTrack] = useState({
+    id: '11dFghVXANMlKmJXsNCbNl',
+  });
+
+  // Let reducer handle state update
+  function handleMessage(message) {
+    const action = JSON.parse(message.data);
+    dispatch(action);
+  }
+
+  // TODO: sendMessage to websocket
   const addTrack = ({
     id,
     name,
@@ -29,44 +79,19 @@ const useRoomState = roomId => {
     isExplicit,
     imageSource,
     votes,
-  }) => console.log(id, name, artists, album, isExplicit, imageSource, votes);
+  }) => {
+    console.log(id, name, artists, album, isExplicit, imageSource, votes);
+  };
 
-  // TODO: send message to websocket
+  // TODO: sendMessage to websocket
   const upvoteTrack = id => {
     console.log(`Upvoted track ${id}`);
   };
 
-  // TODO: send message to websocket
+  // TODO: sendMessage to websocket
   const downvoteTrack = id => {
     console.log(`Downvoted track ${id}`);
   };
-
-  // TODO: remove this placeholder state
-  useEffect(() => {
-    setNowPlayingTrack({ id: '11dFghVXANMlKmJXsNCbNl' });
-    setQueuedTracks([
-      {
-        id: '11dFghVXANMlKmJXsNCbNl',
-        name: 'Cut To The Feeling',
-        artists: ['Carly Rae Jepsen'],
-        album: 'Cut To The Feeling',
-        isExplicit: false,
-        imageSource:
-          'https://i.scdn.co/image/107819f5dc557d5d0a4b216781c6ec1b2f3c5ab2',
-        votes: 0,
-      },
-      {
-        id: '7xGfFoTpQ2E7fRF5lN10tr',
-        name: 'Run Away With Me',
-        artists: ['Carly Rae Jepsen'],
-        album: 'Emotion (Deluxe)',
-        isExplicit: false,
-        imageSource:
-          'https://i.scdn.co/image/ff347680d9e62ccc144926377d4769b02a1024dc',
-        votes: 0,
-      },
-    ]);
-  }, []);
 
   return {
     nowPlayingTrack,
