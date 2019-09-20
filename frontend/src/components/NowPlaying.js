@@ -14,13 +14,11 @@ import {
 import { useFetch } from 'react-async';
 import { useAuth } from '../state/useAuth';
 
-const NowPlaying = props => {
+const NowPlaying = ({ track }) => {
   const { user } = useAuth();
 
-  //Hardcoded to be update
-  const trackID = props.songID;
-  const progress = props.progress;
-
+  // TODO: use track info returned from server
+  const trackID = track.id;
   const headers = {
     Accept: 'application/json',
     Authorization: `Bearer ${user}`,
@@ -54,7 +52,7 @@ const NowPlaying = props => {
           </IonNote>
         </IonCardHeader>
         <IonCardContent>
-          <IonProgressBar value={progress}></IonProgressBar>
+          <IonProgressBar value={0.28}></IonProgressBar>
         </IonCardContent>
       </IonCard>
     );

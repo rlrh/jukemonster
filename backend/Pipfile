@@ -11,6 +11,8 @@ pyflakes = "*"
 django = "*"
 requests = "*"
 python-dotenv = "*"
+channels = "*"
+channels-redis = "*"
 djangorestframework = "*"
 django-cors-headers = "*"
 
