@@ -50,10 +50,10 @@ const useRoomState = roomId => {
   // TODO: return new state based on action type and payload
   const reducer = (state, action) => {
     switch (action.type) {
-      case 'joinevent':
+      case 'user_event':
         console.log(action.payload);
         return state;
-      case 'contentevent':
+      case 'queue_event':
         console.log(action.payload);
         return state;
       default:
