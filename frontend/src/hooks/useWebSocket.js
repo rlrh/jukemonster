@@ -1,6 +1,8 @@
 import React, { useContext, createContext } from 'react';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
+const WEB_SOCKET_URL = 'ws://127.0.0.1:8000/ws/room/';
+
 const SocketContext = createContext();
 
 export const useWebSocket = () => useContext(SocketContext);
@@ -13,47 +15,35 @@ export function SocketProvider({ children }) {
     </SocketContext.Provider>
   );
 }
-
 function UseProvideSocket() {
   var isOpen = false; // whether an active connection is present
   var roomId = null; // room id of active connection
   var socket = null; // socket object
-  var tracks = []; // tracks
+  var tracks = []; // tracks in room's queue
+  var nowPlaying = null; // currently playing track
 
+  // Public Functions
   function openConnection(roomId) {
     if (isOpen) throw new Error(`Connection to ${roomId} already active!`);
 
     // open connection
-    const connection = new W3CWebSocket(
-      'ws://127.0.0.1:8000/ws/room/' + roomId + '/',
-    );
+    const connection = new W3CWebSocket(WEB_SOCKET_URL + roomId + '/');
 
     // specify callbacks
     connection.onopen = () => {
       console.log('Websocket connected');
-      tracks = [];
-      socket = connection;
-      roomId = roomId;
-      isOpen = true;
+      initState(roomId, connection);
     };
 
     connection.onmessage = message => {
       console.log(message);
       const dataFromServer = JSON.parse(message.data);
-      if (dataFromServer.type === 'joinevent') {
-        console.log('joinevent message received');
-      } else if (dataFromServer.type === 'contentevent') {
-        console.log('contentevent message received');
-        const changedTrack = dataFromServer.message;
-        const index = tracks.find(track => track.id === changedTrack.id);
-        if (typeof index === undefined) {
-          tracks = [...tracks, changedTrack];
-        } else {
-          var newTracks = tracks;
-          newTracks[index] = changedTrack;
-          tracks = newTracks;
-        }
-      }
+      if (dataFromServer.type === 'user_event')
+        handleUserEvent(dataFromServer.message);
+      else if (dataFromServer.type === 'queue_event')
+        handleQueueEvent(dataFromServer.message);
+      else if (dataFromServer.type == 'playback_event')
+        handlePlaybackEvent(dataFromServer.message);
     };
 
     connection.onclose = () => {
@@ -61,7 +51,14 @@ function UseProvideSocket() {
     };
   }
 
-  function contentChange(content) {
+  function closeConnection() {
+    if (!isOpen) throw new Error(`No active connection`);
+
+    socket.close();
+    isOpen = false;
+  }
+
+  function sendQueueEvent(content) {
     if (!isOpen) throw new Error(`No active connection`);
 
     var changedTrack = content;
@@ -70,7 +67,7 @@ function UseProvideSocket() {
     }
 
     // send to server
-    const dataToServer = { type: 'contentevent', message: changedTrack };
+    const dataToServer = { type: 'queue_event', message: changedTrack };
     socket.send(JSON.stringify(dataToServer));
 
     // update track list
@@ -84,19 +81,49 @@ function UseProvideSocket() {
     }
   }
 
-  function closeConnection() {
-    if (!isOpen) throw new Error(`No active connection`);
+  // Private Functions
+  function initState(roomId, connection) {
+    tracks = [];
+    nowPlaying = null;
+    socket = connection;
+    roomId = roomId;
+    isOpen = true;
+  }
 
-    socket.close();
-    isOpen = false;
+  function handleUserEvent(message) {
+    console.log('user_event received');
+  }
+
+  function handleQueueEvent(message) {
+    console.log('queue_eventreceived');
+    const changedTrack = message;
+    const index = tracks.find(track => track.id === changedTrack.id);
+    if (typeof index === undefined) {
+      tracks = [...tracks, changedTrack];
+    } else {
+      var newTracks = tracks;
+      newTracks[index] = changedTrack;
+      tracks = newTracks;
+    }
+  }
+
+  function handlePlaybackEvent(message) {
+    console.log('playback_event received');
+    const playingTrack = message;
+
+    // remove playingTrack from queue, if it exists
+    tracks = tracks.filter(track => track.id === playingTrack.id);
+
+    nowPlaying = playingTrack;
   }
 
   return {
     isOpen,
     room: roomId,
     tracks,
+    nowPlaying,
     openConnection,
-    contentChange,
+    sendQueueEvent,
     closeConnection,
   };
 }
