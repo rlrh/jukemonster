@@ -32,13 +32,12 @@ import SignOut from './pages/SignOut';
 import Room from './pages/Room';
 import Rooms from './pages/Rooms';
 import AddRoom from './pages/AddRoom';
-import SongRequest from './pages/SongRequest';
+import SongRequest from './pages/deprecated/SongRequest';
 import SignInCallback from './pages/SignInCallback';
 import { SocketProvider } from './hooks/useWebSocket';
 
 const App = () => {
   setupConfig({
-    rippleEffect: false,
     mode: 'ios',
   });
 

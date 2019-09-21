@@ -14,7 +14,7 @@ import {
 import { Redirect } from 'react-router';
 import React, { useState } from 'react';
 
-import { useAuth } from '../state/useAuth';
+import { useAuth } from '../../state/useAuth';
 
 const SignIn = ({ match }) => {
   const { user, signIn } = useAuth();
