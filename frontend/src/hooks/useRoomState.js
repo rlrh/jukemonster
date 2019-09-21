@@ -1,4 +1,5 @@
 import { useReducer, useMemo } from 'react';
+import produce from 'immer';
 import useWebSocket from 'react-use-websocket';
 
 const useRoomState = roomId => {
@@ -23,28 +24,7 @@ const useRoomState = roomId => {
     nowPlayingTrack: {
       id: '11dFghVXANMlKmJXsNCbNl',
     },
-    queuedTracks: [
-      {
-        id: '11dFghVXANMlKmJXsNCbNl',
-        name: 'Cut To The Feeling',
-        artists: ['Carly Rae Jepsen'],
-        album: 'Cut To The Feeling',
-        isExplicit: false,
-        imageSource:
-          'https://i.scdn.co/image/107819f5dc557d5d0a4b216781c6ec1b2f3c5ab2',
-        votes: 0,
-      },
-      {
-        id: '7xGfFoTpQ2E7fRF5lN10tr',
-        name: 'Run Away With Me',
-        artists: ['Carly Rae Jepsen'],
-        album: 'Emotion (Deluxe)',
-        isExplicit: false,
-        imageSource:
-          'https://i.scdn.co/image/ff347680d9e62ccc144926377d4769b02a1024dc',
-        votes: 0,
-      },
-    ],
+    queuedTracks: [],
   };
 
   // Return new state based on actions receieved from WebSockets
@@ -61,12 +41,17 @@ const useRoomState = roomId => {
           ),
         };
       case 'queue_event':
-        return {
-          ...state,
-          queuedTracks: state.queuedTracks.map(track =>
-            track.id === action.payload.id ? action.payload : track,
-          ),
-        };
+        return produce(state, draft => {
+          const changedTrack = action.payload;
+          const index = draft.queuedTracks.findIndex(
+            track => track.id === changedTrack.id,
+          );
+          if (index === undefined) {
+            draft.queuedTracks.push(changedTrack);
+          } else {
+            draft.queuedTracks[index] = changedTrack;
+          }
+        });
       default:
         return state;
     }
