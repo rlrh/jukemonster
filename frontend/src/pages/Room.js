@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -15,6 +15,7 @@ import {
   IonGrid,
   IonRow,
   IonCol,
+  IonModal,
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
@@ -22,6 +23,7 @@ import useRoomState from '../hooks/useRoomState';
 import Queue from '../components/Queue';
 import NowPlaying from '../components/NowPlaying';
 import Devices from '../components/Devices';
+import Search from '../components/Search';
 
 const Room = ({ match }) => {
   const { user } = useAuth();
@@ -32,6 +34,12 @@ const Room = ({ match }) => {
     upvoteTrack,
     downvoteTrack,
   } = useRoomState(match.params.roomId);
+  const [showAddTrackModal, setShowAddTrackModal] = useState(false);
+
+  const handleSearchResultClick = args => {
+    addTrack(args);
+    setShowAddTrackModal(false);
+  };
 
   return (
     <IonPage>
@@ -66,10 +74,32 @@ const Room = ({ match }) => {
           </IonRow>
         </IonGrid>
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton href={`${match.url}/request`}>
+          <IonFabButton onClick={() => setShowAddTrackModal(true)}>
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>
+        <IonModal
+          isOpen={showAddTrackModal}
+          onDidDismiss={() => setShowAddTrackModal(false)}
+        >
+          <IonHeader>
+            <IonToolbar>
+              <IonButtons slot="primary">
+                <IonButton onClick={() => setShowAddTrackModal(false)}>
+                  Close
+                </IonButton>
+              </IonButtons>
+              <IonTitle>Add A Track</IonTitle>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent>
+            {user ? (
+              <Search onSearchResultClick={handleSearchResultClick} />
+            ) : (
+              <h1>You are not signed in to Spotify.</h1>
+            )}
+          </IonContent>
+        </IonModal>
       </IonContent>
       <IonFooter>
         <Devices />

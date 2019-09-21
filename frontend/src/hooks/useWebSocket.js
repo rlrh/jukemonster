@@ -39,11 +39,11 @@ function UseProvideSocket() {
       console.log(message);
       const dataFromServer = JSON.parse(message.data);
       if (dataFromServer.type === 'user_event')
-        handleUserEvent(dataFromServer.message);
+        handleUserEvent(dataFromServer.payload);
       else if (dataFromServer.type === 'queue_event')
-        handleQueueEvent(dataFromServer.message);
+        handleQueueEvent(dataFromServer.payload);
       else if (dataFromServer.type == 'playback_event')
-        handlePlaybackEvent(dataFromServer.message);
+        handlePlaybackEvent(dataFromServer.payload);
     };
 
     connection.onclose = () => {
@@ -67,7 +67,7 @@ function UseProvideSocket() {
     }
 
     // send to server
-    const dataToServer = { type: 'queue_event', message: changedTrack };
+    const dataToServer = { type: 'queue_event', payload: changedTrack };
     socket.send(JSON.stringify(dataToServer));
 
     // update track list
@@ -90,13 +90,13 @@ function UseProvideSocket() {
     isOpen = true;
   }
 
-  function handleUserEvent(message) {
+  function handleUserEvent(payload) {
     console.log('user_event received');
   }
 
-  function handleQueueEvent(message) {
+  function handleQueueEvent(payload) {
     console.log('queue_eventreceived');
-    const changedTrack = message;
+    const changedTrack = payload;
     const index = tracks.find(track => track.id === changedTrack.id);
     if (typeof index === undefined) {
       tracks = [...tracks, changedTrack];
@@ -107,9 +107,9 @@ function UseProvideSocket() {
     }
   }
 
-  function handlePlaybackEvent(message) {
+  function handlePlaybackEvent(payload) {
     console.log('playback_event received');
-    const playingTrack = message;
+    const playingTrack = payload;
 
     // remove playingTrack from queue, if it exists
     tracks = tracks.filter(track => track.id === playingTrack.id);
