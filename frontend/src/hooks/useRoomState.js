@@ -1,5 +1,4 @@
 import { useReducer, useMemo } from 'react';
-import produce from 'immer';
 import useWebSocket from 'react-use-websocket';
 
 const useRoomState = roomId => {
@@ -41,17 +40,16 @@ const useRoomState = roomId => {
           ),
         };
       case 'queue_event':
-        return produce(state, draft => {
-          const changedTrack = action.payload;
-          const index = draft.queuedTracks.findIndex(
-            track => track.id === changedTrack.id,
-          );
-          if (index === undefined) {
-            draft.queuedTracks.push(changedTrack);
-          } else {
-            draft.queuedTracks[index] = changedTrack;
-          }
-        });
+        return {
+          ...state,
+          queuedTracks: state.queuedTracks.find(
+            track => track.id === action.payload.id,
+          )
+            ? state.queuedTracks.map(track =>
+                track.id === action.payload.id ? action.payload : track,
+              )
+            : state.queuedTracks.push(action.payload),
+        };
       default:
         return state;
     }
