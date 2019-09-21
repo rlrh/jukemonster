@@ -32,7 +32,6 @@ import SignOut from './pages/SignOut';
 import Room from './pages/Room';
 import Rooms from './pages/Rooms';
 import AddRoom from './pages/AddRoom';
-import SongRequest from './pages/deprecated/SongRequest';
 import SignInCallback from './pages/SignInCallback';
 import { SocketProvider } from './hooks/useWebSocket';
 
@@ -59,7 +58,6 @@ const App = () => {
                 />
                 <Route exact path="/signout" component={SignOut} />
                 <Route exact path="/room/:roomId" component={Room} />
-                <Route path="/room/:roomId/request" component={SongRequest} />
               </IonRouterOutlet>
             </IonReactRouter>
           </IonApp>
