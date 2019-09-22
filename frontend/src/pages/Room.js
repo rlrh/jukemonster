@@ -15,8 +15,9 @@ import {
   IonGrid,
   IonRow,
   IonCol,
-  IonModal,
+  IonToast,
 } from '@ionic/react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
 import useRoomState from '../hooks/useRoomState';
@@ -41,6 +42,11 @@ const Room = ({ match }) => {
     setShowAddTrackModal(false);
   };
 
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState(
+    'Link copied. Send your friends :)',
+  );
+
   return (
     <IonPage>
       <IonHeader>
@@ -48,7 +54,15 @@ const Room = ({ match }) => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/rooms" />
           </IonButtons>
-          <IonTitle>{`Room ${match.params.roomId}`}</IonTitle>
+          <CopyToClipboard
+            text={window.location.href}
+            onCopy={() => setShowToast(true)}
+          >
+            <IonButton fill="clear" expand="full">
+              Invite
+            </IonButton>
+          </CopyToClipboard>
+
           <IonButtons slot="primary">
             {user ? (
               <IonButton href="/signout">Sign Out</IonButton>
@@ -57,6 +71,13 @@ const Room = ({ match }) => {
             )}
           </IonButtons>
         </IonToolbar>
+        <IonToast
+          position="top"
+          isOpen={showToast}
+          onDidDismiss={() => setShowToast(false)}
+          message={toastMessage}
+          duration={1500}
+        />
       </IonHeader>
       <IonContent>
         <IonGrid>
