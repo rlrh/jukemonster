@@ -1,5 +1,11 @@
 import React, { Fragment, useState } from 'react';
-import { IonItem, IonList, IonToast } from '@ionic/react';
+import {
+  IonItem,
+  IonList,
+  IonToast,
+  IonLabel,
+  IonSkeletonText,
+} from '@ionic/react';
 import { useFetch } from 'react-async';
 import { useAuth } from '../state/useAuth';
 import Track from './Track';
@@ -19,11 +25,67 @@ const SearchResults = ({ query, onSearchResultClick }) => {
     { headers },
   );
 
-  if (isLoading) return 'Loading...';
-  if (error) return `Something went wrong, ensure your Spotify token is valid`;
+  if (error) {
+    return (
+      <IonItem>
+        <IonLabel>
+          <h2>Something went wrong...</h2>
+        </IonLabel>
+      </IonItem>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Fragment>
+        <IonList>
+          <IonItem>
+            <IonLabel>
+              <h2>
+                <IonSkeletonText animated style={{ width: '15%' }} />
+              </h2>
+              <h3>
+                <IonSkeletonText animated style={{ width: '45%' }} />
+              </h3>
+            </IonLabel>
+          </IonItem>
+          <IonItem>
+            <IonLabel>
+              <h2>
+                <IonSkeletonText animated style={{ width: '10%' }} />
+              </h2>
+              <h3>
+                <IonSkeletonText animateds style={{ width: '30%' }} />
+              </h3>
+            </IonLabel>
+          </IonItem>
+          <IonItem>
+            <IonLabel>
+              <h2>
+                <IonSkeletonText animated style={{ width: '20%' }} />
+              </h2>
+              <h3>
+                <IonSkeletonText animated style={{ width: '60%' }} />
+              </h3>
+            </IonLabel>
+          </IonItem>
+        </IonList>
+      </Fragment>
+    );
+  }
 
   if (data) {
     const tracks = data.tracks.items;
+
+    if (!tracks.length) {
+      return (
+        <IonItem>
+          <IonLabel>
+            <h2>No search results to display.</h2>
+          </IonLabel>
+        </IonItem>
+      );
+    }
 
     const renderTracks = () => {
       return tracks.map(track => {
