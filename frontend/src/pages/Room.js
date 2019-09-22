@@ -23,7 +23,7 @@ import useRoomState from '../hooks/useRoomState';
 import Queue from '../components/Queue';
 import NowPlaying from '../components/NowPlaying';
 import Devices from '../components/Devices';
-import Search from '../components/Search';
+import AddTrackModal from '../components/AddTrackModal';
 
 const Room = ({ match }) => {
   const { user } = useAuth();
@@ -78,28 +78,11 @@ const Room = ({ match }) => {
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>
-        <IonModal
+        <AddTrackModal
           isOpen={showAddTrackModal}
-          onDidDismiss={() => setShowAddTrackModal(false)}
-        >
-          <IonHeader>
-            <IonToolbar>
-              <IonButtons slot="primary">
-                <IonButton onClick={() => setShowAddTrackModal(false)}>
-                  Close
-                </IonButton>
-              </IonButtons>
-              <IonTitle>Add A Track</IonTitle>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent>
-            {user ? (
-              <Search onSearchResultClick={handleSearchResultClick} />
-            ) : (
-              <h1>You are not signed in to Spotify.</h1>
-            )}
-          </IonContent>
-        </IonModal>
+          onClose={() => setShowAddTrackModal(false)}
+          onSearchResultClick={handleSearchResultClick}
+        />
       </IonContent>
       <IonFooter>
         <Devices />
