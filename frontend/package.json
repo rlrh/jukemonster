@@ -5,7 +5,6 @@
   "dependencies": {
     "@ionic/react": "^4.9.0-rc.2",
     "@ionic/react-router": "^4.9.0-rc.2",
-    "immer": "^4.0.0",
     "ionicons": "^4.6.3",
     "query-string": "^6.8.3",
     "react": "^16.9.0",
@@ -15,6 +14,7 @@
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1",
     "react-use-websocket": "^0.9.8",
+    "use-immer": "^0.3.4",
     "websocket": "^1.0.30"
   },
   "scripts": {
