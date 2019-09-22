@@ -28,7 +28,8 @@ const useRoomState = roomId => {
 
   // Return new state based on actions receieved from WebSockets
   const reducer = (state, action) => {
-    console.log(action);
+    console.log('Current state: ' + JSON.stringify(state));
+    console.log('Current action: ' + JSON.stringify(action));
     switch (action.type) {
       case 'user_event':
         return state;
@@ -48,7 +49,7 @@ const useRoomState = roomId => {
             ? state.queuedTracks.map(track =>
                 track.id === action.payload.id ? action.payload : track,
               )
-            : state.queuedTracks.push(action.payload),
+            : state.queuedTracks.concat([action.payload]),
         };
       default:
         return state;
