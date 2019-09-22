@@ -1,5 +1,6 @@
 import { useReducer, useMemo } from 'react';
 import useWebSocket from 'react-use-websocket';
+import { produce } from 'immer';
 
 const useRoomState = roomId => {
   // Setup WebSocket connection hook
@@ -41,6 +42,7 @@ const useRoomState = roomId => {
           ),
         };
       case 'queue_event':
+        /*
         return {
           ...state,
           queuedTracks: state.queuedTracks.find(
@@ -51,6 +53,19 @@ const useRoomState = roomId => {
               )
             : state.queuedTracks.concat([action.payload]),
         };
+        */
+        return produce(state, draft => {
+          const incomingTrack = action.payload;
+          const incomingTrackQueueIndex = draft.queuedTracks.findIndex(
+            track => track.id === incomingTrack.id,
+          );
+          if (incomingTrackQueueIndex === -1) {
+            draft.queuedTracks.push(incomingTrack);
+          } else {
+            draft.queuedTracks[incomingTrackQueueIndex] = incomingTrack;
+          }
+          return draft;
+        });
       default:
         return state;
     }
