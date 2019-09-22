@@ -69,7 +69,7 @@ function useProvideAuth(key, persistOnWindowClosed = true) {
     if (!token.access_token) return;
     // Refresh the token for the app, and update.
     const newToken = await api.refreshToken(token);
-    const updated = { ...token, access_token: newToken.access };
+    const updated = { ...token, ...newToken };
     signIn(updated);
   };
 
