@@ -1,5 +1,6 @@
-import { useReducer, useMemo } from 'react';
+import { useMemo } from 'react';
 import useWebSocket from 'react-use-websocket';
+import { useImmerReducer } from 'use-immer';
 
 const useRoomState = roomId => {
   // Setup WebSocket connection hook
@@ -41,23 +42,23 @@ const useRoomState = roomId => {
           ),
         };
       case 'queue_event':
-        return {
-          ...state,
-          queuedTracks: state.queuedTracks.find(
-            track => track.id === action.payload.id,
-          )
-            ? state.queuedTracks.map(track =>
-                track.id === action.payload.id ? action.payload : track,
-              )
-            : state.queuedTracks.concat([action.payload]),
-        };
+        const incomingTrack = action.payload;
+        const incomingTrackQueueIndex = state.queuedTracks.findIndex(
+          track => track.id === incomingTrack.id,
+        );
+        if (incomingTrackQueueIndex === -1) {
+          state.queuedTracks.push(incomingTrack);
+        } else {
+          state.queuedTracks[incomingTrackQueueIndex] = incomingTrack;
+        }
+        return;
       default:
         return state;
     }
   };
 
   // State management
-  const [state, dispatch] = useReducer(reducer, initialValues);
+  const [state, dispatch] = useImmerReducer(reducer, initialValues);
 
   // Let reducer handle state update
   function handleMessage(message) {

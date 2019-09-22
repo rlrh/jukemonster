@@ -1,31 +1,83 @@
-import React, { useEffect } from 'react';
+import React, { Component } from 'react';
 import { Redirect } from 'react-router';
-import { useFetch } from 'react-async';
+import {
+  IonPage,
+  IonHeader,
+  IonContent,
+  IonToolbar,
+  IonTitle,
+  IonProgressBar,
+} from '@ionic/react';
 import { useAuth } from '../state/useAuth';
 
-const SignInCallback = ({ location }) => {
+const SignInCallback = props => {
   const { signIn } = useAuth();
-  const headers = { Accept: 'application/json' };
-  const options = { credentials: 'include' };
-  const { data, error, isLoading } = useFetch(
-    `http://127.0.0.1:8000/authorize/done/${location.search}`,
-    { headers },
-    options,
-  );
-
-  useEffect(() => {
-    if (data) {
-      console.log('Your Spotify access token is: ' + data.access_token);
-      signIn(data.access_token);
-    }
-  }, [data]);
-
-  return (
-    <React.Fragment>
-      {isLoading && <div> 'Loading...' </div>}
-      {error && <div> "Something's wrong..." </div>}
-      {data && <Redirect to="/" />}
-    </React.Fragment>
-  );
+  return <SignInCallbackChild {...props} onSignIn={signIn} />;
 };
+
+class SignInCallbackChild extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: null,
+      isLoading: false,
+      error: null,
+    };
+  }
+
+  componentDidMount() {
+    this.setState({ isLoading: true });
+    fetch(`http://127.0.0.1:8000/authorize/done/${this.props.location.search}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Something went wrong ...');
+        }
+      })
+      .then(data => {
+        this.setState({ data, isLoading: false });
+        console.log('Your token is: ' + data.access_token);
+        this.props.onSignIn(data.access_token);
+      })
+      .catch(error => this.setState({ error, isLoading: false }));
+  }
+
+  render() {
+    const { data, error } = this.state;
+
+    if (data) {
+      return <Redirect to="/" />;
+    }
+
+    if (error) {
+      return (
+        <IonPage>
+          <IonHeader>
+            <IonToolbar>
+              <IonTitle>Login Failed</IonTitle>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent>
+            <h2>Something went wrong...</h2>
+          </IonContent>
+        </IonPage>
+      );
+    }
+
+    return (
+      <IonPage>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Logging in...</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent>
+          <IonProgressBar type="indeterminate"></IonProgressBar>
+        </IonContent>
+      </IonPage>
+    );
+  }
+}
+
 export default SignInCallback;
