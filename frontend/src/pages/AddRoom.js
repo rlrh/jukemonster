@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   IonBackButton,
   IonButtons,
@@ -13,9 +13,26 @@ import {
   IonCard,
   IonCardTitle,
   IonCardContent,
+  IonButton,
 } from '@ionic/react';
 
-const AddRoom = () => {
+const AddRoom = ({ history }) => {
+  const [name, setName] = useState('');
+  const [location, setLocation] = useState('');
+
+  const submit = async () => {
+    try {
+      console.log(`name is ${name}\n location is ${location}`);
+      /*
+        Network call to create room ID
+      */
+      const roomId = 'h12ss712a';
+      history.push(`/room/${roomId}`);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -28,17 +45,39 @@ const AddRoom = () => {
       </IonHeader>
       <IonContent>
         <IonCard>
-          <IonCardContent>
-            <IonCardTitle>Create room</IonCardTitle>
-            <IonItem>
-              <IonLabel position="floating">Location</IonLabel>
-              <IonInput></IonInput>
-            </IonItem>
-            <IonItem>
-              <IonLabel position="floating">Name</IonLabel>
-              <IonInput></IonInput>
-            </IonItem>
-          </IonCardContent>
+          <form
+            onSubmit={e => {
+              e.preventDefault();
+              submit();
+            }}
+          >
+            <IonCardContent>
+              <IonCardTitle>Create room</IonCardTitle>
+              <IonItem>
+                <IonLabel position="floating">Location</IonLabel>
+                <IonInput
+                  required="true"
+                  name="location"
+                  type="location"
+                  value={location}
+                  onIonChange={e => setLocation(e.target.value)}
+                />
+              </IonItem>
+              <IonItem>
+                <IonLabel position="floating">Name</IonLabel>
+                <IonInput
+                  name="name"
+                  type="name"
+                  value={name}
+                  onIonChange={e => setName(e.target.value)}
+                />
+              </IonItem>
+              <br />
+              <IonButton expand="block" type="submit">
+                Create
+              </IonButton>
+            </IonCardContent>
+          </form>
         </IonCard>
 
         <IonCard>
