@@ -24,7 +24,7 @@ const AddRoom = ({ history }) => {
     try {
       await fetch(`http://127.0.0.1:8000/rooms/`, {
         method: 'POST',
-        body: JSON.stringify(JSON.stringify({ example: 'data' })),
+        body: JSON.stringify(JSON.stringify({ name, location })),
       }).then(res => {
         res.json().then(prom => {
           const roomId = prom['roomId'];
