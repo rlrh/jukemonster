@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { IonBadge, IonLabel, IonThumbnail } from '@ionic/react';
+import { IonBadge, IonLabel } from '@ionic/react';
 
 export default function Track({
   name,

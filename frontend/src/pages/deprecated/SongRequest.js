@@ -9,8 +9,8 @@ import {
   IonToolbar,
 } from '@ionic/react';
 
-import { useAuth } from '../state/useAuth';
-import Search from '../components/Search';
+import { useAuth } from '../../state/useAuth';
+import Search from '../../components/Search';
 
 const SongRequest = () => {
   const { user } = useAuth();

@@ -1,4 +1,4 @@
-import { useState, useReducer, useMemo } from 'react';
+import { useReducer, useMemo } from 'react';
 import useWebSocket from 'react-use-websocket';
 
 const useRoomState = roomId => {
@@ -23,39 +23,33 @@ const useRoomState = roomId => {
     nowPlayingTrack: {
       id: '11dFghVXANMlKmJXsNCbNl',
     },
-    queuedTracks: [
-      {
-        id: '11dFghVXANMlKmJXsNCbNl',
-        name: 'Cut To The Feeling',
-        artists: ['Carly Rae Jepsen'],
-        album: 'Cut To The Feeling',
-        isExplicit: false,
-        imageSource:
-          'https://i.scdn.co/image/107819f5dc557d5d0a4b216781c6ec1b2f3c5ab2',
-        votes: 0,
-      },
-      {
-        id: '7xGfFoTpQ2E7fRF5lN10tr',
-        name: 'Run Away With Me',
-        artists: ['Carly Rae Jepsen'],
-        album: 'Emotion (Deluxe)',
-        isExplicit: false,
-        imageSource:
-          'https://i.scdn.co/image/ff347680d9e62ccc144926377d4769b02a1024dc',
-        votes: 0,
-      },
-    ],
+    queuedTracks: [],
   };
 
-  // TODO: return new state based on action type and payload
+  // Return new state based on actions receieved from WebSockets
   const reducer = (state, action) => {
+    console.log(action);
     switch (action.type) {
       case 'user_event':
-        console.log(action.payload);
         return state;
+      case 'playback_event':
+        return {
+          nowPlayingTrack: action.payload,
+          queuedTracks: state.queuedTracks.filter(
+            track => track.id !== action.payload.id,
+          ),
+        };
       case 'queue_event':
-        console.log(action.payload);
-        return state;
+        return {
+          ...state,
+          queuedTracks: state.queuedTracks.find(
+            track => track.id === action.payload.id,
+          )
+            ? state.queuedTracks.map(track =>
+                track.id === action.payload.id ? action.payload : track,
+              )
+            : state.queuedTracks.push(action.payload),
+        };
       default:
         return state;
     }
@@ -70,27 +64,59 @@ const useRoomState = roomId => {
     dispatch(action);
   }
 
-  // TODO: sendMessage to websocket
-  const addTrack = ({
-    id,
-    name,
-    artists,
-    album,
-    isExplicit,
-    imageSource,
-    votes,
-  }) => {
-    console.log(id, name, artists, album, isExplicit, imageSource, votes);
+  // Handler for adding track
+  const addTrack = ({ id, name, artists, album, isExplicit, imageSource }) => {
+    console.log(`Added track ${id}`);
+    const message = {
+      type: 'queue_event',
+      payload: {
+        id,
+        name,
+        artists,
+        album,
+        isExplicit,
+        imageSource,
+        votes: 0,
+      },
+    };
+    console.log(message);
+    sendMessage(JSON.stringify(message));
   };
 
-  // TODO: sendMessage to websocket
+  // Handler for track upvote
   const upvoteTrack = id => {
     console.log(`Upvoted track ${id}`);
+    const track = state.queuedTracks.find(track => track.id === id);
+    if (track === undefined) {
+      return;
+    }
+    const message = {
+      type: 'queue_event',
+      payload: {
+        ...track,
+        votes: track.votes + 1,
+      },
+    };
+    console.log(message);
+    sendMessage(JSON.stringify(message));
   };
 
-  // TODO: sendMessage to websocket
+  // Handler for track downvote
   const downvoteTrack = id => {
     console.log(`Downvoted track ${id}`);
+    const track = state.queuedTracks.find(track => track.id === id);
+    if (track === undefined) {
+      return;
+    }
+    const message = {
+      type: 'queue_event',
+      payload: {
+        ...track,
+        votes: track.votes - 1,
+      },
+    };
+    console.log(message);
+    sendMessage(JSON.stringify(message));
   };
 
   return {
