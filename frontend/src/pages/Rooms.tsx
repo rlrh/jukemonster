@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 import {
   IonContent,
   IonHeader,
@@ -21,17 +21,22 @@ import {
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
+import { useAsync } from 'react-async';
+import { useOurApi } from '../apis';
 
 const Rooms = props => {
+  const { useState, useEffect } = React;
   const {
     isAuthenticated,
+    value,
     spotify_access_token,
     ensureTokenValidity,
   } = useAuth();
+  const { getApi } = useOurApi();
   const [showAlertCreateRoom, setShowAlertCreateRoom] = useState(false);
 
   const handleCreateRoom = async () => {
-    if (isAuthenticated) {
+    if (isAuthenticated && typeof value !== 'string') {
       const headers = {
         Accept: 'application/json',
         Authorization: `Bearer ${spotify_access_token}`,
@@ -40,8 +45,8 @@ const Rooms = props => {
         method: 'GET',
         headers: headers,
       });
-      const value = await res.json();
-      const hasPremium = value['product'] === 'premium'; //remove hardcode to use above response
+      const account = await res.json();
+      const hasPremium = account['product'] === 'premium'; //remove hardcode to use above response
       if (!hasPremium) {
         setShowAlertCreateRoom(true);
       } else {
@@ -55,7 +60,15 @@ const Rooms = props => {
   const setDevice = async id => {};
 
   //backend api call to get rooms
+  const [rooms, setRooms] = useState([]);
 
+  useEffect(() => {
+    const getRooms = async () => {
+      const rooms = await getApi('rooms/');
+      setRooms(rooms.data);
+    };
+    isAuthenticated && getRooms();
+  }, [isAuthenticated]);
   /*
   const rooms = [
     {

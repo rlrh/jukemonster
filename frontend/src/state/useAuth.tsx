@@ -1,7 +1,17 @@
 import React, { useState, useContext, useEffect, createContext } from 'react';
 import { Credentials, refreshToken } from '../apis';
 
-const AuthContext = createContext({});
+interface AuthContextMethods {
+  value: string | Credentials;
+  isAuthenticated: boolean;
+  spotify_access_token: string;
+  access_token: string;
+  ensureTokenValidity: () => Promise<void>;
+  signIn: (token: Credentials | string) => void;
+  signOut: () => void;
+}
+
+const AuthContext = createContext({} as AuthContextMethods);
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -41,8 +51,8 @@ function useProvideAuth(key: string, persistOnWindowClosed = true) {
 
   const [value, setValue] = useState(getStoredValue());
 
-  const signIn = newValue => {
-    if (typeof newValue == 'object' || typeof newValue === 'string') {
+  const signIn = (newValue: Credentials | string) => {
+    if (typeof newValue === 'object' || typeof newValue === 'string') {
       getStorage().setItem(key, JSON.stringify(newValue));
       setValue(newValue);
     } else {
@@ -59,7 +69,7 @@ function useProvideAuth(key: string, persistOnWindowClosed = true) {
     // If the user is not logged in, we can't do this.
     if (typeof value === 'string' || !value.access_token) return;
     // Refresh the token for the app, and update.
-    const newValue = await api.refreshToken(value);
+    const newValue = await refreshToken(value);
     signIn(newValue);
   };
 
@@ -76,8 +86,12 @@ function useProvideAuth(key: string, persistOnWindowClosed = true) {
   }, [key]);
 
   return {
-    ...value,
+    value,
     isAuthenticated: typeof value === 'object' && value !== null,
+    spotify_access_token:
+      value && (typeof value === 'string' ? value : value.spotify_access_token),
+    access_token:
+      value && (typeof value === 'string' ? value : value.access_token),
     ensureTokenValidity,
     signIn,
     signOut,

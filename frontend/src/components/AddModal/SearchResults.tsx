@@ -15,14 +15,16 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   query,
   onSearchResultClick,
 }) => {
-  const { spotify_access_token } = useAuth();
+  const { value } = useAuth();
 
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('Track added to queue!');
 
   const headers = {
     Accept: 'application/json',
-    Authorization: `Bearer ${spotify_access_token}`,
+    Authorization: `Bearer ${
+      typeof value === 'string' ? value : value.spotify_access_token
+    }`,
   };
   const { data, error, isLoading } = useFetch(
     `https://api.spotify.com/v1/search?q=${query}&type=track`,
