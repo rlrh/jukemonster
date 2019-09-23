@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useReducer } from 'react';
 import useWebSocket from 'react-use-websocket';
-import { useImmerReducer, Reducer } from 'use-immer';
+import { produce } from 'immer';
 import {
   RoomState,
   Track,
@@ -35,60 +35,55 @@ const useRoomState = (roomId: string) => {
   };
 
   // Return new state based on actions receieved from WebSockets
-  const reducer: Reducer<RoomState, Event> = (state, action) => {
+  const reducer = (state: RoomState, action: Event) => {
     console.log('Current state: ' + JSON.stringify(state));
     console.log('Incoming action: ' + JSON.stringify(action));
+
     switch (action.type) {
       case EventType.Playback:
-        const playbackEventUpdater = () => {
+        return produce(state, draftState => {
           const incomingTrack = action.payload;
-          state.nowPlayingTrack = incomingTrack;
+          draftState.nowPlayingTrack = incomingTrack;
           if ('id' in incomingTrack) {
-            state.queuedTracks = state.queuedTracks.filter(
+            draftState.queuedTracks = draftState.queuedTracks.filter(
               track => track.id !== incomingTrack.id,
             );
           }
-        };
-        return void playbackEventUpdater();
+        });
       case EventType.Queue:
-        const queueEventUpdater = () => {
+        return produce(state, draftState => {
           const incomingTracks = action.payload.songs;
           incomingTracks.forEach(incomingTrack => {
-            const incomingTrackQueueIndex = state.queuedTracks.findIndex(
+            const incomingTrackQueueIndex = draftState.queuedTracks.findIndex(
               track => track.id === incomingTrack.id,
             );
             if (incomingTrackQueueIndex === -1) {
-              state.queuedTracks.push(incomingTrack);
+              draftState.queuedTracks.push(incomingTrack);
             } else {
-              state.queuedTracks[incomingTrackQueueIndex] = incomingTrack;
+              draftState.queuedTracks[incomingTrackQueueIndex] = incomingTrack;
             }
           });
-        };
-        return void queueEventUpdater();
+        });
       case EventType.VoteCount:
-        const voteCountEventUpdater = () => {
+        return produce(state, draftState => {
           const incomingTracks = action.payload.songs;
           incomingTracks.forEach(incomingTrack => {
-            const incomingTrackQueueIndex = state.queuedTracks.findIndex(
+            const incomingTrackQueueIndex = draftState.queuedTracks.findIndex(
               track => track.id === incomingTrack.id,
             );
             if (incomingTrackQueueIndex !== -1) {
-              state.queuedTracks[incomingTrackQueueIndex].votes =
+              draftState.queuedTracks[incomingTrackQueueIndex].votes =
                 incomingTrack.votes;
             }
           });
-        };
-        return void voteCountEventUpdater();
+        });
       default:
         return state;
     }
   };
 
   // State management
-  const [state, dispatch] = useImmerReducer<RoomState, Event>(
-    reducer,
-    initialState,
-  );
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   // Let reducer handle state update
   function handleMessage(rawMessage: any) {
