@@ -25,8 +25,7 @@ function useProvideAuth(key, persistOnWindowClosed = true) {
         // There is a token in storage already
         try {
           // Token is an object
-          const token = JSON.parse(token);
-          return token;
+          return JSON.parse(storedToken);
         } catch {
           // Token is a string
           return storedToken;

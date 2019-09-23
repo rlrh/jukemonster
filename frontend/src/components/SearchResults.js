@@ -95,6 +95,7 @@ const SearchResults = ({ query, onSearchResultClick }) => {
         const album = track.album.name;
         const isExplicit = track.explicit;
         const imageSource = track.album.images.slice(-1)[0].url;
+        const trackDuration = track.duration_ms;
 
         const handleClick = event => {
           try {
@@ -105,6 +106,7 @@ const SearchResults = ({ query, onSearchResultClick }) => {
               album,
               isExplicit,
               imageSource,
+              trackDuration,
             });
             setToastMessage(`${name} added to queue!`);
           } catch (err) {
