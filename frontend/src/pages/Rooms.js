@@ -140,7 +140,7 @@ const Rooms = props => {
           header={'You need to sign in with'}
           message={'a <strong>premium</strong> spotify account'}
           buttons={
-            !user
+            !isAuthenticated
               ? [
                   {
                     text: 'Cancel',
