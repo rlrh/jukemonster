@@ -36,7 +36,8 @@ const Rooms = props => {
         method: 'GET',
         headers: headers,
       });
-      const hasPremium = false; //remove hardcode to use above response
+      const value = await res.json();
+      const hasPremium = value['product'] === 'premium'; //remove hardcode to use above response
       if (!hasPremium) {
         setShowAlertCreateRoom(true);
       } else {
