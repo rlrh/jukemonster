@@ -137,8 +137,7 @@ const Rooms = props => {
         <IonAlert
           isOpen={showAlertCreateRoom}
           onDidDismiss={() => setShowAlertCreateRoom(false)}
-          header={'You need to sign in with'}
-          message={'a <strong>premium</strong> spotify account'}
+          header="You need to sign in with a Spotify Premium account"
           buttons={
             !isAuthenticated
               ? [
@@ -146,10 +145,9 @@ const Rooms = props => {
                     text: 'Cancel',
                     role: 'cancel',
                     cssClass: 'secondary',
-                    handler: () => {},
                   },
                   {
-                    text: 'Sign in',
+                    text: 'Sign In',
                     handler: () => {
                       props.history.push(`/signin`);
                     },
@@ -160,7 +158,6 @@ const Rooms = props => {
                     text: 'Cancel',
                     role: 'cancel',
                     cssClass: 'secondary',
-                    handler: () => {},
                   },
                 ]
           }
