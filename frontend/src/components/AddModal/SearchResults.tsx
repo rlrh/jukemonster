@@ -7,10 +7,14 @@ import {
   IonSkeletonText,
 } from '@ionic/react';
 import { useFetch } from 'react-async';
-import { useAuth } from '../state/useAuth';
-import Track from './Track';
+import { useAuth } from '../../state/useAuth';
+import Track from '../Track';
+import { SearchResultsProps } from './types';
 
-const SearchResults = ({ query, onSearchResultClick }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({
+  query,
+  onSearchResultClick,
+}) => {
   const { user } = useAuth();
 
   const [showToast, setShowToast] = useState(false);
@@ -55,7 +59,7 @@ const SearchResults = ({ query, onSearchResultClick }) => {
                 <IonSkeletonText animated style={{ width: '10%' }} />
               </h2>
               <h3>
-                <IonSkeletonText animateds style={{ width: '30%' }} />
+                <IonSkeletonText animated style={{ width: '30%' }} />
               </h3>
             </IonLabel>
           </IonItem>

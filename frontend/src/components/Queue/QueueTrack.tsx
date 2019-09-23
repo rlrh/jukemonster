@@ -1,9 +1,10 @@
 import React from 'react';
 import { IonItem, IonButton, IonIcon, IonBadge } from '@ionic/react';
 import { arrowDown, arrowUp, more } from 'ionicons/icons';
-import Track from './Track';
+import Track from '../Track';
+import { QueueTrackProps } from './types';
 
-const QueueTrack = ({
+const QueueTrack: React.FC<QueueTrackProps> = ({
   name,
   artists,
   album,

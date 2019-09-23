@@ -11,7 +11,7 @@ import {
 import { useFetch } from 'react-async';
 import { useAuth } from '../state/useAuth';
 
-const Devices = () => {
+const Devices: React.FC = () => {
   const { user } = useAuth();
 
   const [showPopover, setShowPopover] = useState(false);

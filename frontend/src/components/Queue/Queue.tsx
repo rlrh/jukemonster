@@ -1,8 +1,13 @@
 import React from 'react';
 import { IonList, IonListHeader, IonLabel, IonItem } from '@ionic/react';
 import QueueTrack from './QueueTrack';
+import { QueueProps } from './types';
 
-const Queue = ({ tracks, onTrackUpvote, onTrackDownvote }) => {
+const Queue: React.FC<QueueProps> = ({
+  tracks,
+  onTrackUpvote,
+  onTrackDownvote,
+}) => {
   const renderQueueTracks = () => {
     if (!tracks.length) {
       return (
