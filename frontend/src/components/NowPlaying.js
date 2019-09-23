@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonCard, IonCardHeader, IonCardSubtitle } from '@ionic/react';
+import { IonCard, IonCardHeader, IonCardTitle } from '@ionic/react';
 import NowPlayingCard from './NowPlayingCard';
 
 const NowPlaying = ({ track }) => {
@@ -10,7 +10,7 @@ const NowPlaying = ({ track }) => {
   return (
     <IonCard>
       <IonCardHeader>
-        <IonCardSubtitle>Nothing Playing Yet</IonCardSubtitle>
+        <IonCardTitle>Nothing Playing Yet</IonCardTitle>
       </IonCardHeader>
     </IonCard>
   );
