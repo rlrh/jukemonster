@@ -26,7 +26,7 @@ const NowPlayingWithTrack: React.FC<NowPlayingWithTrackProps> = ({ track }) => {
   const trackID = track.id;
   const headers = {
     Accept: 'application/json',
-    Authorization: `Bearer ${user}`,
+    Authorization: `Bearer ${user && user['spotify_access_token']}`,
   };
   const { data, error, isLoading } = useFetch(
     `https://api.spotify.com/v1/tracks/${trackID}`,

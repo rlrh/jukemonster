@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect, createContext } from 'react';
+import * as api from '../apis';
 
 const AuthContext = createContext();
 
@@ -42,13 +43,14 @@ function useProvideAuth(key, persistOnWindowClosed = true) {
 
   const [token, setToken] = useState(getStoredToken());
 
-  const signIn = token => {
-    if (typeof token == 'object' || typeof token === 'string') {
-      getStorage().setItem(key, JSON.stringify(token));
-      setToken(token);
-    } else {
-      throw new Error('Only objects or strings can be tokens');
-    }
+  const signIn = auth_results => {
+    Object.keys(auth_results).forEach(key => {
+      const token = auth_results[key];
+      if (typeof token == 'object' || typeof token === 'string') {
+        getStorage().setItem(key, JSON.stringify(token));
+      }
+    });
+    setToken(auth_results);
   };
 
   const signOut = () => {
@@ -61,6 +63,16 @@ function useProvideAuth(key, persistOnWindowClosed = true) {
       setToken(getStoredToken());
     }
   };
+
+  const ensureTokenValidity = async () => {
+    // If the user is not logged in, we can't do this.
+    if (!token.access_token) return;
+    // Refresh the token for the app, and update.
+    const newToken = await api.refreshToken(token);
+    const updated = { ...token, ...newToken };
+    signIn(updated);
+  };
+
   useEffect(() => {
     window.addEventListener('storage', syncState);
     return () => {
@@ -71,6 +83,7 @@ function useProvideAuth(key, persistOnWindowClosed = true) {
   return {
     isAuthenticated: token !== null,
     user: token,
+    ensureTokenValidity,
     signIn,
     signOut,
   };
