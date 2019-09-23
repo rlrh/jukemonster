@@ -22,11 +22,12 @@ const AddRoom = ({ history }) => {
 
   const submit = async () => {
     try {
-      console.log(`name is ${name}\n location is ${location}`);
-      /*
-        Network call to create room ID
-      */
-      const roomId = 'h12ss712a';
+      const res = await fetch(`http://127.0.0.1:8000/rooms/`, {
+        method: 'POST',
+        body: JSON.stringify({ name, location }),
+      });
+      const value = await res.json();
+      const roomId = value['roomId'];
       history.push(`/room/${roomId}`);
     } catch (e) {
       console.log(e);
@@ -66,6 +67,7 @@ const AddRoom = ({ history }) => {
               <IonItem>
                 <IonLabel position="floating">Name</IonLabel>
                 <IonInput
+                  required="true"
                   name="name"
                   type="name"
                   value={name}
@@ -78,16 +80,6 @@ const AddRoom = ({ history }) => {
               </IonButton>
             </IonCardContent>
           </form>
-        </IonCard>
-
-        <IonCard>
-          <IonCardContent>
-            <IonCardTitle>Join room</IonCardTitle>
-            <IonItem>
-              <IonLabel position="floating">Room ID</IonLabel>
-              <IonInput></IonInput>
-            </IonItem>
-          </IonCardContent>
         </IonCard>
       </IonContent>
     </IonPage>
