@@ -1,7 +1,7 @@
 import { useAuth } from '../state/useAuth';
 import axios, { AxiosResponse } from 'axios';
 
-const BACKEND_URL = 'http://127.0.0.1:8000/';
+const BACKEND_URL = 'http://127.0.0.1:8000/'; // TODO: shift to env file
 
 interface apiHook {
   getApi: (path: string) => Promise<AxiosResponse<any>>;
@@ -9,18 +9,21 @@ interface apiHook {
   patchApi: (path: string, body: object) => Promise<AxiosResponse<any>>;
 }
 
+/**
+ * A hook that can be used to query our backend's APIs with token refresh methods
+ * on failure.
+ * Usage: `getApi('rooms/')` and you should expect to get the results.
+ */
 export const useOurApi = (): apiHook => {
   const { value, ensureTokenValidity } = useAuth();
   const getApi = async (path: string) => {
     if (typeof value === 'string' || value == null) return null;
     const getHeader = () => ({ Authorization: 'Bearer ' + value.access_token });
-    console.log(BACKEND_URL + path);
     let resp = await axios.get(BACKEND_URL + path, { headers: getHeader() });
     if (resp.status >= 400) {
       await ensureTokenValidity();
       resp = await axios.get(BACKEND_URL + path, { headers: getHeader() });
     }
-    console.log(resp);
     return resp;
   };
 
@@ -61,6 +64,12 @@ export const useOurApi = (): apiHook => {
   };
 };
 
+/**
+ * A hook that can be used to query Spotify's APIs with token refresh methods
+ * on failure.
+ * Usage: `getApi({spotify path with params})` and you should get a response
+ * with the requested data.
+ */
 export const useSpotifyApi = (): apiHook => {
   const { value, ensureTokenValidity } = useAuth();
   const getApi = async (path: string) => {

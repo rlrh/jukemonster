@@ -60,7 +60,7 @@ const Rooms = props => {
   const setDevice = async id => {};
 
   //backend api call to get rooms
-  const [rooms, setRooms] = useState([]);
+  const [trooms, setRooms] = useState([]);
 
   useEffect(() => {
     const getRooms = async () => {
@@ -69,7 +69,7 @@ const Rooms = props => {
     };
     isAuthenticated && getRooms();
   }, [isAuthenticated]);
-  /*
+
   const rooms = [
     {
       id: 81124,
@@ -114,7 +114,6 @@ const Rooms = props => {
       active: false,
     },
   ];
-*/
 
   return (
     <IonPage>

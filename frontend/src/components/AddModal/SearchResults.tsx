@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import {
   IonItem,
   IonList,
@@ -6,8 +6,7 @@ import {
   IonLabel,
   IonSkeletonText,
 } from '@ionic/react';
-import { useFetch } from 'react-async';
-import { useAuth } from '../../state/useAuth';
+import { useSpotifyApi } from '../../apis';
 import Track from '../Track';
 import { SearchResultsProps } from './types';
 
@@ -15,21 +14,22 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   query,
   onSearchResultClick,
 }) => {
-  const { value } = useAuth();
-
-  const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('Track added to queue!');
-
-  const headers = {
-    Accept: 'application/json',
-    Authorization: `Bearer ${
-      typeof value === 'string' ? value : value.spotify_access_token
-    }`,
-  };
-  const { data, error, isLoading } = useFetch(
-    `https://api.spotify.com/v1/search?q=${query}&type=track`,
-    { headers },
-  );
+  const [showToast, setShowToast] = useState(false);
+  const error = null;
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
+  const { getApi } = useSpotifyApi();
+  useEffect(() => {
+    const getData = async () => {
+      const resp = await getApi(
+        `https://api.spotify.com/v1/search?q=${query}&type=track`,
+      );
+      setData(resp.data);
+      setLoading(false);
+    };
+    getData();
+  }, []);
 
   if (error) {
     return (
