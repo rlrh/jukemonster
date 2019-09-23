@@ -27,7 +27,7 @@ import Devices from '../components/Devices';
 import AddModal from '../components/AddModal';
 
 const Room = ({ match }) => {
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const {
     nowPlayingTrack,
     queuedTracks,
@@ -64,7 +64,7 @@ const Room = ({ match }) => {
           </CopyToClipboard>
 
           <IonButtons slot="primary">
-            {user ? (
+            {isAuthenticated ? (
               <IonButton href="/signout">Sign Out</IonButton>
             ) : (
               <IonButton href="/signin">Sign In</IonButton>

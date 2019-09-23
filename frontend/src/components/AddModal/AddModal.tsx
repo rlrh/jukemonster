@@ -20,12 +20,12 @@ const AddModal: React.FC<AddModalProps> = ({
   onClose,
   onSearchResultClick,
 }) => {
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [query, setQuery] = useState('');
   const handleChange = event => setQuery(event.target.value);
 
-  if (!user) {
+  if (!isAuthenticated) {
     return (
       <IonModal isOpen={isOpen} onDidDismiss={onClose}>
         <IonHeader>

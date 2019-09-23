@@ -12,67 +12,62 @@ export function AuthProvider({ children }) {
 
 function useProvideAuth(key, persistOnWindowClosed = true) {
   if (!key) {
-    throw new Error('sessionKey not provided');
+    throw new Error('Key not provided');
   }
 
   const getStorage = () => {
     return persistOnWindowClosed ? localStorage : sessionStorage;
   };
 
-  const getStoredToken = () => {
+  const getStoredValue = () => {
     try {
-      const storedToken = getStorage().getItem(key);
-      if (storedToken != null) {
-        // There is a token in storage already
+      const storedValue = getStorage().getItem(key);
+      if (storedValue != null) {
+        // There is a value in storage already
         try {
-          // Token is an object
-          return JSON.parse(storedToken);
+          return JSON.parse(storedValue); // Value is an object
         } catch {
-          // Token is a string
-          return storedToken;
+          return storedValue; // value is a string
         }
       }
     } catch {
       // This catch block handles the known issues listed here: https://caniuse.com/#feat=namevalue-storage
       console.warn(
-        'Could not access the browser storage. Session will be lost when closing browser window',
+        'Could not access browser storage. Session will be lost when closing browser window',
       );
     }
     return null;
   };
 
-  const [token, setToken] = useState(getStoredToken());
+  const [value, setValue] = useState(getStoredValue());
 
-  const signIn = auth_results => {
-    Object.keys(auth_results).forEach(key => {
-      const token = auth_results[key];
-      if (typeof token == 'object' || typeof token === 'string') {
-        getStorage().setItem(key, JSON.stringify(token));
-      }
-    });
-    setToken(auth_results);
+  const signIn = newValue => {
+    if (typeof newValue == 'object' || typeof newValue === 'string') {
+      getStorage().setItem(key, JSON.stringify(newValue));
+      setValue(newValue);
+    } else {
+      throw new Error('Only objects or strings are accepted values');
+    }
   };
 
   const signOut = () => {
     getStorage().removeItem(key);
-    setToken(null);
-  };
-
-  const syncState = event => {
-    if (event.key === key) {
-      setToken(getStoredToken());
-    }
+    setValue(null);
   };
 
   const ensureTokenValidity = async () => {
     // If the user is not logged in, we can't do this.
-    if (!token.access_token) return;
+    if (!value.access_token) return;
     // Refresh the token for the app, and update.
-    const newToken = await api.refreshToken(token);
-    const updated = { ...token, ...newToken };
-    signIn(updated);
+    const newValue = await api.refreshToken(value);
+    signIn(newValue);
   };
 
+  const syncState = event => {
+    if (event.key === key) {
+      setValue(getStoredValue());
+    }
+  };
   useEffect(() => {
     window.addEventListener('storage', syncState);
     return () => {
@@ -81,8 +76,8 @@ function useProvideAuth(key, persistOnWindowClosed = true) {
   }, [key]);
 
   return {
-    isAuthenticated: token !== null,
-    user: token,
+    ...value,
+    isAuthenticated: typeof value === 'object' && value !== null,
     ensureTokenValidity,
     signIn,
     signOut,

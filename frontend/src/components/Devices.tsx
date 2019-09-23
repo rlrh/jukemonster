@@ -12,13 +12,13 @@ import { useFetch } from 'react-async';
 import { useAuth } from '../state/useAuth';
 
 const Devices: React.FC = () => {
-  const { user } = useAuth();
+  const { spotify_access_token } = useAuth();
 
   const [showPopover, setShowPopover] = useState(false);
 
   const headers = {
     Accept: 'application/json',
-    Authorization: `Bearer ${user}`,
+    Authorization: `Bearer ${spotify_access_token}`,
   };
   const { data, error, isLoading } = useFetch(
     `https://api.spotify.com/v1/me/player/devices`,

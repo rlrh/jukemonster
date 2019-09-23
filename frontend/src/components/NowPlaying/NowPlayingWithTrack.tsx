@@ -16,13 +16,13 @@ import { useAuth } from '../../state/useAuth';
 import { NowPlayingWithTrackProps } from './types';
 
 const NowPlayingWithTrack: React.FC<NowPlayingWithTrackProps> = ({ track }) => {
-  const { user } = useAuth();
+  const { spotify_access_token } = useAuth();
 
   // TODO: use track info returned from server
   const trackID = track.id;
   const headers = {
     Accept: 'application/json',
-    Authorization: `Bearer ${user && user['spotify_access_token']}`,
+    Authorization: `Bearer ${spotify_access_token}`,
   };
   const { data, error, isLoading } = useFetch(
     `https://api.spotify.com/v1/tracks/${trackID}`,

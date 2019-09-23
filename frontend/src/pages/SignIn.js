@@ -4,8 +4,8 @@ import React from 'react';
 import { useAuth } from '../state/useAuth';
 
 const SignIn = () => {
-  const { user } = useAuth();
-  if (user) {
+  const { isAuthenticated } = useAuth();
+  if (isAuthenticated) {
     return <Redirect to="/" />;
   }
 
