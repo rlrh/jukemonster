@@ -24,15 +24,14 @@ import { useAuth } from '../state/useAuth';
 
 const Rooms = props => {
   const { user } = useAuth();
-  const headers = {
-    Accept: 'application/json',
-    Authorization: `Bearer ${user}`,
-  };
-
   const [showAlertCreateRoom, setShowAlertCreateRoom] = useState(false);
 
   const handleCreateRoom = async () => {
     if (user) {
+      const headers = {
+        Accept: 'application/json',
+        Authorization: `Bearer ${user}`,
+      };
       const res = await fetch(`https://api.spotify.com/v1/me`, {
         method: 'GET',
         headers: headers,
