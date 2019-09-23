@@ -5,6 +5,11 @@
   "dependencies": {
     "@ionic/react": "^4.9.0-rc.2",
     "@ionic/react-router": "^4.9.0-rc.2",
+    "@types/jest": "^24.0.18",
+    "@types/node": "^12.7.5",
+    "@types/react": "^16.9.2",
+    "@types/react-dom": "^16.9.0",
+    "immer": "^4.0.0",
     "ionicons": "^4.6.3",
     "query-string": "^6.8.3",
     "react": "^16.9.0",
@@ -15,14 +20,17 @@
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1",
     "react-use-websocket": "^0.9.8",
-    "use-immer": "^0.3.4",
+    "typescript": "^3.6.3",
     "websocket": "^1.0.30"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "yarn lint:js",
+    "lint:fix": "./node_modules/eslint/bin/eslint.js . --fix --cache",
+    "lint:js": "./node_modules/eslint/bin/eslint.js . --cache"
   },
   "eslintConfig": {
     "extends": "react-app",
@@ -46,6 +54,7 @@
     ]
   },
   "devDependencies": {
+    "eslint-plugin-prettier": "^3.1.1",
     "husky": "^3.0.5",
     "lint-staged": "^9.2.5",
     "prettier": "^1.18.2",

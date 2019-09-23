@@ -12,24 +12,32 @@ import {
   IonCol,
 } from '@ionic/react';
 import { useFetch } from 'react-async';
-import { useAuth } from '../state/useAuth';
+import { useAuth } from '../../state/useAuth';
+import { NowPlayingWithTrackProps } from './types';
 
-const NowPlaying = ({ track }) => {
-  const { user } = useAuth();
+const NowPlayingWithTrack: React.FC<NowPlayingWithTrackProps> = ({ track }) => {
+  const { spotify_access_token } = useAuth();
 
   // TODO: use track info returned from server
   const trackID = track.id;
   const headers = {
     Accept: 'application/json',
-    Authorization: `Bearer ${user}`,
+    Authorization: `Bearer ${spotify_access_token}`,
   };
   const { data, error, isLoading } = useFetch(
     `https://api.spotify.com/v1/tracks/${trackID}`,
     { headers },
   );
 
-  if (isLoading) return 'Loading...';
-  if (error) return `Something went wrong, ensure your Spotify token is valid`;
+  if (error)
+    return (
+      <IonCard>
+        <IonCardHeader>
+          <IonCardTitle>Error</IonCardTitle>
+          <IonCardSubtitle>Something went wrong...</IonCardSubtitle>
+        </IonCardHeader>
+      </IonCard>
+    );
 
   if (data) {
     const artists = data.artists.map(artist => artist.name).join(', ');
@@ -57,6 +65,16 @@ const NowPlaying = ({ track }) => {
       </IonCard>
     );
   }
+
+  return (
+    <IonCard>
+      <IonCardHeader>
+        <IonCardTitle>Loading...</IonCardTitle>
+        <IonCardSubtitle>Please wait</IonCardSubtitle>
+        <IonProgressBar type="indeterminate"></IonProgressBar>
+      </IonCardHeader>
+    </IonCard>
+  );
 };
 
-export default NowPlaying;
+export default NowPlayingWithTrack;

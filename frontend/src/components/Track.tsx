@@ -1,13 +1,14 @@
 import React, { Fragment } from 'react';
 import { IonBadge, IonLabel } from '@ionic/react';
+import { Track as TrackType } from '../hooks/useRoomState/types';
 
-export default function Track({
+const Track: React.FC<Partial<TrackType>> = ({
   name,
   artists,
   album,
   isExplicit,
   imageSource,
-}) {
+}) => {
   return (
     <Fragment>
       <IonLabel>
@@ -17,4 +18,6 @@ export default function Track({
       </IonLabel>
     </Fragment>
   );
-}
+};
+
+export default Track;

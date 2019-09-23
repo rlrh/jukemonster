@@ -23,14 +23,18 @@ import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
 
 const Rooms = props => {
-  const { user } = useAuth();
+  const {
+    isAuthenticated,
+    spotify_access_token,
+    ensureTokenValidity,
+  } = useAuth();
   const [showAlertCreateRoom, setShowAlertCreateRoom] = useState(false);
 
   const handleCreateRoom = async () => {
-    if (user) {
+    if (isAuthenticated) {
       const headers = {
         Accept: 'application/json',
-        Authorization: `Bearer ${user}`,
+        Authorization: `Bearer ${spotify_access_token}`,
       };
       const res = await fetch(`https://api.spotify.com/v1/me`, {
         method: 'GET',
@@ -102,8 +106,10 @@ const Rooms = props => {
         <IonToolbar>
           <IonTitle>Rooms</IonTitle>
           <IonButtons slot="primary">
-            {user ? (
-              <IonButton href="/signout">Sign Out</IonButton>
+            {isAuthenticated ? (
+              <IonButton href="#" onClick={ensureTokenValidity}>
+                Refresh
+              </IonButton>
             ) : (
               <IonButton href="/signin">Sign In</IonButton>
             )}
@@ -163,8 +169,8 @@ const Rooms = props => {
       <IonFooter>
         <IonToolbar>
           <IonTitle>
-            {user
-              ? `Your Spotify token is: ${user}`
+            {isAuthenticated
+              ? `Your Spotify token is: ${spotify_access_token}`
               : 'Sign in to provide a Spotify token'}
           </IonTitle>
         </IonToolbar>

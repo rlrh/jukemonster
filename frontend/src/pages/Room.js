@@ -24,10 +24,10 @@ import useRoomState from '../hooks/useRoomState';
 import Queue from '../components/Queue';
 import NowPlaying from '../components/NowPlaying';
 import Devices from '../components/Devices';
-import AddTrackModal from '../components/AddTrackModal';
+import AddModal from '../components/AddModal';
 
 const Room = ({ match }) => {
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const {
     nowPlayingTrack,
     queuedTracks,
@@ -64,7 +64,7 @@ const Room = ({ match }) => {
           </CopyToClipboard>
 
           <IonButtons slot="primary">
-            {user ? (
+            {isAuthenticated ? (
               <IonButton href="/signout">Sign Out</IonButton>
             ) : (
               <IonButton href="/signin">Sign In</IonButton>
@@ -99,7 +99,7 @@ const Room = ({ match }) => {
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>
-        <AddTrackModal
+        <AddModal
           isOpen={showAddTrackModal}
           onClose={() => setShowAddTrackModal(false)}
           onSearchResultClick={handleSearchResultClick}

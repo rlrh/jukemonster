@@ -7,18 +7,22 @@ import {
   IonSkeletonText,
 } from '@ionic/react';
 import { useFetch } from 'react-async';
-import { useAuth } from '../state/useAuth';
-import Track from './Track';
+import { useAuth } from '../../state/useAuth';
+import Track from '../Track';
+import { SearchResultsProps } from './types';
 
-const SearchResults = ({ query, onSearchResultClick }) => {
-  const { user } = useAuth();
+const SearchResults: React.FC<SearchResultsProps> = ({
+  query,
+  onSearchResultClick,
+}) => {
+  const { spotify_access_token } = useAuth();
 
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('Track added to queue!');
 
   const headers = {
     Accept: 'application/json',
-    Authorization: `Bearer ${user}`,
+    Authorization: `Bearer ${spotify_access_token}`,
   };
   const { data, error, isLoading } = useFetch(
     `https://api.spotify.com/v1/search?q=${query}&type=track`,
@@ -55,7 +59,7 @@ const SearchResults = ({ query, onSearchResultClick }) => {
                 <IonSkeletonText animated style={{ width: '10%' }} />
               </h2>
               <h3>
-                <IonSkeletonText animateds style={{ width: '30%' }} />
+                <IonSkeletonText animated style={{ width: '30%' }} />
               </h3>
             </IonLabel>
           </IonItem>
@@ -95,6 +99,7 @@ const SearchResults = ({ query, onSearchResultClick }) => {
         const album = track.album.name;
         const isExplicit = track.explicit;
         const imageSource = track.album.images.slice(-1)[0].url;
+        const trackDuration = track.duration_ms;
 
         const handleClick = event => {
           try {
@@ -105,6 +110,7 @@ const SearchResults = ({ query, onSearchResultClick }) => {
               album,
               isExplicit,
               imageSource,
+              trackDuration,
             });
             setToastMessage(`${name} added to queue!`);
           } catch (err) {

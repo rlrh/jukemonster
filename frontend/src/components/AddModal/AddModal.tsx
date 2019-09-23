@@ -11,16 +11,21 @@ import {
   IonLabel,
   IonSearchbar,
 } from '@ionic/react';
-import { useAuth } from '../state/useAuth';
+import { useAuth } from '../../state/useAuth';
 import SearchResults from './SearchResults';
+import { AddModalProps } from './types';
 
-const AddTrackModal = ({ isOpen, onClose, onSearchResultClick }) => {
-  const { user } = useAuth();
+const AddModal: React.FC<AddModalProps> = ({
+  isOpen,
+  onClose,
+  onSearchResultClick,
+}) => {
+  const { isAuthenticated } = useAuth();
 
   const [query, setQuery] = useState('');
   const handleChange = event => setQuery(event.target.value);
 
-  if (!user) {
+  if (!isAuthenticated) {
     return (
       <IonModal isOpen={isOpen} onDidDismiss={onClose}>
         <IonHeader>
@@ -73,4 +78,4 @@ const AddTrackModal = ({ isOpen, onClose, onSearchResultClick }) => {
   );
 };
 
-export default AddTrackModal;
+export default AddModal;
