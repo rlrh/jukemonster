@@ -22,7 +22,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
   const headers = {
     Accept: 'application/json',
-    Authorization: `Bearer ${user}`,
+    Authorization: `Bearer ${user['spotify_access_token']}`,
   };
   const { data, error, isLoading } = useFetch(
     `https://api.spotify.com/v1/search?q=${query}&type=track`,

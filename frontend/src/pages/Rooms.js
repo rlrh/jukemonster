@@ -22,7 +22,7 @@ import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
 
 const Rooms = props => {
-  const { user } = useAuth();
+  const { user, ensureTokenValidity } = useAuth();
 
   //backend api call to get rooms
   const rooms = [
@@ -77,7 +77,9 @@ const Rooms = props => {
           <IonTitle>Rooms</IonTitle>
           <IonButtons slot="primary">
             {user ? (
-              <IonButton href="/signout">Sign Out</IonButton>
+              <IonButton href="#" onClick={ensureTokenValidity}>
+                Refresh
+              </IonButton>
             ) : (
               <IonButton href="/signin">Sign In</IonButton>
             )}
@@ -107,7 +109,7 @@ const Rooms = props => {
         <IonToolbar>
           <IonTitle>
             {user
-              ? `Your Spotify token is: ${user}`
+              ? `Your Spotify token is: ${user.access_token}`
               : 'Sign in to provide a Spotify token'}
           </IonTitle>
         </IonToolbar>

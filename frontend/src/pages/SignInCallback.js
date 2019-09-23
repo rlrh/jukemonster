@@ -38,7 +38,7 @@ class SignInCallbackChild extends Component {
       .then(data => {
         this.setState({ data, isLoading: false });
         console.log('Your token is: ' + data.access_token);
-        this.props.onSignIn(data.access_token);
+        this.props.onSignIn(data);
       })
       .catch(error => this.setState({ error, isLoading: false }));
   }
