@@ -1,16 +1,16 @@
 import React, { useState, useContext, useEffect, createContext } from 'react';
-import * as api from '../apis';
+import { Credentials, refreshToken } from '../apis';
 
-const AuthContext = createContext();
+const AuthContext = createContext({});
 
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
   const auth = useProvideAuth('session');
-  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={auth}> {children} </AuthContext.Provider>;
 }
 
-function useProvideAuth(key, persistOnWindowClosed = true) {
+function useProvideAuth(key: string, persistOnWindowClosed = true) {
   if (!key) {
     throw new Error('Key not provided');
   }
@@ -19,7 +19,7 @@ function useProvideAuth(key, persistOnWindowClosed = true) {
     return persistOnWindowClosed ? localStorage : sessionStorage;
   };
 
-  const getStoredValue = () => {
+  const getStoredValue = (): Credentials | string | null => {
     try {
       const storedValue = getStorage().getItem(key);
       if (storedValue != null) {
@@ -57,7 +57,7 @@ function useProvideAuth(key, persistOnWindowClosed = true) {
 
   const ensureTokenValidity = async () => {
     // If the user is not logged in, we can't do this.
-    if (!value.access_token) return;
+    if (typeof value === 'string' || !value.access_token) return;
     // Refresh the token for the app, and update.
     const newValue = await api.refreshToken(value);
     signIn(newValue);

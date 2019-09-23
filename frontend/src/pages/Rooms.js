@@ -55,6 +55,8 @@ const Rooms = props => {
   const setDevice = async id => {};
 
   //backend api call to get rooms
+
+  /*
   const rooms = [
     {
       id: 81124,
@@ -99,6 +101,7 @@ const Rooms = props => {
       active: false,
     },
   ];
+*/
 
   return (
     <IonPage>
