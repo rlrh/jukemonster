@@ -1,6 +1,7 @@
 import { useMemo, useReducer } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { produce } from 'immer';
+import { useAuth } from '../../state/useAuth';
 import {
   RoomState,
   Track,
@@ -12,20 +13,24 @@ import {
 } from './types';
 
 const useRoomState = (roomId: string) => {
+  const { isAuthenticated, access_token } = useAuth();
+  const token = useMemo(() => access_token, []);
+
   // Setup WebSocket connection hook
-  const socketUrl = `ws://127.0.0.1:8000/ws/room/${roomId}/`;
-  const STATIC_OPTIONS = useMemo(
+  const socketUrl = `ws://127.0.0.1:8000/ws/room/${roomId}`;
+  const STATIC_OPTIONS_AUTHENTICATED = useMemo(
     () => ({
       onOpen: console.log,
       onError: console.log,
       onMessage: handleMessage,
       onClose: console.log,
+      queryParams: { access_token: token },
     }),
     [],
   );
   const [sendMessage, lastMessage, readyState] = useWebSocket(
     socketUrl,
-    STATIC_OPTIONS,
+    STATIC_OPTIONS_AUTHENTICATED,
   );
 
   // TODO: remove placeholder initial values
