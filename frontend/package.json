@@ -5,6 +5,7 @@
   "dependencies": {
     "@ionic/react": "^4.9.0-rc.2",
     "@ionic/react-router": "^4.9.0-rc.2",
+    "immer": "^4.0.0",
     "ionicons": "^4.6.3",
     "query-string": "^6.8.3",
     "react": "^16.9.0",
