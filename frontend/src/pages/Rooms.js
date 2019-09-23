@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -17,12 +17,38 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonCardContent,
+  IonAlert,
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
 
 const Rooms = props => {
   const { user } = useAuth();
+  const headers = {
+    Accept: 'application/json',
+    Authorization: `Bearer ${user}`,
+  };
+
+  const [showAlertCreateRoom, setShowAlertCreateRoom] = useState(false);
+
+  const handleCreateRoom = async () => {
+    if (user) {
+      const res = await fetch(`https://api.spotify.com/v1/me`, {
+        method: 'GET',
+        headers: headers,
+      });
+      const hasPremium = false; //remove hardcode to use above response
+      if (!hasPremium) {
+        setShowAlertCreateRoom(true);
+      } else {
+        props.history.push(`${props.match.url}/addRoom`);
+      }
+    } else {
+      setShowAlertCreateRoom(true);
+    }
+  };
+
+  const setDevice = async id => {};
 
   //backend api call to get rooms
   const rooms = [
@@ -98,10 +124,41 @@ const Rooms = props => {
         })}
         <IonList></IonList>
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton href={`${props.match.url}/addRoom`}>
+          <IonFabButton onClick={handleCreateRoom}>
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>
+        <IonAlert
+          isOpen={showAlertCreateRoom}
+          onDidDismiss={() => setShowAlertCreateRoom(false)}
+          header={'You need to sign in with'}
+          message={'a <strong>premium</strong> spotify account'}
+          buttons={
+            !user
+              ? [
+                  {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: () => {},
+                  },
+                  {
+                    text: 'Sign in',
+                    handler: () => {
+                      props.history.push(`/signin`);
+                    },
+                  },
+                ]
+              : [
+                  {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: () => {},
+                  },
+                ]
+          }
+        />
       </IonContent>
       <IonFooter>
         <IonToolbar>

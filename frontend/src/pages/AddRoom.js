@@ -22,15 +22,13 @@ const AddRoom = ({ history }) => {
 
   const submit = async () => {
     try {
-      await fetch(`http://127.0.0.1:8000/rooms/`, {
+      const res = await fetch(`http://127.0.0.1:8000/rooms/`, {
         method: 'POST',
-        body: JSON.stringify(JSON.stringify({ name, location })),
-      }).then(res => {
-        res.json().then(prom => {
-          const roomId = prom['roomId'];
-          history.push(`/room/${roomId}`);
-        });
+        body: JSON.stringify({ name, location }),
       });
+      const value = await res.json();
+      const roomId = value['roomId'];
+      history.push(`/room/${roomId}`);
     } catch (e) {
       console.log(e);
     }
@@ -82,16 +80,6 @@ const AddRoom = ({ history }) => {
               </IonButton>
             </IonCardContent>
           </form>
-        </IonCard>
-
-        <IonCard>
-          <IonCardContent>
-            <IonCardTitle>Join room</IonCardTitle>
-            <IonItem>
-              <IonLabel position="floating">Room ID</IonLabel>
-              <IonInput></IonInput>
-            </IonItem>
-          </IonCardContent>
         </IonCard>
       </IonContent>
     </IonPage>
