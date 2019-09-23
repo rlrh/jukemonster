@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { useImmerReducer, Reducer } from 'use-immer';
 import {
-  IRoomState,
-  ITrack,
-  IQueueEvent,
-  IVoteActionEvent,
+  RoomState,
+  Track,
+  QueueEvent,
+  VoteActionEvent,
   Event,
   EventType,
   Message,
@@ -29,23 +29,27 @@ const useRoomState = (roomId: string) => {
   );
 
   // TODO: remove placeholder initial values
-  const initialState: IRoomState = {
+  const initialState: RoomState = {
     nowPlayingTrack: {},
     queuedTracks: [],
   };
 
   // Return new state based on actions receieved from WebSockets
-  const reducer: Reducer<IRoomState, Event> = (state, action) => {
+  const reducer: Reducer<RoomState, Event> = (state, action) => {
     console.log('Current state: ' + JSON.stringify(state));
-    console.log('Current action: ' + JSON.stringify(action));
+    console.log('Incoming action: ' + JSON.stringify(action));
     switch (action.type) {
       case EventType.Playback:
-        return {
-          nowPlayingTrack: action.payload,
-          queuedTracks: state.queuedTracks.filter(
-            track => track.id !== action.payload.id,
-          ),
+        const playbackEventUpdater = () => {
+          const incomingTrack = action.payload;
+          state.nowPlayingTrack = incomingTrack;
+          if ('id' in incomingTrack) {
+            state.queuedTracks = state.queuedTracks.filter(
+              track => track.id !== incomingTrack.id,
+            );
+          }
         };
+        return void playbackEventUpdater();
       case EventType.Queue:
         const queueEventUpdater = () => {
           const incomingTracks = action.payload.songs;
@@ -81,7 +85,7 @@ const useRoomState = (roomId: string) => {
   };
 
   // State management
-  const [state, dispatch] = useImmerReducer<IRoomState, Event>(
+  const [state, dispatch] = useImmerReducer<RoomState, Event>(
     reducer,
     initialState,
   );
@@ -94,15 +98,15 @@ const useRoomState = (roomId: string) => {
   }
 
   // Handler for adding track
-  function addTrack(track: ITrack) {
+  function addTrack(track: Track) {
     console.log(`Added track ${track.id}`); // TODO: remove
-    const message: IQueueEvent = {
+    const message: QueueEvent = {
       type: EventType.Queue,
       payload: {
         songs: [track],
       },
     };
-    console.log(message); // TODO: remove
+    console.log('Outgoing action: ' + JSON.stringify(message));
     sendMessage(JSON.stringify(message));
   }
 
@@ -113,7 +117,7 @@ const useRoomState = (roomId: string) => {
     if (track === undefined) {
       return;
     }
-    const message: IVoteActionEvent = {
+    const message: VoteActionEvent = {
       type: EventType.VoteAction,
       payload: {
         votes: [
@@ -124,7 +128,7 @@ const useRoomState = (roomId: string) => {
         ],
       },
     };
-    console.log(message);
+    console.log('Outgoing action: ' + JSON.stringify(message));
     sendMessage(JSON.stringify(message));
   }
 
@@ -135,7 +139,7 @@ const useRoomState = (roomId: string) => {
     if (track === undefined) {
       return;
     }
-    const message: IVoteActionEvent = {
+    const message: VoteActionEvent = {
       type: EventType.VoteAction,
       payload: {
         votes: [
@@ -146,7 +150,7 @@ const useRoomState = (roomId: string) => {
         ],
       },
     };
-    console.log(message);
+    console.log('Outgoing action: ' + JSON.stringify(message));
     sendMessage(JSON.stringify(message));
   }
 

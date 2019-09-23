@@ -1,15 +1,15 @@
 // Message
 
-export interface Message {
+export type Message = {
   data: string;
-}
+};
 
 // Room state
 
-export interface IRoomState {
-  nowPlayingTrack: ITrack | {};
-  queuedTracks: ITrack[];
-}
+export type RoomState = {
+  nowPlayingTrack: Track | {};
+  queuedTracks: Track[];
+};
 
 // Events
 
@@ -20,56 +20,56 @@ export enum EventType {
   VoteCount = 'voteCountEvent',
 }
 
-export interface IQueueEvent {
+export type QueueEvent = {
   type: EventType.Queue;
-  payload: IQueueEventPayload;
-}
+  payload: QueueEventPayload;
+};
 
-export interface IPlaybackEvent {
+export type PlaybackEvent = {
   type: EventType.Playback;
-  payload: IPlaybackEventPayload;
-}
+  payload: PlaybackEventPayload;
+};
 
-export interface IVoteActionEvent {
+export type VoteActionEvent = {
   type: EventType.VoteAction;
-  payload: IVoteActionEventPayload;
-}
+  payload: VoteActionEventPayload;
+};
 
-export interface IVoteCountEvent {
+export type VoteCountEvent = {
   type: EventType.VoteCount;
-  payload: IVoteCountEventPayload;
-}
+  payload: VoteCountEventPayload;
+};
 
 export type Event =
-  | IQueueEvent
-  | IPlaybackEvent
-  | IVoteActionEvent
-  | IVoteCountEvent;
+  | QueueEvent
+  | PlaybackEvent
+  | VoteActionEvent
+  | VoteCountEvent;
 
 // Event payloads
 
-export interface IQueueEventPayload {
-  songs: ITrack[];
-}
+export type QueueEventPayload = {
+  songs: Track[];
+};
 
-export interface IPlaybackEventPayload extends ITrack {}
+export type PlaybackEventPayload = Track | {};
 
-export interface IVoteActionEventPayload {
-  votes: IVote[];
-}
+export type VoteActionEventPayload = {
+  votes: Vote[];
+};
 
-export interface IVoteCountEventPayload {
+export type VoteCountEventPayload = {
   songs: [
     {
       id: string;
       votes: number;
     },
   ];
-}
+};
 
-// Base interfaces
+// Base types
 
-export interface ITrack {
+export type Track = {
   id: string;
   name: string;
   artists: string[];
@@ -78,9 +78,9 @@ export interface ITrack {
   imageSource: string;
   trackDuration: number;
   votes?: number;
-}
+};
 
-export interface IVote {
+export type Vote = {
   id: string;
   voteDirection: 'up' | 'down';
-}
+};
