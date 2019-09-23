@@ -5,8 +5,8 @@
   "dependencies": {
     "@ionic/react": "^4.9.0-rc.2",
     "@ionic/react-router": "^4.9.0-rc.2",
+    "flow-bin": "^0.108.0",
     "ionicons": "^4.6.3",
-    "query-string": "^6.8.3",
     "react": "^16.9.0",
     "react-async": "^8.0.0",
     "react-copy-to-clipboard": "^5.0.1",
@@ -22,7 +22,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "flow": "flow"
   },
   "eslintConfig": {
     "extends": "react-app",
