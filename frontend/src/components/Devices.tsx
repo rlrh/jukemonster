@@ -30,7 +30,7 @@ const Devices: React.FC = () => {
     await fetch(`https://api.spotify.com/v1/me/player`, {
       method: 'PUT',
       headers: headers,
-      body: `{\"device_ids\":[\"${id}\"]}`,
+      body: `device_ids:[${id}]`,
     });
   };
 
