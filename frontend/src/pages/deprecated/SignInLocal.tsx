@@ -17,11 +17,11 @@ import React, { useState } from 'react';
 import { useAuth } from '../../state/useAuth';
 
 const SignIn = ({ match }) => {
-  const { user, signIn } = useAuth();
+  const { value, signIn } = useAuth();
 
   const [token, setToken] = useState('');
 
-  if (user) {
+  if (value) {
     return <Redirect to={`/room/${match.params.roomId}`} />;
   }
 
