@@ -18,11 +18,28 @@ import {
   IonCardTitle,
   IonCardContent,
   IonAlert,
+  useIonViewDidEnter,
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
 
 const Rooms = props => {
+  const [online, setOnline] = useState(true);
+
+  useIonViewDidEnter(() => {
+    console.log('ionViewDidEnter event fired');
+    window.addEventListener('online', () => {
+      setOnline(true);
+      console.log('online :)');
+    });
+
+    window.addEventListener('offline', () => {
+      setOnline(false);
+      console.log('offline :)');
+    });
+  });
+
+  //console.log(props.offline);
   const {
     isAuthenticated,
     spotify_access_token,
