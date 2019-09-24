@@ -29,7 +29,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       setLoading(false);
     };
     getData();
-  }, []);
+  }, [query]);
 
   if (error) {
     return (
