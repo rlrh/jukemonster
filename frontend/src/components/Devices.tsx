@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import {
   IonCard,
   IonCardHeader,
@@ -6,7 +6,11 @@ import {
   IonCardTitle,
   IonToolbar,
   IonTitle,
-  IonPopover,
+  IonModal,
+  IonHeader,
+  IonContent,
+  IonButtons,
+  IonButton,
 } from '@ionic/react';
 import { useFetch } from 'react-async';
 import { useAuth } from '../state/useAuth';
@@ -14,7 +18,7 @@ import { useAuth } from '../state/useAuth';
 const Devices: React.FC = () => {
   const { value } = useAuth();
 
-  const [showPopover, setShowPopover] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const headers = {
     Accept: 'application/json',
@@ -30,54 +34,72 @@ const Devices: React.FC = () => {
     await fetch(`https://api.spotify.com/v1/me/player`, {
       method: 'PUT',
       headers: headers,
-      body: `device_ids:[${id}]`,
+      body: `{device_ids:["${id}]"}`,
     });
   };
 
   if (isLoading || error)
     return (
-      <IonToolbar onClick={() => setShowPopover(true)}>
-        <IonPopover
-          isOpen={showPopover}
-          onDidDismiss={e => setShowPopover(false)}
-          cssClass="popover"
-        >
-          <IonCard>
-            <IonCardHeader>Not Logged In</IonCardHeader>
-          </IonCard>
-        </IonPopover>
-        <IonTitle>Change Player</IonTitle>
-      </IonToolbar>
+      <Fragment>
+        <IonModal isOpen={showModal} onDidDismiss={e => setShowModal(false)}>
+          <IonHeader translucent>
+            <IonToolbar>
+              <IonTitle>Change Device</IonTitle>
+              <IonButtons slot="end">
+                <IonButton onClick={() => setShowModal(false)}>Close</IonButton>
+              </IonButtons>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent>
+            <IonCard>
+              <IonCardHeader>
+                <IonCardSubtitle>Not Logged In</IonCardSubtitle>
+              </IonCardHeader>
+            </IonCard>
+          </IonContent>
+        </IonModal>
+        <IonToolbar onClick={() => setShowModal(true)}>
+          <IonTitle>Change Player</IonTitle>
+        </IonToolbar>
+      </Fragment>
     );
 
   if (data) {
     return (
-      <IonToolbar onClick={() => setShowPopover(true)}>
-        <IonPopover
-          isOpen={showPopover}
-          onDidDismiss={e => setShowPopover(false)}
-          cssClass="popover"
-        >
-          {data.devices.length == 0 ? (
-            <IonCard>
-              <IonCardHeader>No Devices Available</IonCardHeader>
-            </IonCard>
-          ) : (
-            <p></p>
-          )}
-          {data.devices.map(item => {
-            return (
-              <IonCard key={item.id} onClick={() => setDevice(item.id)}>
+      <Fragment>
+        <IonModal isOpen={showModal} onDidDismiss={e => setShowModal(false)}>
+          <IonHeader translucent>
+            <IonToolbar>
+              <IonTitle>Change Device</IonTitle>
+              <IonButtons slot="end">
+                <IonButton onClick={() => setShowModal(false)}>Close</IonButton>
+              </IonButtons>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent>
+            {data.devices.length == 0 ? (
+              <IonCard>
                 <IonCardHeader>
-                  <IonCardSubtitle>{item.type}</IonCardSubtitle>
-                  <IonCardTitle>{item.name}</IonCardTitle>
+                  <IonCardSubtitle>No Devices Available</IonCardSubtitle>
                 </IonCardHeader>
               </IonCard>
-            );
-          })}
-        </IonPopover>
-        <IonTitle>Change player</IonTitle>
-      </IonToolbar>
+            ) : null}
+            {data.devices.map(item => {
+              return (
+                <IonCard key={item.id} onClick={() => setDevice(item.id)}>
+                  <IonCardHeader>
+                    <IonCardSubtitle>{item.type}</IonCardSubtitle>
+                    <IonCardTitle>{item.name}</IonCardTitle>
+                  </IonCardHeader>
+                </IonCard>
+              );
+            })}
+          </IonContent>
+        </IonModal>
+        <IonToolbar onClick={() => setShowModal(true)}>
+          <IonTitle>Change Player</IonTitle>
+        </IonToolbar>
+      </Fragment>
     );
   }
 };
