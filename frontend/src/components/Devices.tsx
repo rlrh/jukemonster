@@ -18,9 +18,8 @@ const Devices: React.FC = () => {
 
   const headers = {
     Accept: 'application/json',
-    Authorization: `Bearer ${
-      typeof value === 'string' ? value : value.spotify_access_token
-    }`,
+    Authorization: `Bearer ${value &&
+      (typeof value === 'string' ? value : value.spotify_access_token)}`,
   };
   const { data, error, isLoading } = useFetch(
     `https://api.spotify.com/v1/me/player/devices`,

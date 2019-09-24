@@ -71,6 +71,7 @@ const Rooms = props => {
   }, [isAuthenticated]);
 
   const rooms = [
+    ...trooms,
     {
       id: 81124,
       name: 'Sunday nightz >_<',

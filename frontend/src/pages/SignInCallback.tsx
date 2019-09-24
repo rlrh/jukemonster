@@ -15,7 +15,17 @@ const SignInCallback = props => {
   return <SignInCallbackChild {...props} onSignIn={signIn} />;
 };
 
-class SignInCallbackChild extends Component {
+interface IProps {
+  location: Location;
+  onSignIn: (data: {}) => void;
+}
+
+interface IState {
+  data: {} | null;
+  isLoading: boolean;
+  error: string | null;
+}
+class SignInCallbackChild extends Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,7 +48,7 @@ class SignInCallbackChild extends Component {
       .then(data => {
         this.setState({ data, isLoading: false });
         console.log('Your token is: ' + data.access_token);
-        this.props.onSignIn(data);
+        (this.props as any).onSignIn(data);
       })
       .catch(error => this.setState({ error, isLoading: false }));
   }

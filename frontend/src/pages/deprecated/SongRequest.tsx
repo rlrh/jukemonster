@@ -10,10 +10,10 @@ import {
 } from '@ionic/react';
 
 import { useAuth } from '../../state/useAuth';
-import Search from '../../components/Search';
+//import Search from '../../components/Search';
 
 const SongRequest = () => {
-  const { user } = useAuth();
+  const { value } = useAuth();
 
   return (
     <IonPage>
@@ -26,7 +26,7 @@ const SongRequest = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        {user ? <Search /> : <h1>You are not signed in to Spotify.</h1>}
+        {/*user ? <Search /> : <h1>You are not signed in to Spotify.</h1>*/}
       </IonContent>
     </IonPage>
   );

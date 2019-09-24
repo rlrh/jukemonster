@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useOurApi } from '../apis';
 import {
   IonBackButton,
   IonButtons,
@@ -19,15 +20,13 @@ import {
 const AddRoom = ({ history }) => {
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
+  const { postApi } = useOurApi();
 
   const submit = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/rooms/`, {
-        method: 'POST',
-        body: JSON.stringify({ name, location }),
-      });
-      const value = await res.json();
-      const roomId = value['roomId'];
+      const res = await postApi('rooms/', { name, location });
+      const value = res.data;
+      const roomId = value['unique_identifier'];
       history.push(`/room/${roomId}`);
     } catch (e) {
       console.log(e);
@@ -57,21 +56,25 @@ const AddRoom = ({ history }) => {
               <IonItem>
                 <IonLabel position="floating">Location</IonLabel>
                 <IonInput
-                  required="true"
+                  required={true}
                   name="location"
-                  type="location"
+                  type="text"
                   value={location}
-                  onIonChange={e => setLocation(e.target.value)}
+                  onIonChange={e =>
+                    setLocation((e.target as HTMLInputElement).value)
+                  }
                 />
               </IonItem>
               <IonItem>
                 <IonLabel position="floating">Name</IonLabel>
                 <IonInput
-                  required="true"
+                  required={true}
                   name="name"
-                  type="name"
+                  type="text"
                   value={name}
-                  onIonChange={e => setName(e.target.value)}
+                  onIonChange={e =>
+                    setName((e.target as HTMLInputElement).value)
+                  }
                 />
               </IonItem>
               <br />

@@ -1,6 +1,6 @@
 import React, { useState, useContext, createContext } from 'react';
 
-const QueueContext = createContext();
+const QueueContext = createContext({} as any);
 
 export const useQueue = () => useContext(QueueContext);
 
