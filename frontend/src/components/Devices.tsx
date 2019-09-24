@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import {
   IonCard,
   IonCardHeader,
@@ -12,30 +12,42 @@ import {
   IonButtons,
   IonButton,
 } from '@ionic/react';
-import { useFetch } from 'react-async';
-import { useAuth } from '../state/useAuth';
+import { useOurApi, useSpotifyApi } from '../apis';
+
+interface Device {
+  id: string;
+  type: string;
+  name: string;
+}
 
 const Devices: React.FC = () => {
-  const { value } = useAuth();
+  const spotify = useSpotifyApi();
+  const ours = useOurApi();
 
   const [showModal, setShowModal] = useState(false);
 
-  const headers = {
-    Accept: 'application/json',
-    Authorization: `Bearer ${value &&
-      (typeof value === 'string' ? value : value.spotify_access_token)}`,
-  };
-  const { data, error, isLoading } = useFetch(
-    `https://api.spotify.com/v1/me/player/devices`,
-    { headers },
-  );
+  const [data, setData] = useState({ devices: [] as Device[] });
+  const [isLoading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const setDevice = async id => {
-    await fetch(`https://api.spotify.com/v1/me/player`, {
-      method: 'PUT',
-      headers: headers,
-      body: `{device_ids:["${id}]"}`,
+  const getDevices = async () => {
+    setLoading(true);
+    const res = await spotify.getApi(
+      `https://api.spotify.com/v1/me/player/devices`,
+    );
+    setData(res.data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getDevices();
+  }, []);
+
+  const setDevice = async (id: string) => {
+    spotify.putApi(`https://api.spotify.com/v1/me/player`, {
+      device_ids: [id],
     });
+    ours.putApi(`users/device/`, { device_id: id });
   };
 
   if (isLoading || error)
