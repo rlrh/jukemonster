@@ -16,6 +16,7 @@ import {
   IonRow,
   IonCol,
   IonToast,
+  useIonViewDidEnter,
 } from '@ionic/react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { add } from 'ionicons/icons';
@@ -34,6 +35,7 @@ const Room = ({ match }) => {
     addTrack,
     upvoteTrack,
     downvoteTrack,
+    sendOldMsgs,
   } = useRoomState(match.params.roomId);
   const [showAddTrackModal, setShowAddTrackModal] = useState(false);
 
@@ -46,6 +48,18 @@ const Room = ({ match }) => {
   const [toastMessage, setToastMessage] = useState(
     'Link copied. Send your friends :)',
   );
+
+  useIonViewDidEnter(() => {
+    console.log('ionViewDidEnter event fired');
+    window.addEventListener('online', () => {
+      sendOldMsgs();
+      console.log('online :)');
+    });
+
+    window.addEventListener('offline', () => {
+      console.log('offline :)');
+    });
+  });
 
   return (
     <IonPage>

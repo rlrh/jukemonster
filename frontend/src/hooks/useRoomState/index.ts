@@ -2,6 +2,7 @@ import { useMemo, useReducer } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { produce } from 'immer';
 import { useAuth } from '../../state/useAuth';
+import useOnlineStatus from '@rehooks/online-status';
 import {
   RoomState,
   Track,
@@ -15,12 +16,13 @@ import {
 const useRoomState = (roomId: string) => {
   const { isAuthenticated, access_token } = useAuth();
   const token = useMemo(() => access_token, []);
+  const onlineStatus = useOnlineStatus();
 
   // Setup WebSocket connection hook
   const socketUrl = `ws://127.0.0.1:8000/ws/room/${roomId}`;
   const STATIC_OPTIONS_AUTHENTICATED = useMemo(
     () => ({
-      onOpen: handleOpen,
+      onOpen: console.log,
       onError: console.log,
       onMessage: handleMessage,
       onClose: console.log,
@@ -33,11 +35,14 @@ const useRoomState = (roomId: string) => {
     STATIC_OPTIONS_AUTHENTICATED,
   );
 
-  const getStoredValue = () => {
+  const ROOM_STATE_KEY = roomId + '-state';
+  const ROOM_ACTIONS_KEY = roomId + '-actions';
+
+  const getStoredValue = (key: string) => {
     try {
-      const storedValue = localStorage.getItem(roomId);
+      const storedValue = localStorage.getItem(key);
       if (storedValue != null) {
-        return JSON.parse(storedValue) as RoomState; // Value is an object
+        return JSON.parse(storedValue); // Value is an object
       }
     } catch {
       // This catch block handles the known issues listed here: https://caniuse.com/#feat=namevalue-storage
@@ -49,7 +54,7 @@ const useRoomState = (roomId: string) => {
   };
 
   // TODO: remove placeholder initial values
-  let initialState = getStoredValue();
+  let initialState = getStoredValue(ROOM_STATE_KEY);
   if (initialState == null) {
     initialState = {
       nowPlayingTrack: {},
@@ -109,7 +114,7 @@ const useRoomState = (roomId: string) => {
         temp = state;
     }
 
-    localStorage.setItem(roomId, JSON.stringify(temp));
+    localStorage.setItem(ROOM_STATE_KEY, JSON.stringify(temp));
 
     return temp;
   };
@@ -124,12 +129,6 @@ const useRoomState = (roomId: string) => {
     dispatch(action);
   }
 
-  function handleOpen(event) {
-    console.log('handling: ', event);
-    localStorage.removeItem(roomId);
-    console.log(localStorage.getItem(roomId));
-  }
-
   // Handler for adding track
   function addTrack(track: Track) {
     console.log(`Added track ${track.id}`); // TODO: remove
@@ -141,6 +140,21 @@ const useRoomState = (roomId: string) => {
     };
     console.log('Outgoing action: ' + JSON.stringify(message));
     sendMessage(JSON.stringify(message));
+  }
+
+  function messageSender(message) {
+    if (!onlineStatus) {
+      console.log('offline saving');
+      const oldcache = getStoredValue(ROOM_ACTIONS_KEY);
+      if (oldcache != null) {
+        oldcache.push(message);
+        localStorage.setItem(ROOM_ACTIONS_KEY, JSON.stringify(oldcache));
+      } else {
+        localStorage.setItem(ROOM_ACTIONS_KEY, JSON.stringify([message]));
+      }
+    } else {
+      sendMessage(JSON.stringify(message));
+    }
   }
 
   // Handler for track upvote
@@ -162,7 +176,7 @@ const useRoomState = (roomId: string) => {
       },
     };
     console.log('Outgoing action: ' + JSON.stringify(message));
-    sendMessage(JSON.stringify(message));
+    messageSender(message);
   }
 
   // Handler for track downvote
@@ -184,7 +198,19 @@ const useRoomState = (roomId: string) => {
       },
     };
     console.log('Outgoing action: ' + JSON.stringify(message));
-    sendMessage(JSON.stringify(message));
+    messageSender(message);
+  }
+
+  function sendOldMsgs() {
+    localStorage.removeItem(ROOM_STATE_KEY);
+    const cachedMessages = getStoredValue(ROOM_ACTIONS_KEY);
+    if (cachedMessages != null) {
+      cachedMessages.forEach(element => {
+        sendMessage(JSON.stringify(element));
+        console.log('sending old msg');
+      });
+      localStorage.removeItem(ROOM_ACTIONS_KEY);
+    }
   }
 
   return {
@@ -193,6 +219,7 @@ const useRoomState = (roomId: string) => {
     addTrack,
     upvoteTrack,
     downvoteTrack,
+    sendOldMsgs,
   };
 };
 

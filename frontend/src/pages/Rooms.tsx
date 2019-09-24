@@ -25,21 +25,6 @@ import { useAuth } from '../state/useAuth';
 import { useOurApi } from '../apis';
 
 const Rooms = props => {
-  const [online, setOnline] = useState(true);
-
-  useIonViewDidEnter(() => {
-    console.log('ionViewDidEnter event fired');
-    window.addEventListener('online', () => {
-      setOnline(true);
-      console.log('online :)');
-    });
-
-    window.addEventListener('offline', () => {
-      setOnline(false);
-      console.log('offline :)');
-    });
-  });
-
   //console.log(props.offline);
   const {
     isAuthenticated,
