@@ -4,7 +4,9 @@ import {
   setupConfig,
   IonApp,
   IonRouterOutlet,
-  useIonViewDidEnter,
+  IonFooter,
+  IonToolbar,
+  IonTitle,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 
@@ -41,28 +43,6 @@ import SignInCallback from './pages/SignInCallback';
 import { SocketProvider } from './hooks/useWebSocket';
 
 const App = () => {
-  const [online, setOnline] = useState(true);
-
-  useIonViewDidEnter(() => {
-    console.log('ionViewDidEnter event fired');
-    window.addEventListener('online', () => {
-      setOnline(true);
-      console.log('online :)');
-    });
-
-    window.addEventListener('offline', () => {
-      setOnline(false);
-      console.log('offline :)');
-    });
-  });
-
-  /*   componentDidUpdate() {
-    let offlineStatus = !navigator.onLine;
-    if (this.state.offline !== offlineStatus) {
-      this.setState({ offline: offlineStatus });
-    }
-  } */
-
   setupConfig({
     mode: 'ios',
   });

@@ -18,14 +18,12 @@ import {
   IonCardTitle,
   IonCardContent,
   IonAlert,
-  useIonViewDidEnter,
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
 import { useOurApi } from '../apis';
 
 const Rooms = props => {
-  //console.log(props.offline);
   const {
     isAuthenticated,
     value,
@@ -46,7 +44,7 @@ const Rooms = props => {
         headers: headers,
       });
       const account = await res.json();
-      const hasPremium = account['product'] === 'premium'; //remove hardcode to use above response
+      const hasPremium = account['product'] === 'premium';
       if (!hasPremium) {
         setShowAlertCreateRoom(true);
       } else {

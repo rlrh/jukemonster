@@ -1,4 +1,4 @@
-import { useMemo, useReducer } from 'react';
+import { useMemo, useEffect, useReducer } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { produce } from 'immer';
 import { useAuth } from '../../state/useAuth';
@@ -30,10 +30,20 @@ const useRoomState = (roomId: string) => {
     }),
     [],
   );
-  const [sendMessage, lastMessage, readyState] = useWebSocket(
+  const [sendWebSocketMessage, lastMessage, readyState] = useWebSocket(
     socketUrl,
     STATIC_OPTIONS_AUTHENTICATED,
   );
+
+  useEffect(() => {
+    console.log('effect fired');
+    if (onlineStatus) {
+      sendCachedMessages();
+      console.log('online :)');
+    } else {
+      console.log('offline :)');
+    }
+  }, [onlineStatus]);
 
   const ROOM_STATE_KEY = roomId + '-state';
   const ROOM_ACTIONS_KEY = roomId + '-actions';
@@ -139,22 +149,7 @@ const useRoomState = (roomId: string) => {
       },
     };
     console.log('Outgoing action: ' + JSON.stringify(message));
-    sendMessage(JSON.stringify(message));
-  }
-
-  function messageSender(message) {
-    if (!onlineStatus) {
-      console.log('offline saving');
-      const oldcache = getStoredValue(ROOM_ACTIONS_KEY);
-      if (oldcache != null) {
-        oldcache.push(message);
-        localStorage.setItem(ROOM_ACTIONS_KEY, JSON.stringify(oldcache));
-      } else {
-        localStorage.setItem(ROOM_ACTIONS_KEY, JSON.stringify([message]));
-      }
-    } else {
-      sendMessage(JSON.stringify(message));
-    }
+    sendWebSocketMessage(JSON.stringify(message));
   }
 
   // Handler for track upvote
@@ -176,7 +171,7 @@ const useRoomState = (roomId: string) => {
       },
     };
     console.log('Outgoing action: ' + JSON.stringify(message));
-    messageSender(message);
+    sendMessage(message);
   }
 
   // Handler for track downvote
@@ -198,15 +193,31 @@ const useRoomState = (roomId: string) => {
       },
     };
     console.log('Outgoing action: ' + JSON.stringify(message));
-    messageSender(message);
+    sendMessage(message);
   }
 
-  function sendOldMsgs() {
+  // Caches message if offline else sends it
+  function sendMessage(message) {
+    if (!onlineStatus) {
+      console.log('offline saving');
+      const oldcache = getStoredValue(ROOM_ACTIONS_KEY);
+      if (oldcache != null) {
+        oldcache.push(message);
+        localStorage.setItem(ROOM_ACTIONS_KEY, JSON.stringify(oldcache));
+      } else {
+        localStorage.setItem(ROOM_ACTIONS_KEY, JSON.stringify([message]));
+      }
+    } else {
+      sendWebSocketMessage(JSON.stringify(message));
+    }
+  }
+
+  function sendCachedMessages() {
     localStorage.removeItem(ROOM_STATE_KEY);
     const cachedMessages = getStoredValue(ROOM_ACTIONS_KEY);
     if (cachedMessages != null) {
       cachedMessages.forEach(element => {
-        sendMessage(JSON.stringify(element));
+        sendWebSocketMessage(JSON.stringify(element));
         console.log('sending old msg');
       });
       localStorage.removeItem(ROOM_ACTIONS_KEY);
@@ -219,7 +230,6 @@ const useRoomState = (roomId: string) => {
     addTrack,
     upvoteTrack,
     downvoteTrack,
-    sendOldMsgs,
   };
 };
 

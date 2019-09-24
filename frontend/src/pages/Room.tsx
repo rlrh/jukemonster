@@ -18,6 +18,7 @@ import {
   IonToast,
   useIonViewDidEnter,
 } from '@ionic/react';
+import useOnlineStatus from '@rehooks/online-status';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
@@ -35,9 +36,10 @@ const Room = ({ match }) => {
     addTrack,
     upvoteTrack,
     downvoteTrack,
-    sendOldMsgs,
   } = useRoomState(match.params.roomId);
   const [showAddTrackModal, setShowAddTrackModal] = useState(false);
+
+  const onlineStatus = useOnlineStatus();
 
   const handleSearchResultClick = args => {
     addTrack(args);
@@ -49,6 +51,7 @@ const Room = ({ match }) => {
     'Link copied. Send your friends :)',
   );
 
+  /*
   useIonViewDidEnter(() => {
     console.log('ionViewDidEnter event fired');
     window.addEventListener('online', () => {
@@ -60,6 +63,7 @@ const Room = ({ match }) => {
       console.log('offline :)');
     });
   });
+  */
 
   return (
     <IonPage>
@@ -121,6 +125,11 @@ const Room = ({ match }) => {
       </IonContent>
       <IonFooter>
         <Devices />
+        {onlineStatus ? null : (
+          <IonToolbar color="danger">
+            <IonTitle>You are offline</IonTitle>
+          </IonToolbar>
+        )}
       </IonFooter>
     </IonPage>
   );
