@@ -20,7 +20,7 @@ const useRoomState = (roomId: string) => {
   const socketUrl = `ws://127.0.0.1:8000/ws/room/${roomId}`;
   const STATIC_OPTIONS_AUTHENTICATED = useMemo(
     () => ({
-      onOpen: console.log,
+      onOpen: handleOpen,
       onError: console.log,
       onMessage: handleMessage,
       onClose: console.log,
@@ -33,20 +33,40 @@ const useRoomState = (roomId: string) => {
     STATIC_OPTIONS_AUTHENTICATED,
   );
 
-  // TODO: remove placeholder initial values
-  const initialState: RoomState = {
-    nowPlayingTrack: {},
-    queuedTracks: [],
+  const getStoredValue = () => {
+    try {
+      const storedValue = localStorage.getItem(roomId);
+      if (storedValue != null) {
+        return JSON.parse(storedValue) as RoomState; // Value is an object
+      }
+    } catch {
+      // This catch block handles the known issues listed here: https://caniuse.com/#feat=namevalue-storage
+      console.warn(
+        'Could not access browser storage. Session will be lost when closing browser window',
+      );
+    }
+    return null;
   };
+
+  // TODO: remove placeholder initial values
+  let initialState = getStoredValue();
+  if (initialState == null) {
+    initialState = {
+      nowPlayingTrack: {},
+      queuedTracks: [],
+    };
+  }
 
   // Return new state based on actions receieved from WebSockets
   const reducer = (state: RoomState, action: Event) => {
     console.log('Current state: ' + JSON.stringify(state));
     console.log('Incoming action: ' + JSON.stringify(action));
 
+    let temp;
+
     switch (action.type) {
       case EventType.Playback:
-        return produce(state, draftState => {
+        temp = produce(state, draftState => {
           const incomingTrack = action.payload;
           draftState.nowPlayingTrack = incomingTrack;
           if ('id' in incomingTrack) {
@@ -55,8 +75,9 @@ const useRoomState = (roomId: string) => {
             );
           }
         });
+        break;
       case EventType.Queue:
-        return produce(state, draftState => {
+        temp = produce(state, draftState => {
           const incomingTracks = action.payload.songs;
           incomingTracks.forEach(incomingTrack => {
             const incomingTrackQueueIndex = draftState.queuedTracks.findIndex(
@@ -69,8 +90,9 @@ const useRoomState = (roomId: string) => {
             }
           });
         });
+        break;
       case EventType.VoteCount:
-        return produce(state, draftState => {
+        temp = produce(state, draftState => {
           const incomingTracks = action.payload.songs;
           incomingTracks.forEach(incomingTrack => {
             const incomingTrackQueueIndex = draftState.queuedTracks.findIndex(
@@ -82,9 +104,14 @@ const useRoomState = (roomId: string) => {
             }
           });
         });
+        break;
       default:
-        return state;
+        temp = state;
     }
+
+    localStorage.setItem(roomId, JSON.stringify(temp));
+
+    return temp;
   };
 
   // State management
@@ -95,6 +122,12 @@ const useRoomState = (roomId: string) => {
     const message: Message = rawMessage as Message;
     const action: Event = JSON.parse(message.data);
     dispatch(action);
+  }
+
+  function handleOpen(event) {
+    console.log('handling: ', event);
+    localStorage.removeItem(roomId);
+    console.log(localStorage.getItem(roomId));
   }
 
   // Handler for adding track
