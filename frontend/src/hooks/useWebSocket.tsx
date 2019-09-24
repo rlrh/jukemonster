@@ -3,7 +3,7 @@ import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
 const WEB_SOCKET_URL = 'ws://127.0.0.1:8000/ws/room/';
 
-const SocketContext = createContext();
+const SocketContext = createContext({} as any);
 
 export const useWebSocket = () => useContext(SocketContext);
 
