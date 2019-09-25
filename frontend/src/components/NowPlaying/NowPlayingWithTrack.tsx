@@ -12,6 +12,7 @@ import {
 } from '@ionic/react';
 import { useFetch } from 'react-async';
 import { useAuth } from '../../state/useAuth';
+import NowPlayingWithTrackData from './NowPlayingWithTrackData';
 import { NowPlayingWithTrackProps } from './types';
 
 const NowPlayingWithTrack: React.FC<NowPlayingWithTrackProps> = ({ track }) => {
