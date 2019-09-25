@@ -1,6 +1,6 @@
 import React from 'react';
 import { IonItem, IonButton, IonIcon, IonBadge } from '@ionic/react';
-import { arrowDown, arrowUp, more } from 'ionicons/icons';
+import { arrowDown, arrowUp } from 'ionicons/icons';
 import Track from '../Track';
 import { QueueTrackProps } from './types';
 
@@ -51,9 +51,6 @@ const QueueTrack: React.FC<QueueTrackProps> = ({
       </IonButton>
       <IonButton onClick={() => onDownvote()} fill="clear" slot="end">
         <IonIcon slot="icon-only" icon={arrowDown} />
-      </IonButton>
-      <IonButton fill="clear" slot="end">
-        <IonIcon slot="icon-only" icon={more} />
       </IonButton>
     </IonItem>
   );

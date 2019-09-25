@@ -284,9 +284,12 @@ body.dark {
  * -------------------------------------------
  */
 
-:root {
-  --ion-grid-padding-xs: 0;
-  --ion-grid-column-padding-xs: 0;
+ion-grid.full-height {
+  height: 100%;
+}
+
+ion-row.full-height {
+  height: 100%;
 }
 
 ion-grid.no-padding {

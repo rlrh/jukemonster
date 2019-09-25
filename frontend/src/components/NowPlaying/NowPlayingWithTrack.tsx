@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   IonCard,
-  IonCardContent,
   IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
@@ -44,24 +43,21 @@ const NowPlayingWithTrack: React.FC<NowPlayingWithTrackProps> = ({ track }) => {
     return (
       <IonCard>
         <IonCardHeader>
-          <IonCardSubtitle>Now Playing</IonCardSubtitle>
           <IonGrid>
             <IonRow>
-              <IonCol size="3" sizeSm="4" />
-              <IonCol size="6" sizeSm="4">
+              <IonCol size="3" sizeMd="4" sizeLg="3" />
+              <IonCol size="6" sizeMd="4" sizeLg="6">
                 <img src={data.album.images[0].url} className="ion-padding" />
               </IonCol>
-              <IonCol size="3" sizeSm="4" />
+              <IonCol size="3" sizeMd="4" sizeLg="3" />
             </IonRow>
           </IonGrid>
+          <IonCardSubtitle>Now Playing</IonCardSubtitle>
           <IonCardTitle>{data.name}</IonCardTitle>
-          <IonNote color="medium">
+          <IonNote color="dark">
             {artists} • {data.album.name}
           </IonNote>
         </IonCardHeader>
-        <IonCardContent>
-          <IonProgressBar value={0.28}></IonProgressBar>
-        </IonCardContent>
       </IonCard>
     );
   }

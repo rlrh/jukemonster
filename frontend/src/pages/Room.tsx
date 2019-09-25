@@ -80,17 +80,33 @@ const Room = ({ match }) => {
         />
       </IonHeader>
       <IonContent>
-        <IonGrid>
+        <IonGrid class="no-padding ion-hide-lg-up">
           <IonRow>
-            <IonCol size="12" sizeSm="6">
+            <IonCol size="12">
               <NowPlaying track={nowPlayingTrack} />
             </IonCol>
-            <IonCol size="12" sizeSm="6">
+            <IonCol size="12">
               <Queue
                 tracks={queuedTracks}
                 onTrackUpvote={upvoteTrack}
                 onTrackDownvote={downvoteTrack}
               />
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+        <IonGrid class="full-height no-padding ion-hide-md-down">
+          <IonRow class="full-height">
+            <IonCol size="6">
+              <NowPlaying track={nowPlayingTrack} />
+            </IonCol>
+            <IonCol size="6">
+              <IonContent>
+                <Queue
+                  tracks={queuedTracks}
+                  onTrackUpvote={upvoteTrack}
+                  onTrackDownvote={downvoteTrack}
+                />
+              </IonContent>
             </IonCol>
           </IonRow>
         </IonGrid>

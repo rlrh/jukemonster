@@ -9,7 +9,7 @@ import {
 const NowPlayingWithoutTrack: React.FC = () => (
   <IonCard>
     <IonCardHeader>
-      <IonCardTitle>Nothing Playing Yet</IonCardTitle>
+      <IonCardTitle>Nothing Playing Now</IonCardTitle>
       <IonCardSubtitle>Add some songs!</IonCardSubtitle>
     </IonCardHeader>
   </IonCard>
