@@ -1,8 +1,12 @@
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from rest_framework_simplejwt.tokens import AccessToken, UntypedToken, TokenError
+from urllib import parse
 import json
 
 from .room import Room
+
+from .models.room import Room as RoomModel
 
 DEBUG = False
 
@@ -13,32 +17,45 @@ rooms = {}
 
 class PlaybackConsumer(WebsocketConsumer):
     def connect(self):
+        self.is_valid = False
         self.room_id = self.scope['url_route']['kwargs']['room_id']
         self.room_group_name = 'room_%s' % self.room_id
 
-        # TODO: Extract user id from initial request
-        self.user_id = '123'
-
-        if DEBUG:
-            print("CLIENT CONNECTED. ROOMS:", rooms)
-
-        # TODO: Room creation should be triggered by POST
+        # 1. Verify that room exists. If yes, get or create in-memory room
         if self.room_id not in rooms:
-            rooms[self.room_id] = Room(self.room_id, self.room_group_name,
-                                       rooms)
+            if RoomModel.exists(self.room_id):
+                rooms[self.room_id] = Room(self.room_id, self.room_group_name,
+                                        rooms)
+            else:
+                self.close(404)
+                return
+
         self.room = rooms[self.room_id]
+        
+        # 2. Verify JWT token and get user identity
+        query_string = self.scope['query_string'].decode("utf-8")
+        access_token = parse.parse_qs(query_string)['access_token'][0]
 
-        # Add user to room
+        try:
+            self.user_id = AccessToken(access_token).get('user_id')
+        except TokenError as e:
+            print(e)
+            self.close(401)
+            return
+
+        # 3. Add user to room and broadcast to channel layer
         self.room.add_user(self)
-
-        # Add user to room channel layer
         async_to_sync(self.channel_layer.group_add)(self.room_group_name,
                                                     self.channel_name)
-
+        
+        # 4. Accept connection and send initial data
+        self.is_valid = True
         self.accept()
         self.send_initial_data()
 
     def disconnect(self, close_code):
+        if not self.is_valid:
+            return
 
         self.room.remove_user(self)
 
@@ -51,7 +68,6 @@ class PlaybackConsumer(WebsocketConsumer):
                                                         self.channel_name)
 
     def receive(self, text_data):
-
         data = json.loads(text_data)
         type = data['type']
         payload = data['payload']
@@ -70,9 +86,6 @@ class PlaybackConsumer(WebsocketConsumer):
         elif type == 'voteActionEvent':
             self.room.vote_songs(self, payload['votes'])
 
-            if DEBUG:
-                print(payload['votes'])
-
             # Convert to vote count event
             songs = []
             for vote in payload['votes']:
@@ -81,8 +94,6 @@ class PlaybackConsumer(WebsocketConsumer):
                 songs.append(song)
             data = {'type': 'voteCountEvent', 'payload': {'songs': songs}}
 
-            print(data)
-
         # Propagate message to room channel layer
         async_to_sync(self.channel_layer.group_send)(self.room_group_name,
                                                      data)
@@ -90,30 +101,25 @@ class PlaybackConsumer(WebsocketConsumer):
     ### HANDLING OF CHANNEL LAYER EVENTS ###
     # 1. Queue Event: Notify clients of new queue songs
     def queueEvent(self, json_data):
-
         self.send(text_data=json.dumps(json_data))
 
     # 2. Playback Event: Notify clients of new now playing song
     def playbackEvent(self, json_data):
-
         self.send(text_data=json.dumps(json_data))
 
     # 3. Vote Event: Notify clients of new vote counts
     def voteCountEvent(self, json_data):
-
         self.send(text_data=json.dumps(json_data))
 
     ### HELPER FUNCTIONS ###
 
     def send_initial_data(self):
-
         self.send_queue()
         self.send_user_votes()
         self.send_now_playing()
 
     # Send all songs to a client
     def send_queue(self):
-
         data = {
             'type': 'queueEvent',
             'payload': {
@@ -125,13 +131,14 @@ class PlaybackConsumer(WebsocketConsumer):
 
     # Send a user's previous votes
     def send_user_votes(self):
-
-        # TODO
-        pass
+        data = {
+            'type': 'voteActionEvent',
+            'payload': self.room.get_user_votes(self.user_id)
+        }
+        self.send(text_data=json.dumps(data))
 
     # Send the current playing song in the room
     def send_now_playing(self):
-
         if self.room.has_now_playing():
             data = {
                 'type': 'playbackEvent',

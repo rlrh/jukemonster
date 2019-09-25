@@ -25,6 +25,10 @@ class Room(Timestampable):
         app_label = 'room_manager'
         db_table = 'room'
 
+    @classmethod
+    def exists(cls, room_id):
+        return cls.objects.filter(unique_identifier=room_id).count() == 1
+
 
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
