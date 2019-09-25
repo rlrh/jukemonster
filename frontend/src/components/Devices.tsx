@@ -20,13 +20,13 @@ interface Device {
   name: string;
 }
 
-const Devices: React.FC = () => {
+const Devices = () => {
   const spotify = useSpotifyApi();
   const ours = useOurApi();
 
   const [showModal, setShowModal] = useState(false);
 
-  const [data, setData] = useState({ devices: [] as Device[] });
+  const [data, setData] = useState({ devices: [] });
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -35,7 +35,9 @@ const Devices: React.FC = () => {
     const res = await spotify.getApi(
       `https://api.spotify.com/v1/me/player/devices`,
     );
-    setData(res.data);
+    if (res) {
+      setData(res.data);
+    }
     setLoading(false);
   };
 
