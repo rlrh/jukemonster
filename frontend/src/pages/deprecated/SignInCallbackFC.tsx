@@ -6,7 +6,7 @@ import { useAuth } from '../../state/useAuth';
 const SignInCallback = ({ location }) => {
   const { signIn } = useAuth();
   const { data, error, isLoading } = useFetch(
-    `http://127.0.0.1:8000/authorize/done/${location.search}`,
+    process.env.REACT_APP_BACKEND_URL + `/authorize/done/${location.search}`,
   );
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -21,11 +21,9 @@ import {
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
-import { useAsync } from 'react-async';
 import { useOurApi } from '../apis';
 
 const Rooms = props => {
-  const { useState, useEffect } = React;
   const {
     isAuthenticated,
     value,
@@ -46,7 +44,7 @@ const Rooms = props => {
         headers: headers,
       });
       const account = await res.json();
-      const hasPremium = account['product'] === 'premium'; //remove hardcode to use above response
+      const hasPremium = account['product'] === 'premium';
       if (!hasPremium) {
         setShowAlertCreateRoom(true);
       } else {

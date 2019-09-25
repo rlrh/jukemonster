@@ -18,15 +18,16 @@ interface Device {
   id: string;
   type: string;
   name: string;
+  is_active: boolean;
 }
 
-const Devices: React.FC = () => {
+const Devices = () => {
   const spotify = useSpotifyApi();
   const ours = useOurApi();
 
   const [showModal, setShowModal] = useState(false);
 
-  const [data, setData] = useState({ devices: [] as Device[] });
+  const [data, setData] = useState({ devices: [] });
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -35,7 +36,9 @@ const Devices: React.FC = () => {
     const res = await spotify.getApi(
       `https://api.spotify.com/v1/me/player/devices`,
     );
-    setData(res.data);
+    if (res && res.data) {
+      setData(res.data);
+    }
     setLoading(false);
   };
 
@@ -53,25 +56,16 @@ const Devices: React.FC = () => {
   if (isLoading || error)
     return (
       <Fragment>
-        <IonModal isOpen={showModal} onDidDismiss={e => setShowModal(false)}>
-          <IonHeader translucent>
-            <IonToolbar>
-              <IonTitle>Change Device</IonTitle>
-              <IonButtons slot="end">
-                <IonButton onClick={() => setShowModal(false)}>Close</IonButton>
-              </IonButtons>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent>
-            <IonCard>
-              <IonCardHeader>
-                <IonCardSubtitle>Not Logged In</IonCardSubtitle>
-              </IonCardHeader>
-            </IonCard>
-          </IonContent>
-        </IonModal>
-        <IonToolbar onClick={() => setShowModal(true)}>
-          <IonTitle>Change Player</IonTitle>
+        <IonToolbar>
+          <IonTitle>Loading...</IonTitle>
+          <IonButton
+            size="small"
+            slot="start"
+            color="black"
+            onClick={getDevices}
+          >
+            Refresh
+          </IonButton>
         </IonToolbar>
       </Fragment>
     );
@@ -98,7 +92,13 @@ const Devices: React.FC = () => {
             ) : null}
             {data.devices.map(item => {
               return (
-                <IonCard key={item.id} onClick={() => setDevice(item.id)}>
+                <IonCard
+                  key={item.id}
+                  onClick={() => {
+                    setDevice(item.id);
+                    setShowModal(false);
+                  }}
+                >
                   <IonCardHeader>
                     <IonCardSubtitle>{item.type}</IonCardSubtitle>
                     <IonCardTitle>{item.name}</IonCardTitle>
@@ -108,8 +108,36 @@ const Devices: React.FC = () => {
             })}
           </IonContent>
         </IonModal>
-        <IonToolbar onClick={() => setShowModal(true)}>
-          <IonTitle>Change Player</IonTitle>
+
+        <IonToolbar>
+          {data.devices.filter(x => x.is_active).length == 0 ? (
+            <IonTitle> No active devices </IonTitle>
+          ) : null}
+          {data.devices
+            .filter(x => x.is_active)
+            .map(item => {
+              return (
+                <IonTitle key={item.id}>
+                  {item.name + ' ' + item.type}{' '}
+                </IonTitle>
+              );
+            })}
+          <IonButton
+            size="small"
+            slot="start"
+            color="black"
+            onClick={getDevices}
+          >
+            Refresh
+          </IonButton>
+          <IonButton
+            size="small"
+            slot="end"
+            color="black"
+            onClick={() => setShowModal(true)}
+          >
+            Change
+          </IonButton>
         </IonToolbar>
       </Fragment>
     );
