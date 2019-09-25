@@ -13,6 +13,21 @@ import {
   Message,
 } from './types';
 
+const getStoredValue = (key: string) => {
+  try {
+    const storedValue = localStorage.getItem(key);
+    if (storedValue != null) {
+      return JSON.parse(storedValue); // Value is an object
+    }
+  } catch {
+    // This catch block handles the known issues listed here: https://caniuse.com/#feat=namevalue-storage
+    console.warn(
+      'Could not access browser storage. Session will be lost when closing browser window',
+    );
+  }
+  return null;
+};
+
 const useRoomState = (roomId: string) => {
   const { access_token } = useAuth();
   const token = useMemo(() => access_token, []);
@@ -48,21 +63,6 @@ const useRoomState = (roomId: string) => {
   const ROOM_STATE_KEY = roomId + '-state';
   const ROOM_ACTIONS_KEY = roomId + '-actions';
 
-  const getStoredValue = (key: string) => {
-    try {
-      const storedValue = localStorage.getItem(key);
-      if (storedValue != null) {
-        return JSON.parse(storedValue); // Value is an object
-      }
-    } catch {
-      // This catch block handles the known issues listed here: https://caniuse.com/#feat=namevalue-storage
-      console.warn(
-        'Could not access browser storage. Session will be lost when closing browser window',
-      );
-    }
-    return null;
-  };
-
   // TODO: remove placeholder initial values
   let initialState = getStoredValue(ROOM_STATE_KEY);
   if (initialState == null) {
@@ -77,11 +77,10 @@ const useRoomState = (roomId: string) => {
     console.log('Current state: ' + JSON.stringify(state));
     console.log('Incoming action: ' + JSON.stringify(action));
 
-    let temp;
-
+    let nextState = state;
     switch (action.type) {
       case EventType.Playback:
-        temp = produce(state, draftState => {
+        nextState = produce(state, draftState => {
           const incomingTrack = action.payload;
           draftState.nowPlayingTrack = incomingTrack;
           if ('id' in incomingTrack) {
@@ -92,7 +91,7 @@ const useRoomState = (roomId: string) => {
         });
         break;
       case EventType.Queue:
-        temp = produce(state, draftState => {
+        nextState = produce(state, draftState => {
           const incomingTracks = action.payload.songs;
           incomingTracks.forEach(incomingTrack => {
             const incomingTrackQueueIndex = draftState.queuedTracks.findIndex(
@@ -107,7 +106,7 @@ const useRoomState = (roomId: string) => {
         });
         break;
       case EventType.VoteCount:
-        temp = produce(state, draftState => {
+        nextState = produce(state, draftState => {
           const incomingTracks = action.payload.songs;
           incomingTracks.forEach(incomingTrack => {
             const incomingTrackQueueIndex = draftState.queuedTracks.findIndex(
@@ -121,12 +120,12 @@ const useRoomState = (roomId: string) => {
         });
         break;
       default:
-        temp = state;
+        nextState = state;
     }
 
-    localStorage.setItem(ROOM_STATE_KEY, JSON.stringify(temp));
+    localStorage.setItem(ROOM_STATE_KEY, JSON.stringify(nextState));
 
-    return temp;
+    return nextState;
   };
 
   // State management
