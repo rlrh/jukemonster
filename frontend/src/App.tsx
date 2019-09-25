@@ -27,6 +27,7 @@ import { AuthProvider } from './state/useAuth';
 import { QueueProvider } from './state/useGlobalLocalQueue';
 
 /* Pages */
+import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import SignOut from './pages/SignOut';
 import Room from './pages/Room';
@@ -47,7 +48,7 @@ const App = () => {
           <IonApp>
             <IonReactRouter>
               <IonRouterOutlet>
-                <Route exact path="/" render={() => <Redirect to="/rooms" />} />
+                <Route exact path="/" component={Home} />
                 <Route exact path="/rooms" component={Rooms} />
                 <Route exact path="/rooms/addRoom" component={AddRoom} />
                 <Route exact path="/signin" component={SignIn} />
