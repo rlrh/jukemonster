@@ -16,7 +16,9 @@ import {
   IonRow,
   IonCol,
   IonToast,
+  useIonViewDidEnter,
 } from '@ionic/react';
+import useOnlineStatus from '@rehooks/online-status';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
@@ -36,6 +38,8 @@ const Room = ({ match }) => {
     downvoteTrack,
   } = useRoomState(match.params.roomId);
   const [showAddTrackModal, setShowAddTrackModal] = useState(false);
+
+  const onlineStatus = useOnlineStatus();
 
   const handleSearchResultClick = args => {
     addTrack(args);
@@ -107,6 +111,11 @@ const Room = ({ match }) => {
       </IonContent>
       <IonFooter>
         <Devices />
+        {onlineStatus ? null : (
+          <IonToolbar color="danger">
+            <IonTitle>You are offline</IonTitle>
+          </IonToolbar>
+        )}
       </IonFooter>
     </IonPage>
   );
