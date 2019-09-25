@@ -33,13 +33,13 @@ const AddModal: React.FC<AddModalProps> = ({
             <IonButtons slot="primary">
               <IonButton onClick={onClose}>Close</IonButton>
             </IonButtons>
-            <IonTitle>Add A Track</IonTitle>
+            <IonTitle>Add Songs</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonContent>
+        <IonContent class="item-background">
           <IonItem>
             <IonLabel>
-              <h2>You need to login with Spotify to add a track.</h2>
+              <h2>You need to login with Spotify to add songs.</h2>
             </IonLabel>
           </IonItem>
         </IonContent>
@@ -54,7 +54,7 @@ const AddModal: React.FC<AddModalProps> = ({
           <IonButtons slot="primary">
             <IonButton onClick={onClose}>Close</IonButton>
           </IonButtons>
-          <IonTitle>Add A Track</IonTitle>
+          <IonTitle>Add Songs</IonTitle>
         </IonToolbar>
         <IonToolbar>
           <IonSearchbar value={query} onIonChange={handleChange}></IonSearchbar>

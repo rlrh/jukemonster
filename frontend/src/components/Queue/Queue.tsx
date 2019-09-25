@@ -11,8 +11,8 @@ const Queue: React.FC<QueueProps> = ({
   const renderQueueTracks = () => {
     if (!tracks.length) {
       return (
-        <IonItem>
-          <IonLabel>Nothing in the queue yet, go add some tracks!</IonLabel>
+        <IonItem class="transparent">
+          <IonLabel>Nothing in the queue - add some songs!</IonLabel>
         </IonItem>
       );
     }

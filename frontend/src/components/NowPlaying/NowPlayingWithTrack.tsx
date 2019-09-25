@@ -27,12 +27,10 @@ const NowPlayingWithTrack: React.FC<NowPlayingWithTrackProps> = ({ track }) => {
 
   if (error)
     return (
-      <IonCard>
-        <IonCardHeader>
-          <IonCardTitle>Error</IonCardTitle>
-          <IonCardSubtitle>Something went wrong...</IonCardSubtitle>
-        </IonCardHeader>
-      </IonCard>
+      <IonCardHeader>
+        <IonCardSubtitle>Something went wrong...</IonCardSubtitle>
+        <IonCardTitle>Error</IonCardTitle>
+      </IonCardHeader>
     );
 
   if (data) {
@@ -49,13 +47,11 @@ const NowPlayingWithTrack: React.FC<NowPlayingWithTrackProps> = ({ track }) => {
   }
 
   return (
-    <IonCard>
-      <IonCardHeader>
-        <IonCardTitle>Loading...</IonCardTitle>
-        <IonCardSubtitle>Please wait</IonCardSubtitle>
-        <IonProgressBar type="indeterminate"></IonProgressBar>
-      </IonCardHeader>
-    </IonCard>
+    <IonCardHeader>
+      <IonCardSubtitle>Please wait</IonCardSubtitle>
+      <IonCardTitle>Loading...</IonCardTitle>
+      <IonProgressBar type="indeterminate"></IonProgressBar>
+    </IonCardHeader>
   );
 };
 
