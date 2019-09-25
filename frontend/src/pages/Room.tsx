@@ -97,7 +97,9 @@ const Room = ({ match }) => {
         <IonGrid class="full-height no-padding ion-hide-md-down">
           <IonRow class="full-height">
             <IonCol size="6">
-              <NowPlaying track={nowPlayingTrack} />
+              <IonContent>
+                <NowPlaying track={nowPlayingTrack} />
+              </IonContent>
             </IonCol>
             <IonCol size="6">
               <IonContent>
