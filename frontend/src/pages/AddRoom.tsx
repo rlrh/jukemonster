@@ -15,16 +15,18 @@ import {
   IonCardTitle,
   IonCardContent,
   IonButton,
+  IonCardSubtitle,
 } from '@ionic/react';
+import Devices from '../components/Devices';
 
 const AddRoom = ({ history }) => {
   const [name, setName] = useState('');
-  const [location, setLocation] = useState('');
+  const [description, setdescription] = useState('');
   const { postApi } = useOurApi();
 
   const submit = async () => {
     try {
-      const res = await postApi('rooms/', { name, location });
+      const res = await postApi('rooms/', { name, description });
       const value = res.data;
       const roomId = value['unique_identifier'];
       history.push(`/room/${roomId}`);
@@ -54,14 +56,14 @@ const AddRoom = ({ history }) => {
             <IonCardContent>
               <IonCardTitle>Create room</IonCardTitle>
               <IonItem>
-                <IonLabel position="floating">Location</IonLabel>
+                <IonLabel position="floating">Description</IonLabel>
                 <IonInput
                   required={true}
-                  name="location"
+                  name="description"
                   type="text"
-                  value={location}
+                  value={description}
                   onIonChange={e =>
-                    setLocation((e.target as HTMLInputElement).value)
+                    setdescription((e.target as HTMLInputElement).value)
                   }
                 />
               </IonItem>
@@ -78,10 +80,19 @@ const AddRoom = ({ history }) => {
                 />
               </IonItem>
               <br />
+              <IonItem>
+                <IonCardSubtitle>Playback Device: </IonCardSubtitle>
+              </IonItem>
+              <IonItem>
+                <Devices />
+              </IonItem>
+              <br />
               <IonButton expand="block" type="submit">
                 Create
               </IonButton>
             </IonCardContent>
+
+            <IonCardContent></IonCardContent>
           </form>
         </IonCard>
       </IonContent>

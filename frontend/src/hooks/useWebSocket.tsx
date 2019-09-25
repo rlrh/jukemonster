@@ -1,7 +1,7 @@
 import React, { useContext, createContext } from 'react';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
-const WEB_SOCKET_URL = 'ws://127.0.0.1:8000/ws/room/';
+const WEB_SOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL + '/ws/room/';
 
 const SocketContext = createContext({} as any);
 

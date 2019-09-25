@@ -1,7 +1,8 @@
-import { useMemo, useReducer } from 'react';
+import { useMemo, useEffect, useReducer } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { produce } from 'immer';
 import { useAuth } from '../../state/useAuth';
+import useOnlineStatus from '@rehooks/online-status';
 import {
   RoomState,
   Track,
@@ -15,9 +16,10 @@ import {
 const useRoomState = (roomId: string) => {
   const { access_token } = useAuth();
   const token = useMemo(() => access_token, []);
+  const onlineStatus = useOnlineStatus();
 
   // Setup WebSocket connection hook
-  const socketUrl = `ws://127.0.0.1:8000/ws/room/${roomId}`;
+  const socketUrl = process.env.REACT_APP_WEBSOCKET_URL + `/ws/room/${roomId}`;
   const STATIC_OPTIONS_AUTHENTICATED = useMemo(
     () => ({
       onOpen: console.log,
@@ -28,25 +30,58 @@ const useRoomState = (roomId: string) => {
     }),
     [],
   );
-  const [sendMessage, ,] = useWebSocket(
+  const [sendWebSocketMessage, lastMessage, readyState] = useWebSocket(
     socketUrl,
     STATIC_OPTIONS_AUTHENTICATED,
   );
 
-  // TODO: remove placeholder initial values
-  const initialState: RoomState = {
-    nowPlayingTrack: {},
-    queuedTracks: [],
+  useEffect(() => {
+    console.log('effect fired');
+    if (onlineStatus) {
+      sendCachedMessages();
+      console.log('online :)');
+    } else {
+      console.log('offline :)');
+    }
+  }, [onlineStatus]);
+
+  const ROOM_STATE_KEY = roomId + '-state';
+  const ROOM_ACTIONS_KEY = roomId + '-actions';
+
+  const getStoredValue = (key: string) => {
+    try {
+      const storedValue = localStorage.getItem(key);
+      if (storedValue != null) {
+        return JSON.parse(storedValue); // Value is an object
+      }
+    } catch {
+      // This catch block handles the known issues listed here: https://caniuse.com/#feat=namevalue-storage
+      console.warn(
+        'Could not access browser storage. Session will be lost when closing browser window',
+      );
+    }
+    return null;
   };
+
+  // TODO: remove placeholder initial values
+  let initialState = getStoredValue(ROOM_STATE_KEY);
+  if (initialState == null) {
+    initialState = {
+      nowPlayingTrack: {},
+      queuedTracks: [],
+    };
+  }
 
   // Return new state based on actions receieved from WebSockets
   const reducer = (state: RoomState, action: Event) => {
     console.log('Current state: ' + JSON.stringify(state));
     console.log('Incoming action: ' + JSON.stringify(action));
 
+    let temp;
+
     switch (action.type) {
       case EventType.Playback:
-        return produce(state, draftState => {
+        temp = produce(state, draftState => {
           const incomingTrack = action.payload;
           draftState.nowPlayingTrack = incomingTrack;
           if ('id' in incomingTrack) {
@@ -55,8 +90,9 @@ const useRoomState = (roomId: string) => {
             );
           }
         });
+        break;
       case EventType.Queue:
-        return produce(state, draftState => {
+        temp = produce(state, draftState => {
           const incomingTracks = action.payload.songs;
           incomingTracks.forEach(incomingTrack => {
             const incomingTrackQueueIndex = draftState.queuedTracks.findIndex(
@@ -69,8 +105,9 @@ const useRoomState = (roomId: string) => {
             }
           });
         });
+        break;
       case EventType.VoteCount:
-        return produce(state, draftState => {
+        temp = produce(state, draftState => {
           const incomingTracks = action.payload.songs;
           incomingTracks.forEach(incomingTrack => {
             const incomingTrackQueueIndex = draftState.queuedTracks.findIndex(
@@ -82,9 +119,14 @@ const useRoomState = (roomId: string) => {
             }
           });
         });
+        break;
       default:
-        return state;
+        temp = state;
     }
+
+    localStorage.setItem(ROOM_STATE_KEY, JSON.stringify(temp));
+
+    return temp;
   };
 
   // State management
@@ -107,7 +149,7 @@ const useRoomState = (roomId: string) => {
       },
     };
     console.log('Outgoing action: ' + JSON.stringify(message));
-    sendMessage(JSON.stringify(message));
+    sendWebSocketMessage(JSON.stringify(message));
   }
 
   // Handler for track upvote
@@ -129,7 +171,7 @@ const useRoomState = (roomId: string) => {
       },
     };
     console.log('Outgoing action: ' + JSON.stringify(message));
-    sendMessage(JSON.stringify(message));
+    sendMessage(message);
   }
 
   // Handler for track downvote
@@ -151,7 +193,35 @@ const useRoomState = (roomId: string) => {
       },
     };
     console.log('Outgoing action: ' + JSON.stringify(message));
-    sendMessage(JSON.stringify(message));
+    sendMessage(message);
+  }
+
+  // Caches message if offline else sends it
+  function sendMessage(message) {
+    if (!onlineStatus) {
+      console.log('offline saving');
+      const oldcache = getStoredValue(ROOM_ACTIONS_KEY);
+      if (oldcache != null) {
+        oldcache.push(message);
+        localStorage.setItem(ROOM_ACTIONS_KEY, JSON.stringify(oldcache));
+      } else {
+        localStorage.setItem(ROOM_ACTIONS_KEY, JSON.stringify([message]));
+      }
+    } else {
+      sendWebSocketMessage(JSON.stringify(message));
+    }
+  }
+
+  function sendCachedMessages() {
+    localStorage.removeItem(ROOM_STATE_KEY);
+    const cachedMessages = getStoredValue(ROOM_ACTIONS_KEY);
+    if (cachedMessages != null) {
+      cachedMessages.forEach(element => {
+        sendWebSocketMessage(JSON.stringify(element));
+        console.log('sending old msg');
+      });
+      localStorage.removeItem(ROOM_ACTIONS_KEY);
+    }
   }
 
   return {

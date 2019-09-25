@@ -10,6 +10,10 @@
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read https://bit.ly/CRA-PWA
 
+var CACHE_NAME = 'my-pwa-cache-v1';
+var urlsToCache = ['/rooms', '/styles/styles.css', '/script/webpack-bundle.js'];
+const FILES_TO_CACHE = ['/rooms'];
+
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
     // [::1] is the IPv6 localhost address.
