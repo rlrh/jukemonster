@@ -57,7 +57,7 @@ const Home: React.FC = () => {
                 />
               </IonItem>
               <IonButton
-                href={`/room/${roomId}`}
+                href={roomId ? `/room/${roomId}` : ''}
                 expand="full"
                 color="favorite"
               >
