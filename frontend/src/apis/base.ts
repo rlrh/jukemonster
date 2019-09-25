@@ -1,7 +1,7 @@
 import { useAuth } from '../state/useAuth';
 import axios, { AxiosResponse } from 'axios';
 
-const BACKEND_URL = 'http://127.0.0.1:8000/'; // TODO: shift to env file
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL + '/'; // TODO: shift to env file
 
 interface ApiHook {
   getApi: (path: string) => Promise<AxiosResponse<any>>;

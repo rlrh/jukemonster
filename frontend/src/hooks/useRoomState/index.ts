@@ -17,7 +17,7 @@ const useRoomState = (roomId: string) => {
   const token = useMemo(() => access_token, []);
 
   // Setup WebSocket connection hook
-  const socketUrl = `ws://127.0.0.1:8000/ws/room/${roomId}`;
+  const socketUrl = process.env.REACT_APP_WEBSOCKET_URL + '/ws/room/${roomId}';
   const STATIC_OPTIONS_AUTHENTICATED = useMemo(
     () => ({
       onOpen: console.log,
