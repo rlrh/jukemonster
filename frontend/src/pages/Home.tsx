@@ -33,20 +33,20 @@ const Home: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Jukemonster</IonTitle>
-          <IonButtons slot="primary">
-            {isAuthenticated ? (
-              <IonButton href="/signout">Sign Out</IonButton>
-            ) : (
-              <IonButton href="/signin">Sign In</IonButton>
-            )}
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent>
-        <IonGrid fixed>
+      <IonGrid fixed class="no-padding">
+        <IonHeader>
+          <IonToolbar class="transparent">
+            <IonTitle>Jukemonster</IonTitle>
+            <IonButtons slot="primary">
+              {isAuthenticated ? (
+                <IonButton href="/signout">Sign Out</IonButton>
+              ) : (
+                <IonButton href="/signin">Sign In</IonButton>
+              )}
+            </IonButtons>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent>
           <IonRow>
             <IonCol size="12" sizeMd="6">
               <h1 className="display-5 ion-padding ion-hide-lg-up">
@@ -121,8 +121,8 @@ const Home: React.FC = () => {
               </IonCard>
             </IonCol>
           </IonRow>
-        </IonGrid>
-      </IonContent>
+        </IonContent>
+      </IonGrid>
     </IonPage>
   );
 };
