@@ -38,10 +38,10 @@ const Home: React.FC = () => {
         <IonGrid fixed>
           <IonRow>
             <IonCol size="12" sizeMd="6">
-              <h1 className="display-4 ion-padding ion-hide-sm-down">
+              <h1 className="display-4 ion-padding ion-hide-md-down">
                 The social jukebox for Spotify.
               </h1>
-              <h1 className="display-5 ion-padding ion-hide-md-up">
+              <h1 className="display-5 ion-padding ion-hide-lg-up">
                 The social jukebox for Spotify.
               </h1>
             </IonCol>
