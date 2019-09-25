@@ -17,11 +17,15 @@ import {
   IonGrid,
   IonRow,
   IonCol,
+  IonButtons,
   useIonViewWillEnter,
   useIonViewWillLeave,
 } from '@ionic/react';
+import { useAuth } from '../state/useAuth';
 
 const Home: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+
   const [roomId, setRoomId] = useState('');
 
   useIonViewWillEnter(() => setRoomId(''));
@@ -32,6 +36,13 @@ const Home: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>Jukemonster</IonTitle>
+          <IonButtons slot="primary">
+            {isAuthenticated ? (
+              <IonButton href="/signout">Sign Out</IonButton>
+            ) : (
+              <IonButton href="/signin">Sign In</IonButton>
+            )}
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent>
