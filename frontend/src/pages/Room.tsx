@@ -51,20 +51,6 @@ const Room = ({ match }) => {
     'Link copied. Send your friends :)',
   );
 
-  /*
-  useIonViewDidEnter(() => {
-    console.log('ionViewDidEnter event fired');
-    window.addEventListener('online', () => {
-      sendOldMsgs();
-      console.log('online :)');
-    });
-
-    window.addEventListener('offline', () => {
-      console.log('offline :)');
-    });
-  });
-  */
-
   return (
     <IonPage>
       <IonHeader>
