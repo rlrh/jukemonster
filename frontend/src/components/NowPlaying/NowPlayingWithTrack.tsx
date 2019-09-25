@@ -5,15 +5,11 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonProgressBar,
-  IonNote,
-  IonGrid,
-  IonRow,
-  IonCol,
 } from '@ionic/react';
 import { useFetch } from 'react-async';
 import { useAuth } from '../../state/useAuth';
-import NowPlayingWithTrackData from './NowPlayingWithTrackData';
 import { NowPlayingWithTrackProps } from './types';
+import NowPlayingWithTrackData from './NowPlayingWithTrackData';
 
 const NowPlayingWithTrack: React.FC<NowPlayingWithTrackProps> = ({ track }) => {
   const { spotify_access_token } = useAuth();
@@ -24,7 +20,7 @@ const NowPlayingWithTrack: React.FC<NowPlayingWithTrackProps> = ({ track }) => {
     Accept: 'application/json',
     Authorization: `Bearer ${spotify_access_token}`,
   };
-  const { data, error, isLoading } = useFetch(
+  const { data, error } = useFetch(
     `https://api.spotify.com/v1/tracks/${trackID}`,
     { headers },
   );
@@ -40,26 +36,15 @@ const NowPlayingWithTrack: React.FC<NowPlayingWithTrackProps> = ({ track }) => {
     );
 
   if (data) {
+    const name = data.name;
     const artists = data.artists.map(artist => artist.name).join(', ');
+    const album = data.album.name;
+    const isExplicit = data.explicit;
+    const imageSource = data.album.images[0].url;
     return (
-      <IonCard>
-        <IonCardHeader>
-          <IonGrid>
-            <IonRow>
-              <IonCol size="3" sizeMd="4" sizeLg="3" />
-              <IonCol size="6" sizeMd="4" sizeLg="6">
-                <img src={data.album.images[0].url} className="ion-padding" />
-              </IonCol>
-              <IonCol size="3" sizeMd="4" sizeLg="3" />
-            </IonRow>
-          </IonGrid>
-          <IonCardSubtitle>Now Playing</IonCardSubtitle>
-          <IonCardTitle>{data.name}</IonCardTitle>
-          <IonNote color="dark">
-            {artists} • {data.album.name}
-          </IonNote>
-        </IonCardHeader>
-      </IonCard>
+      <NowPlayingWithTrackData
+        {...{ name, artists, album, isExplicit, imageSource }}
+      />
     );
   }
 

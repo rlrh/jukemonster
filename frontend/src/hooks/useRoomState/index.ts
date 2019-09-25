@@ -13,7 +13,7 @@ import {
 } from './types';
 
 const useRoomState = (roomId: string) => {
-  const { isAuthenticated, access_token } = useAuth();
+  const { access_token } = useAuth();
   const token = useMemo(() => access_token, []);
 
   // Setup WebSocket connection hook
@@ -28,7 +28,7 @@ const useRoomState = (roomId: string) => {
     }),
     [],
   );
-  const [sendMessage, lastMessage, readyState] = useWebSocket(
+  const [sendMessage, ,] = useWebSocket(
     socketUrl,
     STATIC_OPTIONS_AUTHENTICATED,
   );

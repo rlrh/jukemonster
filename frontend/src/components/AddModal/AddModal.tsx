@@ -60,7 +60,7 @@ const AddModal: React.FC<AddModalProps> = ({
           <IonSearchbar value={query} onIonChange={handleChange}></IonSearchbar>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent class="item-background">
         {query ? (
           <SearchResults
             query={query}

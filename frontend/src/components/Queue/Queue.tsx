@@ -48,7 +48,7 @@ const Queue: React.FC<QueueProps> = ({
 
   return (
     <IonList>
-      <IonListHeader>
+      <IonListHeader class="transparent">
         <IonLabel>Next Up</IonLabel>
       </IonListHeader>
       {renderQueueTracks()}

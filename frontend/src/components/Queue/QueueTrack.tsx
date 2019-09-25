@@ -37,7 +37,7 @@ const QueueTrack: React.FC<QueueTrackProps> = ({
   };
 
   return (
-    <IonItem>
+    <IonItem class="transparent">
       <Track
         name={name}
         artists={artists}

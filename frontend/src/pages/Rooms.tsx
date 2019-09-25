@@ -21,7 +21,6 @@ import {
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
-import { useAsync } from 'react-async';
 import { useOurApi } from '../apis';
 
 const Rooms = props => {

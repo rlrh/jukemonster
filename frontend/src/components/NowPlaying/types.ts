@@ -7,3 +7,11 @@ export type NowPlayingContainerProps = {
 export type NowPlayingWithTrackProps = {
   track: Track;
 };
+
+export type NowPlayingWithTrackDataProps = {
+  name: string;
+  artists: string;
+  album: string;
+  isExplicit: boolean;
+  imageSource: string;
+};

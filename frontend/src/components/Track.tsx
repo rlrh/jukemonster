@@ -12,7 +12,7 @@ const Track: React.FC<Partial<TrackType>> = ({
   return (
     <Fragment>
       <IonThumbnail slot="start" class="ion-hide-sm-down">
-        <img src={imageSource} />
+        <img src={imageSource} alt={`Album art for ${album}`} />
       </IonThumbnail>
       <IonLabel>
         <h2>{name}</h2>

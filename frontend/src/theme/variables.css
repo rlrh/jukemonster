@@ -300,6 +300,18 @@ ion-grid.no-padding ion-col {
   --ion-grid-column-padding: 0;
 }
 
+ion-item.transparent {
+  --ion-item-background: var(--ion-background-color);
+}
+
+.transparent {
+  --background: var(--ion-background-color);
+}
+
+.item-background {
+  --background: var(--ion-item-background);
+}
+
 h1.display-1 {
   font-size: 6rem;
 }
