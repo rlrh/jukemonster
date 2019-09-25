@@ -76,12 +76,58 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-tint: #f5f6f9;
 }
 
-ion-grid {
-  --ion-grid-padding: 0;
+/* Additional Ionic Colors
+// --------------------------------------------------
+// In order to add colors to be used with Ionic components,
+// the color should be added as a class with the convention `.ion-color-{COLOR}`
+// where `{COLOR}` is the color to be used on the Ionic component
+// and each variant is defined for the color. For more information, please see
+// https://beta.ionicframework.com/docs/theming/advanced
+*/
+
+.ion-color-favorite {
+  --ion-color-base: #69bb7b;
+  --ion-color-base-rgb: 105, 187, 123;
+  --ion-color-contrast: #ffffff;
+  --ion-color-contrast-rgb: 255, 255, 255;
+  --ion-color-shade: #5ca56c;
+  --ion-color-tint: #78c288;
 }
 
-ion-col {
-  --ion-grid-column-padding: 0;
+.ion-color-twitter {
+  --ion-color-base: #1da1f4;
+  --ion-color-base-rgb: 29, 161, 244;
+  --ion-color-contrast: #ffffff;
+  --ion-color-contrast-rgb: 255, 255, 255;
+  --ion-color-shade: #1a8ed7;
+  --ion-color-tint: #34aaf5;
+}
+
+.ion-color-google {
+  --ion-color-base: #dc4a38;
+  --ion-color-base-rgb: 220, 74, 56;
+  --ion-color-contrast: #ffffff;
+  --ion-color-contrast-rgb: 255, 255, 255;
+  --ion-color-shade: #c24131;
+  --ion-color-tint: #e05c4c;
+}
+
+.ion-color-vimeo {
+  --ion-color-base: #23b6ea;
+  --ion-color-base-rgb: 35, 182, 234;
+  --ion-color-contrast: #ffffff;
+  --ion-color-contrast-rgb: 255, 255, 255;
+  --ion-color-shade: #1fa0ce;
+  --ion-color-tint: #39bdec;
+}
+
+.ion-color-facebook {
+  --ion-color-base: #3b5998;
+  --ion-color-base-rgb: 59, 89, 152;
+  --ion-color-contrast: #ffffff;
+  --ion-color-contrast-rgb: 255, 255, 255;
+  --ion-color-shade: #344e86;
+  --ion-color-tint: #4f6aa2;
 }
 
 /*
@@ -231,4 +277,42 @@ body.dark {
   --ion-color-step-950: #f3f3f3;
 
   --ion-item-background: #1a1b1e;
+}
+
+/*
+ * Custom Variables
+ * -------------------------------------------
+ */
+
+:root {
+  --ion-grid-padding-xs: 0;
+  --ion-grid-column-padding-xs: 0;
+}
+
+ion-grid.no-padding {
+  --ion-grid-padding: 0;
+}
+
+ion-grid.no-padding ion-col {
+  --ion-grid-column-padding: 0;
+}
+
+h1.display-1 {
+  font-size: 6rem;
+}
+
+h1.display-2 {
+  font-size: 5.5rem;
+}
+
+h1.display-3 {
+  font-size: 4.5rem;
+}
+
+h1.display-4 {
+  font-size: 3.5rem;
+}
+
+h1.display-5 {
+  font-size: 2.5rem;
 }
