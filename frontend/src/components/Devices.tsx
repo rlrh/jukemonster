@@ -116,7 +116,11 @@ const Devices = () => {
           {data.devices
             .filter(x => x.is_active)
             .map(item => {
-              return <IonTitle>{item.name + ' ' + item.type} </IonTitle>;
+              return (
+                <IonTitle key={item.id}>
+                  {item.name + ' ' + item.type}{' '}
+                </IonTitle>
+              );
             })}
           <IonButton
             size="small"
