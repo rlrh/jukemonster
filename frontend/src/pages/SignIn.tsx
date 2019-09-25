@@ -9,7 +9,7 @@ const SignIn = () => {
     return <Redirect to="/" />;
   }
 
-  const REDIRECT_URL = 'http://127.0.0.1:8000/authorize/new';
+  const REDIRECT_URL = process.env.REACT_APP_BACKEND_URL + '/authorize/new';
   window.location.replace(REDIRECT_URL);
   return null;
 };

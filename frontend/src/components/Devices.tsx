@@ -21,13 +21,13 @@ interface Device {
   is_active: boolean;
 }
 
-const Devices: React.FC = () => {
+const Devices = () => {
   const spotify = useSpotifyApi();
   const ours = useOurApi();
 
   const [showModal, setShowModal] = useState(false);
 
-  const [data, setData] = useState({ devices: [] as Device[] });
+  const [data, setData] = useState({ devices: [] });
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 

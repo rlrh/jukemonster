@@ -37,7 +37,10 @@ class SignInCallbackChild extends Component<IProps, IState> {
 
   componentDidMount() {
     this.setState({ isLoading: true });
-    fetch(`http://127.0.0.1:8000/authorize/done/${this.props.location.search}`)
+    fetch(
+      process.env.REACT_APP_BACKEND_URL +
+        `/authorize/done/${this.props.location.search}`,
+    )
       .then(response => {
         if (response.ok) {
           return response.json();

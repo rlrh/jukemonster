@@ -27,6 +27,7 @@ import { AuthProvider } from './state/useAuth';
 import { QueueProvider } from './state/useGlobalLocalQueue';
 
 /* Pages */
+import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import SignOut from './pages/SignOut';
 import Room from './pages/Room';
@@ -34,6 +35,9 @@ import Rooms from './pages/Rooms';
 import AddRoom from './pages/AddRoom';
 import SignInCallback from './pages/SignInCallback';
 import { SocketProvider } from './hooks/useWebSocket';
+
+/* Google Analytics higher order component */
+import withTracker from './withTracker';
 
 const App = () => {
   setupConfig({
@@ -47,17 +51,25 @@ const App = () => {
           <IonApp>
             <IonReactRouter>
               <IonRouterOutlet>
-                <Route exact path="/" render={() => <Redirect to="/rooms" />} />
-                <Route exact path="/rooms" component={Rooms} />
-                <Route exact path="/rooms/addRoom" component={AddRoom} />
-                <Route exact path="/signin" component={SignIn} />
+                <Route exact path="/" component={withTracker(Home)} />
+                <Route exact path="/rooms" component={withTracker(Rooms)} />
+                <Route
+                  exact
+                  path="/rooms/addRoom"
+                  component={withTracker(AddRoom)}
+                />
+                <Route exact path="/signin" component={withTracker(SignIn)} />
                 <Route
                   exact
                   path="/signin/callback"
-                  component={SignInCallback}
+                  component={withTracker(SignInCallback)}
                 />
-                <Route exact path="/signout" component={SignOut} />
-                <Route exact path="/room/:roomId" component={Room} />
+                <Route exact path="/signout" component={withTracker(SignOut)} />
+                <Route
+                  exact
+                  path="/room/:roomId"
+                  component={withTracker(Room)}
+                />
               </IonRouterOutlet>
             </IonReactRouter>
           </IonApp>
