@@ -148,5 +148,12 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       </Fragment>
     );
   }
+  return (
+    <IonItem>
+      <IonLabel>
+        <h2>No search results to display.</h2>
+      </IonLabel>
+    </IonItem>
+  );
 };
 export default SearchResults;

@@ -25,13 +25,18 @@ const AddModal: React.FC<AddModalProps> = ({
   const [query, setQuery] = useState('');
   const handleChange = event => setQuery(event.target.value);
 
+  const handleClose = () => {
+    setQuery('');
+    onClose();
+  };
+
   if (!isAuthenticated) {
     return (
-      <IonModal isOpen={isOpen} onDidDismiss={onClose}>
+      <IonModal isOpen={isOpen} onDidDismiss={handleClose}>
         <IonHeader>
           <IonToolbar>
             <IonButtons slot="primary">
-              <IonButton onClick={onClose}>Close</IonButton>
+              <IonButton onClick={handleClose}>Close</IonButton>
             </IonButtons>
             <IonTitle>Add Songs</IonTitle>
           </IonToolbar>
@@ -48,11 +53,11 @@ const AddModal: React.FC<AddModalProps> = ({
   }
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={onClose}>
+    <IonModal isOpen={isOpen} onDidDismiss={handleClose}>
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="primary">
-            <IonButton onClick={onClose}>Close</IonButton>
+            <IonButton onClick={handleClose}>Close</IonButton>
           </IonButtons>
           <IonTitle>Add Songs</IonTitle>
         </IonToolbar>
