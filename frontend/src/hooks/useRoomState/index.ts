@@ -88,7 +88,7 @@ const useRoomState = (roomId: string) => {
           if (status === 'close') {
             draftState.isAlive = false;
           } else if (status === 'disconnect') {
-            //draftState.deviceConnected = false;
+            draftState.deviceConnected = false;
           }
         });
       case EventType.Playback:
@@ -106,10 +106,7 @@ const useRoomState = (roomId: string) => {
         nextState = produce(state, draftState => {
           const incomingTracks = action.payload.songs;
           if (action.payload.type == 'all') {
-            draftState.queuedTracks.length = 0;
-            incomingTracks.forEach(incomingTrack => {
-              draftState.queuedTracks.push(incomingTrack);
-            });
+            draftState.queuedTracks = incomingTracks;
           } else {
             incomingTracks.forEach(incomingTrack => {
               const incomingTrackQueueIndex = draftState.queuedTracks.findIndex(
@@ -260,12 +257,12 @@ const useRoomState = (roomId: string) => {
   return {
     nowPlayingTrack: state.nowPlayingTrack,
     queuedTracks: state.queuedTracks,
+    isAlive: state.isAlive,
+    deviceConnected: state.deviceConnected,
     addTrack,
     upvoteTrack,
     downvoteTrack,
     sync,
-    isAlive: state.isAlive,
-    deviceConnected: state.deviceConnected,
   };
 };
 
