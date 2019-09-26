@@ -10,7 +10,7 @@ export type NowPlayingWithTrackProps = {
 
 export type NowPlayingWithTrackDataProps = {
   name: string;
-  artists: string;
+  artists: string[];
   album: string;
   isExplicit: boolean;
   imageSource: string;
