@@ -40,7 +40,7 @@ class User(Timestampable, AbstractBaseUser):
 
     @classmethod
     def get_device_and_token(cls, user_ids):
-        users = cls.objects.filter(identifier=user_ids)
+        users = cls.objects.filter(identifier__in=user_ids)
         return list(
             users.values_list('identifier', 'access_token', 'device_id'))
 

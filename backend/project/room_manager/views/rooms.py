@@ -2,7 +2,8 @@ from ..models import Room
 from ..models.room import RoomSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
+
 
 
 class RoomViewSet(viewsets.ModelViewSet):
@@ -32,7 +33,7 @@ class RoomViewSet(viewsets.ModelViewSet):
         method would require the user to be authenticated.
         """
         if self.action == 'list':
-            permission_classes = []
+            permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
