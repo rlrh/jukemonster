@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useOurApi } from '../apis';
+import { useOurApi, useSpotifyApi } from '../apis';
 import {
   IonBackButton,
   IonButtons,
@@ -16,6 +16,7 @@ import {
   IonCardContent,
   IonButton,
   IonAlert,
+  IonToast,
   IonCardSubtitle,
   useIonViewDidEnter,
 } from '@ionic/react';
@@ -26,6 +27,7 @@ const AddRoom = ({ history }) => {
   const [name, setName] = useState('');
   const [description, setdescription] = useState('');
   const [showAlertCreateRoom, setShowAlertCreateRoom] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const {
     isAuthenticated,
     value,
@@ -33,8 +35,32 @@ const AddRoom = ({ history }) => {
     ensureTokenValidity,
   } = useAuth();
   const { postApi } = useOurApi();
+  const spotify = useSpotifyApi();
+
+  const deviceChosen = async () => {
+    try {
+      const res = await spotify.getApi(
+        `https://api.spotify.com/v1/me/player/devices`,
+      );
+      if (res && res.data && res.data.devices) {
+        const devices = res.data.devices;
+        if (devices.filter(x => x.is_active).length != 0) {
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  };
 
   const submit = async () => {
+    const chosen = await deviceChosen();
+    if (!chosen) {
+      setShowToast(true);
+      return;
+    }
     try {
       const res = await postApi('rooms/', { name, description });
       const value = res.data;
@@ -162,6 +188,13 @@ const AddRoom = ({ history }) => {
                   },
                 ]
           }
+        />
+        <IonToast
+          isOpen={showToast}
+          position="middle"
+          onDidDismiss={() => setShowToast(false)}
+          message="Open spotify on your device"
+          duration={1000}
         />
       </IonContent>
     </IonPage>
