@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useReducer } from 'react';
+import { useState, useMemo, useEffect, useReducer } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { produce } from 'immer';
 import { useAuth } from '../../state/useAuth';
@@ -108,7 +108,8 @@ const useRoomState = (roomId: string) => {
   const { isAuthenticated, access_token } = useAuth();
   const auth = useMemo(() => isAuthenticated, []);
   const token = useMemo(() => access_token, []);
-  const socketUrl = process.env.REACT_APP_WEBSOCKET_URL + `/ws/room/${roomId}`;
+  const SOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL + `/ws/room/${roomId}`;
+  const [socketUrl, setSocketUrl] = useState(SOCKET_URL);
   const STATIC_OPTIONS = useMemo(
     () => ({
       onOpen: handleOpen,
