@@ -4,8 +4,6 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardSubtitle,
-  IonThumbnail,
-  IonSkeletonText,
   IonNote,
 } from '@ionic/react';
 
