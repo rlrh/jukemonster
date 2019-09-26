@@ -93,6 +93,20 @@ const useRoomState = (roomId: string) => {
           });
         });
         break;
+      case EventType.VoteAction:
+        nextState = produce(state, draftState => {
+          const incomingVotes = action.payload.votes;
+          incomingVotes.forEach(incomingVote => {
+            const incomingVoteQueueIndex = draftState.queuedTracks.findIndex(
+              track => track.id === incomingVote.id,
+            );
+            if (incomingVoteQueueIndex !== -1) {
+              draftState.queuedTracks[incomingVoteQueueIndex].voteDirection =
+                incomingVote.voteDirection;
+            }
+          });
+        });
+        break;
       case EventType.Invalidate:
         nextState = { ...state, nowPlayingTrack: {}, queuedTracks: [] };
         break;

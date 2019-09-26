@@ -13,6 +13,7 @@ const QueueTrack: React.FC<QueueTrackProps> = ({
   votes,
   onUpvote,
   onDownvote,
+  voteDirection,
 }) => {
   const renderVotes = () => {
     if (votes < 0) {
@@ -46,10 +47,18 @@ const QueueTrack: React.FC<QueueTrackProps> = ({
         imageSource={imageSource}
       />
       {renderVotes()}
-      <IonButton onClick={() => onUpvote()} fill="clear" slot="end">
+      <IonButton
+        onClick={() => onUpvote()}
+        fill={voteDirection == 'up' ? 'outline' : 'clear'}
+        slot="end"
+      >
         <IonIcon slot="icon-only" icon={arrowUp} />
       </IonButton>
-      <IonButton onClick={() => onDownvote()} fill="clear" slot="end">
+      <IonButton
+        onClick={() => onDownvote()}
+        fill={voteDirection == 'down' ? 'outline' : 'clear'}
+        slot="end"
+      >
         <IonIcon slot="icon-only" icon={arrowDown} />
       </IonButton>
     </IonItem>

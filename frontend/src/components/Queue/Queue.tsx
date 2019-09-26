@@ -27,6 +27,7 @@ const Queue: React.FC<QueueProps> = ({
         isExplicit,
         imageSource,
         votes,
+        voteDirection = null,
       } = track;
       const handleUpvote = () => onTrackUpvote(id);
       const handleDownvote = () => onTrackDownvote(id);
@@ -41,6 +42,7 @@ const Queue: React.FC<QueueProps> = ({
           votes={votes}
           onUpvote={handleUpvote}
           onDownvote={handleDownvote}
+          voteDirection={voteDirection}
         />
       );
     });
