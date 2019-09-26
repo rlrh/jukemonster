@@ -16,9 +16,8 @@ import {
   IonRow,
   IonCol,
 } from '@ionic/react';
-import { RouteComponentProps } from 'react-router-dom';
+import { Redirect, RouteComponentProps } from 'react-router-dom';
 import useOnlineStatus from '@rehooks/online-status';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
 import useRoomState from '../hooks/useRoomState';
@@ -30,16 +29,21 @@ import Sharer from '../components/Sharer';
 
 const Room: React.FC<RouteComponentProps> = ({
   match,
+  history,
 }: RouteComponentProps) => {
   const { isAuthenticated } = useAuth();
   const onlineStatus = useOnlineStatus();
 
   const {
+    error,
     nowPlayingTrack,
     queuedTracks,
     addTrack,
     upvoteTrack,
     downvoteTrack,
+    sync,
+    isAlive,
+    deviceConnected,
   } = useRoomState(match.params.roomId);
 
   const [showAddTrackModal, setShowAddTrackModal] = useState(false);
@@ -55,20 +59,25 @@ const Room: React.FC<RouteComponentProps> = ({
   const shareText = 'Choose your music here!';
   const shareMessage = `${shareTitle} - ${shareText}`;
 
+  if (error) {
+    return <Redirect to="/roomNotFound" />;
+  }
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
+            <IonBackButton defaultHref="/" text="Home" />
+          </IonButtons>
+          <IonTitle>{`Room ${match.params.roomId}`}</IonTitle>
+          <IonButtons slot="primary">
             <Sharer
               render={handleClick => (
                 <IonButton onClick={handleClick}>Invite</IonButton>
               )}
               {...{ roomId, shareUrl, shareTitle, shareText, shareMessage }}
             />
-          </IonButtons>
-          <IonTitle>{`Room ${match.params.roomId}`}</IonTitle>
-          <IonButtons slot="primary">
             {isAuthenticated ? (
               <IonButton href="/signout">Sign Out</IonButton>
             ) : (
@@ -121,6 +130,16 @@ const Room: React.FC<RouteComponentProps> = ({
         {onlineStatus ? null : (
           <IonToolbar color="danger">
             <IonTitle>You are offline</IonTitle>
+          </IonToolbar>
+        )}
+        {isAlive ? null : (
+          <IonToolbar color="warning" onClick={() => history.push(`/`)}>
+            <IonTitle>Room closed. Tap to exit.</IonTitle>
+          </IonToolbar>
+        )}
+        {deviceConnected ? null : (
+          <IonToolbar color="danger" onClick={sync}>
+            <IonTitle>Device stopped. Tap to sync.</IonTitle>
           </IonToolbar>
         )}
       </IonFooter>

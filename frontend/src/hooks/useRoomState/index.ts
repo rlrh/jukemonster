@@ -1,8 +1,9 @@
-import { useMemo, useEffect, useReducer } from 'react';
+import { useState, useMemo, useEffect, useReducer } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { produce } from 'immer';
 import { useAuth } from '../../state/useAuth';
 import useOnlineStatus from '@rehooks/online-status';
+import { getItem, setItem, removeItem } from '../../utils/localStorage';
 import {
   RoomState,
   Track,
@@ -11,64 +12,21 @@ import {
   Event,
   EventType,
   Message,
+  StopEvent,
 } from './types';
 
-const getStoredValue = (key: string) => {
-  try {
-    const storedValue = localStorage.getItem(key);
-    if (storedValue != null) {
-      return JSON.parse(storedValue); // Value is an object
-    }
-  } catch {
-    // This catch block handles the known issues listed here: https://caniuse.com/#feat=namevalue-storage
-    console.warn(
-      'Could not access browser storage. Session will be lost when closing browser window',
-    );
-  }
-  return null;
-};
-
 const useRoomState = (roomId: string) => {
-  const { access_token } = useAuth();
-  const token = useMemo(() => access_token, []);
-  const onlineStatus = useOnlineStatus();
-
-  // Setup WebSocket connection hook
-  const socketUrl = process.env.REACT_APP_WEBSOCKET_URL + `/ws/room/${roomId}`;
-  const STATIC_OPTIONS_AUTHENTICATED = useMemo(
-    () => ({
-      onOpen: console.log,
-      onError: console.log,
-      onMessage: handleMessage,
-      onClose: console.log,
-      queryParams: { access_token: token },
-    }),
-    [],
-  );
-  const [sendWebSocketMessage, lastMessage, readyState] = useWebSocket(
-    socketUrl,
-    STATIC_OPTIONS_AUTHENTICATED,
-  );
-
-  useEffect(() => {
-    console.log('effect fired');
-    if (onlineStatus) {
-      sendCachedMessages();
-      console.log('online :)');
-    } else {
-      console.log('offline :)');
-    }
-  }, [onlineStatus]);
-
   const ROOM_STATE_KEY = roomId + '-state';
   const ROOM_ACTIONS_KEY = roomId + '-actions';
 
-  // TODO: remove placeholder initial values
-  let initialState = getStoredValue(ROOM_STATE_KEY);
+  // Initiate state from local storage if available
+  let initialState = getItem(ROOM_STATE_KEY);
   if (initialState == null) {
     initialState = {
       nowPlayingTrack: {},
       queuedTracks: [],
+      isAlive: true,
+      deviceConnected: true,
     };
   }
 
@@ -79,6 +37,16 @@ const useRoomState = (roomId: string) => {
 
     let nextState = state;
     switch (action.type) {
+      case EventType.Stop:
+        nextState = produce(state, draftState => {
+          const status = action.payload.type;
+          if (status === 'close') {
+            draftState.isAlive = false;
+          } else if (status === 'disconnect') {
+            draftState.deviceConnected = false;
+          }
+        });
+        break;
       case EventType.Playback:
         nextState = produce(state, draftState => {
           const incomingTrack = action.payload;
@@ -93,16 +61,22 @@ const useRoomState = (roomId: string) => {
       case EventType.Queue:
         nextState = produce(state, draftState => {
           const incomingTracks = action.payload.songs;
-          incomingTracks.forEach(incomingTrack => {
-            const incomingTrackQueueIndex = draftState.queuedTracks.findIndex(
-              track => track.id === incomingTrack.id,
-            );
-            if (incomingTrackQueueIndex === -1) {
-              draftState.queuedTracks.push(incomingTrack);
-            } else {
-              draftState.queuedTracks[incomingTrackQueueIndex] = incomingTrack;
-            }
-          });
+          if (action.payload.type == 'all') {
+            draftState.queuedTracks = incomingTracks;
+          } else {
+            incomingTracks.forEach(incomingTrack => {
+              const incomingTrackQueueIndex = draftState.queuedTracks.findIndex(
+                track => track.id === incomingTrack.id,
+              );
+              if (incomingTrackQueueIndex === -1) {
+                draftState.queuedTracks.push(incomingTrack);
+              } else {
+                draftState.queuedTracks[
+                  incomingTrackQueueIndex
+                ] = incomingTrack;
+              }
+            });
+          }
         });
         break;
       case EventType.VoteCount:
@@ -119,23 +93,95 @@ const useRoomState = (roomId: string) => {
           });
         });
         break;
+      case EventType.Invalidate:
+        nextState = { ...state, nowPlayingTrack: {}, queuedTracks: [] };
+        break;
       default:
-        nextState = state;
     }
-
-    localStorage.setItem(ROOM_STATE_KEY, JSON.stringify(nextState));
-
+    console.log('Next state: ' + JSON.stringify(nextState));
+    setItem(ROOM_STATE_KEY, nextState);
     return nextState;
   };
-
-  // State management
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [error, setError] = useState(false);
+
+  // Setup WebSocket connection hook
+  const { isAuthenticated, access_token } = useAuth();
+  const auth = useMemo(() => isAuthenticated, []);
+  const token = useMemo(() => access_token, []);
+  const SOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL + `/ws/room/${roomId}`;
+  const [socketUrl, setSocketUrl] = useState(SOCKET_URL);
+  const STATIC_OPTIONS = useMemo(
+    () => ({
+      onOpen: handleOpen,
+      onError: handleError,
+      onMessage: handleMessage,
+      onClose: console.log,
+      queryParams: auth ? { access_token: token } : null,
+    }),
+    [],
+  );
+  const [sendWebSocketMessage, lastMessage, readyState] = useWebSocket(
+    socketUrl,
+    STATIC_OPTIONS,
+  );
 
   // Let reducer handle state update
   function handleMessage(rawMessage: any) {
     const message: Message = rawMessage as Message;
     const action: Event = JSON.parse(message.data);
     dispatch(action);
+  }
+
+  // Invalidate cache on connection
+  function handleOpen(event) {
+    console.log(event);
+    dispatch({ type: EventType.Invalidate });
+  }
+
+  function handleError(event) {
+    console.log(event);
+    setError(true);
+  }
+
+  const onlineStatus = useOnlineStatus();
+  useEffect(() => {
+    if (onlineStatus) {
+      sendCachedMessages();
+      console.log('Now online');
+    } else {
+      console.log('Now offline');
+    }
+  }, [onlineStatus]);
+
+  // Caches message if offline else sends it
+  function sendMessage(message) {
+    if (!onlineStatus) {
+      console.log('Offline - saving message to cache...');
+      const oldCache = getItem(ROOM_ACTIONS_KEY);
+      if (oldCache != null) {
+        oldCache.push(message);
+        setItem(ROOM_ACTIONS_KEY, oldCache);
+      } else {
+        setItem(ROOM_ACTIONS_KEY, [message]);
+      }
+    } else {
+      console.log('Online - sending message...');
+      sendWebSocketMessage(JSON.stringify(message));
+    }
+  }
+
+  // Sends cached messages
+  function sendCachedMessages() {
+    removeItem(ROOM_STATE_KEY);
+    const cachedMessages = getItem(ROOM_ACTIONS_KEY);
+    if (cachedMessages != null) {
+      console.log('Sending cached messages...');
+      cachedMessages.forEach(element => {
+        sendWebSocketMessage(JSON.stringify(element));
+      });
+      removeItem(ROOM_ACTIONS_KEY);
+    }
   }
 
   // Handler for adding track
@@ -145,10 +191,11 @@ const useRoomState = (roomId: string) => {
       type: EventType.Queue,
       payload: {
         songs: [track],
+        type: 'changes',
       },
     };
     console.log('Outgoing action: ' + JSON.stringify(message));
-    sendWebSocketMessage(JSON.stringify(message));
+    sendMessage(message);
   }
 
   // Handler for track upvote
@@ -195,40 +242,29 @@ const useRoomState = (roomId: string) => {
     sendMessage(message);
   }
 
-  // Caches message if offline else sends it
-  function sendMessage(message) {
-    if (!onlineStatus) {
-      console.log('offline saving');
-      const oldcache = getStoredValue(ROOM_ACTIONS_KEY);
-      if (oldcache != null) {
-        oldcache.push(message);
-        localStorage.setItem(ROOM_ACTIONS_KEY, JSON.stringify(oldcache));
-      } else {
-        localStorage.setItem(ROOM_ACTIONS_KEY, JSON.stringify([message]));
-      }
-    } else {
-      sendWebSocketMessage(JSON.stringify(message));
-    }
-  }
-
-  function sendCachedMessages() {
-    localStorage.removeItem(ROOM_STATE_KEY);
-    const cachedMessages = getStoredValue(ROOM_ACTIONS_KEY);
-    if (cachedMessages != null) {
-      cachedMessages.forEach(element => {
-        sendWebSocketMessage(JSON.stringify(element));
-        console.log('sending old msg');
-      });
-      localStorage.removeItem(ROOM_ACTIONS_KEY);
-    }
+  // Handler for sync
+  function sync() {
+    console.log('Sync requested');
+    const message: StopEvent = {
+      type: EventType.Stop,
+      payload: {
+        type: 'reconnect',
+      },
+    };
+    console.log('Outgoing action: ' + JSON.stringify(message));
+    sendMessage(message);
   }
 
   return {
+    error,
     nowPlayingTrack: state.nowPlayingTrack,
     queuedTracks: state.queuedTracks,
+    isAlive: state.isAlive,
+    deviceConnected: state.deviceConnected,
     addTrack,
     upvoteTrack,
     downvoteTrack,
+    sync,
   };
 };
 

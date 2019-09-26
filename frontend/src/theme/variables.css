@@ -316,6 +316,10 @@ ion-item.transparent {
   display: inline;
 }
 
+.block {
+  display: block;
+}
+
 h1.display-1 {
   font-size: 6rem;
 }
