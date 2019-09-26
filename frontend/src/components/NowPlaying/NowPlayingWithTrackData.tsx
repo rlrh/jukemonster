@@ -43,7 +43,7 @@ const NowPlayingWithTrackData: React.FC<NowPlayingWithTrackDataProps> = ({
       <IonCardSubtitle>Now Playing</IonCardSubtitle>
       <IonCardTitle>{name}</IonCardTitle>
       <IonNote color="dark" class="block">
-        {artists} • {album}
+        {artists.join(', ')} • {album}
       </IonNote>
       {isExplicit ? <IonBadge color="medium">Explicit</IonBadge> : null}
     </IonCardHeader>

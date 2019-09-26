@@ -86,6 +86,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
     const renderTracks = () => {
       return tracks.map(track => {
+        if (track == null) {
+          return null;
+        }
+
         const id = track.id;
         const name = track.name;
         const artists = track.artists.map(artist => artist.name);
