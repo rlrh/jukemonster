@@ -15,9 +15,8 @@ import {
   IonGrid,
   IonRow,
   IonCol,
-  IonToast,
-  useIonViewDidEnter,
 } from '@ionic/react';
+import { RouteComponentProps } from 'react-router-dom';
 import useOnlineStatus from '@rehooks/online-status';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { add } from 'ionicons/icons';
@@ -27,9 +26,14 @@ import Queue from '../components/Queue';
 import NowPlaying from '../components/NowPlaying';
 import Devices from '../components/Devices';
 import AddModal from '../components/AddModal';
+import Sharer from '../components/Sharer';
 
-const Room = ({ match }) => {
+const Room: React.FC<RouteComponentProps> = ({
+  match,
+}: RouteComponentProps) => {
   const { isAuthenticated } = useAuth();
+  const onlineStatus = useOnlineStatus();
+
   const {
     nowPlayingTrack,
     queuedTracks,
@@ -37,36 +41,33 @@ const Room = ({ match }) => {
     upvoteTrack,
     downvoteTrack,
   } = useRoomState(match.params.roomId);
+
   const [showAddTrackModal, setShowAddTrackModal] = useState(false);
-
-  const onlineStatus = useOnlineStatus();
-
   const handleSearchResultClick = args => {
     addTrack(args);
     setShowAddTrackModal(false);
   };
 
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState(
-    'Link copied. Send your friends :)',
-  );
+  // TODO: use room title in share message
+  const roomId = match.params.roomId;
+  const shareUrl = window.location.href;
+  const shareTitle = `Join room ${match.params.roomId}`;
+  const shareText = 'Choose your music here!';
+  const shareMessage = `${shareTitle} - ${shareText}`;
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/rooms" />
+            <Sharer
+              render={handleClick => (
+                <IonButton onClick={handleClick}>Invite</IonButton>
+              )}
+              {...{ roomId, shareUrl, shareTitle, shareText, shareMessage }}
+            />
           </IonButtons>
-          <CopyToClipboard
-            text={window.location.href}
-            onCopy={() => setShowToast(true)}
-          >
-            <IonButton fill="clear" expand="full">
-              Invite
-            </IonButton>
-          </CopyToClipboard>
-
+          <IonTitle>{`Room ${match.params.roomId}`}</IonTitle>
           <IonButtons slot="primary">
             {isAuthenticated ? (
               <IonButton href="/signout">Sign Out</IonButton>
@@ -75,13 +76,6 @@ const Room = ({ match }) => {
             )}
           </IonButtons>
         </IonToolbar>
-        <IonToast
-          position="top"
-          isOpen={showToast}
-          onDidDismiss={() => setShowToast(false)}
-          message={toastMessage}
-          duration={1500}
-        />
       </IonHeader>
       <IonContent>
         <IonGrid class="no-padding ion-hide-lg-up">
@@ -121,11 +115,6 @@ const Room = ({ match }) => {
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>
-        <AddModal
-          isOpen={showAddTrackModal}
-          onClose={() => setShowAddTrackModal(false)}
-          onSearchResultClick={handleSearchResultClick}
-        />
       </IonContent>
       <IonFooter>
         <Devices />
@@ -135,6 +124,11 @@ const Room = ({ match }) => {
           </IonToolbar>
         )}
       </IonFooter>
+      <AddModal
+        isOpen={showAddTrackModal}
+        onClose={() => setShowAddTrackModal(false)}
+        onSearchResultClick={handleSearchResultClick}
+      />
     </IonPage>
   );
 };
