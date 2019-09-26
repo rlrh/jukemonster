@@ -126,7 +126,7 @@ export const useSpotifyApi: () => ApiHook = () => {
 
   const getHeader = () => {
     if (typeof value === 'string' || value == null) return null;
-    return { Authorization: 'Bearer ' + value.access_token };
+    return { Authorization: 'Bearer ' + value.spotify_access_token };
   };
 
   const getApi = async (path: string) => {
