@@ -7,6 +7,7 @@ import {
   IonSkeletonText,
 } from '@ionic/react';
 import { useSpotifyApi } from '../../apis';
+import useDeclarativeDataFetching from '../../hooks/useDeclarativeDataFetching';
 import Track from '../Track';
 import { SearchResultsProps } from './types';
 
@@ -16,10 +17,17 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 }) => {
   const [toastMessage, setToastMessage] = useState('Track added to queue!');
   const [showToast, setShowToast] = useState(false);
+
+  const { getApi } = useSpotifyApi();
+  const { isLoading, isError, data } = useDeclarativeDataFetching(
+    getApi,
+    `https://api.spotify.com/v1/search?q=${query}&type=track`,
+  );
+
+  /* Legacy code
   const error = null;
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState(null);
-  const { getApi } = useSpotifyApi();
   useEffect(() => {
     const getData = async () => {
       const resp = await getApi(
@@ -30,8 +38,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     };
     getData();
   }, [query]);
+  */
 
-  if (error) {
+  if (isError) {
     return (
       <IonItem>
         <IonLabel>
@@ -45,36 +54,18 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     return (
       <Fragment>
         <IonList>
-          <IonItem>
-            <IonLabel>
-              <h2>
-                <IonSkeletonText animated style={{ width: '15%' }} />
-              </h2>
-              <h3>
-                <IonSkeletonText animated style={{ width: '45%' }} />
-              </h3>
-            </IonLabel>
-          </IonItem>
-          <IonItem>
-            <IonLabel>
-              <h2>
-                <IonSkeletonText animated style={{ width: '10%' }} />
-              </h2>
-              <h3>
-                <IonSkeletonText animated style={{ width: '30%' }} />
-              </h3>
-            </IonLabel>
-          </IonItem>
-          <IonItem>
-            <IonLabel>
-              <h2>
-                <IonSkeletonText animated style={{ width: '20%' }} />
-              </h2>
-              <h3>
-                <IonSkeletonText animated style={{ width: '60%' }} />
-              </h3>
-            </IonLabel>
-          </IonItem>
+          {Array.from(Array(20).keys()).map(i => (
+            <IonItem key={i}>
+              <IonLabel>
+                <h2>
+                  <IonSkeletonText animated style={{ width: '15%' }} />
+                </h2>
+                <h3>
+                  <IonSkeletonText animated style={{ width: '30%' }} />
+                </h3>
+              </IonLabel>
+            </IonItem>
+          ))}
         </IonList>
       </Fragment>
     );
@@ -148,5 +139,12 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       </Fragment>
     );
   }
+  return (
+    <IonItem>
+      <IonLabel>
+        <h2>No search results to display.</h2>
+      </IonLabel>
+    </IonItem>
+  );
 };
 export default SearchResults;
