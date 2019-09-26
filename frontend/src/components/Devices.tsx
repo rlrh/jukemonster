@@ -51,6 +51,9 @@ const Devices = () => {
       device_ids: [id],
     });
     ours.putApi(`users/device/`, { device_id: id });
+    setTimeout(function() {
+      getDevices();
+    }, 500);
   };
 
   if (isLoading || error)
