@@ -312,6 +312,14 @@ ion-item.transparent {
   --background: var(--ion-item-background);
 }
 
+.inline {
+  display: inline;
+}
+
+.block {
+  display: block;
+}
+
 h1.display-1 {
   font-size: 6rem;
 }

@@ -42,7 +42,7 @@ const NowPlayingWithTrackData: React.FC<NowPlayingWithTrackDataProps> = ({
       </IonGrid>
       <IonCardSubtitle>Now Playing</IonCardSubtitle>
       <IonCardTitle>{name}</IonCardTitle>
-      <IonNote color="dark">
+      <IonNote color="dark" class="block">
         {artists} • {album}
       </IonNote>
       {isExplicit ? <IonBadge color="medium">Explicit</IonBadge> : null}
