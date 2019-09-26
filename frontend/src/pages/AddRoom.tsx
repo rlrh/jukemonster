@@ -103,7 +103,7 @@ const AddRoom = ({ history }) => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/rooms" />
+            <IonBackButton defaultHref="/" />
           </IonButtons>
           <IonTitle>Add Room</IonTitle>
         </IonToolbar>
