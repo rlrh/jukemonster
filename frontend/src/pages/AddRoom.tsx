@@ -15,13 +15,23 @@ import {
   IonCardTitle,
   IonCardContent,
   IonButton,
+  IonAlert,
   IonCardSubtitle,
+  useIonViewDidEnter,
 } from '@ionic/react';
 import Devices from '../components/Devices';
+import { useAuth } from '../state/useAuth';
 
 const AddRoom = ({ history }) => {
   const [name, setName] = useState('');
   const [description, setdescription] = useState('');
+  const [showAlertCreateRoom, setShowAlertCreateRoom] = useState(false);
+  const {
+    isAuthenticated,
+    value,
+    spotify_access_token,
+    ensureTokenValidity,
+  } = useAuth();
   const { postApi } = useOurApi();
 
   const submit = async () => {
@@ -34,6 +44,33 @@ const AddRoom = ({ history }) => {
       console.log(e);
     }
   };
+
+  const handleCreateRoom = async () => {
+    if (isAuthenticated && typeof value !== 'string') {
+      const headers = {
+        Accept: 'application/json',
+        Authorization: `Bearer ${spotify_access_token}`,
+      };
+      const res = await fetch(`https://api.spotify.com/v1/me`, {
+        method: 'GET',
+        headers: headers,
+      });
+      const account = await res.json();
+      const hasPremium = account['product'] === 'premium';
+      if (!hasPremium) {
+        setShowAlertCreateRoom(true);
+      } else {
+        history.push(`/host`);
+      }
+    } else {
+      setShowAlertCreateRoom(false);
+      setShowAlertCreateRoom(true);
+    }
+  };
+
+  useIonViewDidEnter(() => {
+    handleCreateRoom();
+  });
 
   return (
     <IonPage>
@@ -95,6 +132,37 @@ const AddRoom = ({ history }) => {
             <IonCardContent></IonCardContent>
           </form>
         </IonCard>
+        <IonAlert
+          isOpen={showAlertCreateRoom}
+          onDidDismiss={() => history.push(`/`)}
+          header="You need to sign in with a Spotify Premium account"
+          buttons={
+            !isAuthenticated
+              ? [
+                  {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: () => {
+                      history.push(`/`);
+                    },
+                  },
+                  {
+                    text: 'Sign In',
+                    handler: () => {
+                      history.push(`/signin`);
+                    },
+                  },
+                ]
+              : [
+                  {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                  },
+                ]
+          }
+        />
       </IonContent>
     </IonPage>
   );

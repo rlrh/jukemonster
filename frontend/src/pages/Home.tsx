@@ -18,7 +18,6 @@ import {
   IonRow,
   IonCol,
   IonButtons,
-  IonAlert,
   useIonViewWillEnter,
   useIonViewWillLeave,
 } from '@ionic/react';
@@ -29,40 +28,12 @@ const Home: React.FC<RouteComponentProps> = ({
   match,
   history,
 }: RouteComponentProps) => {
-  const {
-    isAuthenticated,
-    value,
-    spotify_access_token,
-    ensureTokenValidity,
-  } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [roomId, setRoomId] = useState('');
-  const [showAlertCreateRoom, setShowAlertCreateRoom] = useState(false);
 
   useIonViewWillEnter(() => setRoomId(''));
   useIonViewWillLeave(() => setRoomId(''));
-
-  const handleCreateRoom = async () => {
-    if (isAuthenticated && typeof value !== 'string') {
-      const headers = {
-        Accept: 'application/json',
-        Authorization: `Bearer ${spotify_access_token}`,
-      };
-      const res = await fetch(`https://api.spotify.com/v1/me`, {
-        method: 'GET',
-        headers: headers,
-      });
-      const account = await res.json();
-      const hasPremium = account['product'] === 'premium';
-      if (!hasPremium) {
-        setShowAlertCreateRoom(true);
-      } else {
-        history.push(`/host`);
-      }
-    } else {
-      setShowAlertCreateRoom(true);
-    }
-  };
 
   return (
     <IonPage>
@@ -108,11 +79,7 @@ const Home: React.FC<RouteComponentProps> = ({
                 Join Room
               </IonButton>
               <br />
-              <IonButton
-                onClick={handleCreateRoom}
-                expand="full"
-                color="google"
-              >
+              <IonButton href="/host" expand="full" color="google">
                 Host Room
               </IonButton>
               <br />
@@ -158,34 +125,6 @@ const Home: React.FC<RouteComponentProps> = ({
               </IonCard>
             </IonCol>
           </IonRow>
-          <IonAlert
-            isOpen={showAlertCreateRoom}
-            onDidDismiss={() => setShowAlertCreateRoom(false)}
-            header="You need to sign in with a Spotify Premium account"
-            buttons={
-              !isAuthenticated
-                ? [
-                    {
-                      text: 'Cancel',
-                      role: 'cancel',
-                      cssClass: 'secondary',
-                    },
-                    {
-                      text: 'Sign In',
-                      handler: () => {
-                        history.push(`/signin`);
-                      },
-                    },
-                  ]
-                : [
-                    {
-                      text: 'Cancel',
-                      role: 'cancel',
-                      cssClass: 'secondary',
-                    },
-                  ]
-            }
-          />
         </IonContent>
       </IonGrid>
     </IonPage>
