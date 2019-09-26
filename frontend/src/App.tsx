@@ -31,6 +31,7 @@ import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import SignOut from './pages/SignOut';
 import Room from './pages/Room';
+import RoomNotFound from './pages/RoomNotFound';
 import Rooms from './pages/Rooms';
 import AddRoom from './pages/AddRoom';
 import SignInCallback from './pages/SignInCallback';
@@ -53,11 +54,7 @@ const App = () => {
               <IonRouterOutlet>
                 <Route exact path="/" component={withTracker(Home)} />
                 <Route exact path="/rooms" component={withTracker(Rooms)} />
-                <Route
-                  exact
-                  path="/rooms/addRoom"
-                  component={withTracker(AddRoom)}
-                />
+                <Route exact path="/host" component={withTracker(AddRoom)} />
                 <Route exact path="/signin" component={withTracker(SignIn)} />
                 <Route
                   exact
@@ -69,6 +66,11 @@ const App = () => {
                   exact
                   path="/room/:roomId"
                   component={withTracker(Room)}
+                />
+                <Route
+                  exact
+                  path="/roomNotFound"
+                  component={withTracker(RoomNotFound)}
                 />
               </IonRouterOutlet>
             </IonReactRouter>

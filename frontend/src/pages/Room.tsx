@@ -16,7 +16,7 @@ import {
   IonRow,
   IonCol,
 } from '@ionic/react';
-import { RouteComponentProps } from 'react-router-dom';
+import { Redirect, RouteComponentProps } from 'react-router-dom';
 import useOnlineStatus from '@rehooks/online-status';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
@@ -35,6 +35,7 @@ const Room: React.FC<RouteComponentProps> = ({
   const onlineStatus = useOnlineStatus();
 
   const {
+    error,
     nowPlayingTrack,
     queuedTracks,
     addTrack,
@@ -57,6 +58,10 @@ const Room: React.FC<RouteComponentProps> = ({
   const shareTitle = `Join room ${match.params.roomId}`;
   const shareText = 'Choose your music here!';
   const shareMessage = `${shareTitle} - ${shareText}`;
+
+  if (error) {
+    return <Redirect to="/roomNotFound" />;
+  }
 
   return (
     <IonPage>

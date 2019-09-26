@@ -75,7 +75,7 @@ const Home: React.FC = () => {
                 Join Room
               </IonButton>
               <br />
-              <IonButton href={`/rooms/addRoom`} expand="full" color="google">
+              <IonButton href="/host" expand="full" color="google">
                 Host Room
               </IonButton>
               <br />

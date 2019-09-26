@@ -103,6 +103,7 @@ const useRoomState = (roomId: string) => {
     return nextState;
   };
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [error, setError] = useState(false);
 
   // Setup WebSocket connection hook
   const { isAuthenticated, access_token } = useAuth();
@@ -113,7 +114,7 @@ const useRoomState = (roomId: string) => {
   const STATIC_OPTIONS = useMemo(
     () => ({
       onOpen: handleOpen,
-      onError: console.log,
+      onError: handleError,
       onMessage: handleMessage,
       onClose: console.log,
       queryParams: auth ? { access_token: token } : null,
@@ -136,6 +137,11 @@ const useRoomState = (roomId: string) => {
   function handleOpen(event) {
     console.log(event);
     dispatch({ type: EventType.Invalidate });
+  }
+
+  function handleError(event) {
+    console.log(event);
+    setError(true);
   }
 
   const onlineStatus = useOnlineStatus();
@@ -250,6 +256,7 @@ const useRoomState = (roomId: string) => {
   }
 
   return {
+    error,
     nowPlayingTrack: state.nowPlayingTrack,
     queuedTracks: state.queuedTracks,
     isAlive: state.isAlive,
