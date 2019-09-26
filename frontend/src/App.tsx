@@ -53,7 +53,7 @@ const App = () => {
             <IonReactRouter>
               <IonRouterOutlet>
                 <Route exact path="/" component={withTracker(Home)} />
-                <Route exact path="/rooms" component={withTracker(Rooms)} />
+                {/*<Route exact path="/rooms" component={withTracker(Rooms)} />*/}
                 <Route exact path="/host" component={withTracker(AddRoom)} />
                 <Route exact path="/signin" component={withTracker(SignIn)} />
                 <Route

@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL + '/'; // TODO: shift to env file
 
 interface ApiHook {
-  getApi: (path: string) => Promise<AxiosResponse<any>>;
+  getApi: (path: string, withoutAuth?: boolean) => Promise<AxiosResponse<any>>;
   postApi: (path: string, body: object) => Promise<AxiosResponse<any>>;
   putApi: (path: string, body: object) => Promise<AxiosResponse<any>>;
   patchApi: (path: string, body: object) => Promise<AxiosResponse<any>>;
@@ -42,7 +42,8 @@ export const useOurApi: () => ApiHook = () => {
     return { Authorization: 'Bearer ' + value.access_token };
   };
 
-  const getApi = async (path: string) => {
+  const getApi = async (path: string, withoutAuth = false) => {
+    if (withoutAuth) return axios.get(BACKEND_URL + path);
     const headers = getHeader();
     if (!headers) return null;
     return withRetry(() =>
