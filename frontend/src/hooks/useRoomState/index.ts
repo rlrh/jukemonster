@@ -11,6 +11,7 @@ import {
   Event,
   EventType,
   Message,
+  StopEvent,
 } from './types';
 
 const getStoredValue = (key: string) => {
@@ -69,6 +70,8 @@ const useRoomState = (roomId: string) => {
     initialState = {
       nowPlayingTrack: {},
       queuedTracks: [],
+      isAlive: true,
+      deviceConnected: true,
     };
   }
 
@@ -79,6 +82,15 @@ const useRoomState = (roomId: string) => {
 
     let nextState = state;
     switch (action.type) {
+      case EventType.Stop:
+        nextState = produce(state, draftState => {
+          const status = action.payload.type;
+          if (status === 'close') {
+            draftState.isAlive = false;
+          } else if (status === 'disconnect') {
+            //draftState.deviceConnected = false;
+          }
+        });
       case EventType.Playback:
         nextState = produce(state, draftState => {
           const incomingTrack = action.payload;
@@ -93,16 +105,25 @@ const useRoomState = (roomId: string) => {
       case EventType.Queue:
         nextState = produce(state, draftState => {
           const incomingTracks = action.payload.songs;
-          incomingTracks.forEach(incomingTrack => {
-            const incomingTrackQueueIndex = draftState.queuedTracks.findIndex(
-              track => track.id === incomingTrack.id,
-            );
-            if (incomingTrackQueueIndex === -1) {
+          if (action.payload.type == 'all') {
+            draftState.queuedTracks.length = 0;
+            incomingTracks.forEach(incomingTrack => {
               draftState.queuedTracks.push(incomingTrack);
-            } else {
-              draftState.queuedTracks[incomingTrackQueueIndex] = incomingTrack;
-            }
-          });
+            });
+          } else {
+            incomingTracks.forEach(incomingTrack => {
+              const incomingTrackQueueIndex = draftState.queuedTracks.findIndex(
+                track => track.id === incomingTrack.id,
+              );
+              if (incomingTrackQueueIndex === -1) {
+                draftState.queuedTracks.push(incomingTrack);
+              } else {
+                draftState.queuedTracks[
+                  incomingTrackQueueIndex
+                ] = incomingTrack;
+              }
+            });
+          }
         });
         break;
       case EventType.VoteCount:
@@ -145,6 +166,7 @@ const useRoomState = (roomId: string) => {
       type: EventType.Queue,
       payload: {
         songs: [track],
+        type: 'changes',
       },
     };
     console.log('Outgoing action: ' + JSON.stringify(message));
@@ -195,6 +217,18 @@ const useRoomState = (roomId: string) => {
     sendMessage(message);
   }
 
+  function sync() {
+    console.log('Sync requested');
+    const message: StopEvent = {
+      type: EventType.Stop,
+      payload: {
+        type: 'reconnect',
+      },
+    };
+    console.log('Outgoing action: ' + JSON.stringify(message));
+    sendMessage(message);
+  }
+
   // Caches message if offline else sends it
   function sendMessage(message) {
     if (!onlineStatus) {
@@ -229,6 +263,9 @@ const useRoomState = (roomId: string) => {
     addTrack,
     upvoteTrack,
     downvoteTrack,
+    sync,
+    isAlive: state.isAlive,
+    deviceConnected: state.deviceConnected,
   };
 };
 

@@ -9,6 +9,8 @@ export type Message = {
 export type RoomState = {
   nowPlayingTrack: Track | {};
   queuedTracks: Track[];
+  isAlive: boolean;
+  deviceConnected: boolean;
 };
 
 // Events
@@ -18,6 +20,7 @@ export enum EventType {
   Playback = 'playbackEvent',
   VoteAction = 'voteActionEvent',
   VoteCount = 'voteCountEvent',
+  Stop = 'stopEvent',
 }
 
 export type QueueEvent = {
@@ -40,16 +43,27 @@ export type VoteCountEvent = {
   payload: VoteCountEventPayload;
 };
 
+export type StopEvent = {
+  type: EventType.Stop;
+  payload: StopEventPayload;
+};
+
 export type Event =
   | QueueEvent
   | PlaybackEvent
   | VoteActionEvent
-  | VoteCountEvent;
+  | VoteCountEvent
+  | StopEvent;
 
 // Event payloads
 
 export type QueueEventPayload = {
   songs: Track[];
+  type: string;
+};
+
+export type StopEventPayload = {
+  type: string;
 };
 
 export type PlaybackEventPayload = Track | {};

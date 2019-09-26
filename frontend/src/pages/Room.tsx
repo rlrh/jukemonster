@@ -28,7 +28,7 @@ import NowPlaying from '../components/NowPlaying';
 import Devices from '../components/Devices';
 import AddModal from '../components/AddModal';
 
-const Room = ({ match }) => {
+const Room = ({ match, history }) => {
   const { isAuthenticated } = useAuth();
   const {
     nowPlayingTrack,
@@ -36,6 +36,9 @@ const Room = ({ match }) => {
     addTrack,
     upvoteTrack,
     downvoteTrack,
+    sync,
+    isAlive,
+    deviceConnected,
   } = useRoomState(match.params.roomId);
   const [showAddTrackModal, setShowAddTrackModal] = useState(false);
 
@@ -132,6 +135,16 @@ const Room = ({ match }) => {
         {onlineStatus ? null : (
           <IonToolbar color="danger">
             <IonTitle>You are offline</IonTitle>
+          </IonToolbar>
+        )}
+        {isAlive ? null : (
+          <IonToolbar color="warning" onClick={() => history.push(`/`)}>
+            <IonTitle>Room closed. Tap to exit.</IonTitle>
+          </IonToolbar>
+        )}
+        {deviceConnected ? null : (
+          <IonToolbar color="danger" onClick={sync}>
+            <IonTitle>Device stopped. Tap to sync.</IonTitle>
           </IonToolbar>
         )}
       </IonFooter>
