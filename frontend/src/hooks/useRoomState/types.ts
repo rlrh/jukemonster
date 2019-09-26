@@ -21,6 +21,7 @@ export enum EventType {
   VoteAction = 'voteActionEvent',
   VoteCount = 'voteCountEvent',
   Stop = 'stopEvent',
+  Invalidate = 'invalidateEvent',
 }
 
 export type QueueEvent = {
@@ -48,12 +49,17 @@ export type StopEvent = {
   payload: StopEventPayload;
 };
 
+export type InvalidateEvent = {
+  type: EventType.Invalidate;
+};
+
 export type Event =
   | QueueEvent
   | PlaybackEvent
   | VoteActionEvent
   | VoteCountEvent
-  | StopEvent;
+  | StopEvent
+  | InvalidateEvent;
 
 // Event payloads
 
