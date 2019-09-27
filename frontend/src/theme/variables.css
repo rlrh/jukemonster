@@ -238,10 +238,6 @@ body.dark {
   --ion-item-background-activated: #313131;
 }
 
-.ios body.dark .popover {
-  --background: #989aa2;
-}
-
 /*
  * Material Design Dark Theme
  * -------------------------------------------
@@ -310,6 +306,10 @@ ion-item.transparent {
 
 .item-background {
   --background: var(--ion-item-background);
+}
+
+.item-background-light {
+  --background: var(--ion-item-background-activated);
 }
 
 .inline {

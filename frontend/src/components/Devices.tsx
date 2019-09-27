@@ -85,7 +85,7 @@ const Devices = () => {
               </IonButtons>
             </IonToolbar>
           </IonHeader>
-          <IonContent>
+          <IonContent class="item-background">
             {data.devices.length == 0 ? (
               <IonCard>
                 <IonCardHeader>
@@ -101,6 +101,7 @@ const Devices = () => {
                     setDevice(item.id);
                     setShowModal(false);
                   }}
+                  class="item-background-light"
                 >
                   <IonCardHeader>
                     <IonCardSubtitle>{item.type}</IonCardSubtitle>
@@ -114,16 +115,12 @@ const Devices = () => {
 
         <IonToolbar>
           {data.devices.filter(x => x.is_active).length == 0 ? (
-            <IonTitle> No active devices </IonTitle>
+            <IonTitle>No active devices</IonTitle>
           ) : null}
           {data.devices
             .filter(x => x.is_active)
             .map(item => {
-              return (
-                <IonTitle key={item.id}>
-                  {item.name + ' ' + item.type}{' '}
-                </IonTitle>
-              );
+              return <IonTitle key={item.id}>{item.name}</IonTitle>;
             })}
           <IonButton
             size="small"
