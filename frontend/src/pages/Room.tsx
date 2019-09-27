@@ -39,7 +39,7 @@ const Room: React.FC<RouteComponentProps> = ({
   const roomId = match.params.roomId;
 
   const { isAuthenticated } = useAuth();
-  const { getApi } = useOurApi();
+  const { getApi, deleteApi } = useOurApi();
   const { signInRedirect } = useSignInRedirect();
   const onlineStatus = useOnlineStatus();
 
@@ -85,8 +85,12 @@ const Room: React.FC<RouteComponentProps> = ({
 
   const renderExitButton = () => {
     if (isHost) {
+      const handleClick = async () => {
+        await deleteApi(`rooms/${roomId}`);
+        return history.push('/');
+      };
       return (
-        <IonButton href="/" color="danger">
+        <IonButton onClick={handleClick} color="danger">
           <IonIcon slot="start" icon={trash} />
           Delete Room
         </IonButton>
