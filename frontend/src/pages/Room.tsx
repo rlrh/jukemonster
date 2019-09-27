@@ -35,6 +35,8 @@ const Room: React.FC<RouteComponentProps> = ({
   match,
   history,
 }: RouteComponentProps) => {
+  const roomId = match.params.roomId;
+
   const { isAuthenticated } = useAuth();
   const { getApi } = useOurApi();
   const { signInRedirect } = useSignInRedirect();
@@ -42,7 +44,7 @@ const Room: React.FC<RouteComponentProps> = ({
 
   const { isLoading, isError, data } = useDeclarativeDataFetching(
     getApi,
-    `rooms/${match.params.roomId}`,
+    `rooms/${roomId}`,
     true,
   );
 
@@ -56,7 +58,7 @@ const Room: React.FC<RouteComponentProps> = ({
     sync,
     isAlive,
     deviceConnected,
-  } = useRoomState(match.params.roomId);
+  } = useRoomState(roomId);
 
   const [showDesc, setShowDesc] = useState(false);
 
@@ -71,10 +73,8 @@ const Room: React.FC<RouteComponentProps> = ({
     if (!isAuthenticated) setShowAlertViewRoom(true);
   });
 
-  // TODO: use room title in share message
-  const roomId = match.params.roomId;
   const shareUrl = window.location.href;
-  const shareTitle = `Join room ${match.params.roomId}`;
+  const shareTitle = `Join ${data ? data.name : `room ${roomId}`}`;
   const shareText = 'Choose your music here!';
   const shareMessage = `${shareTitle} - ${shareText}`;
 
@@ -90,8 +90,7 @@ const Room: React.FC<RouteComponentProps> = ({
               </IonButton>
             </IonButtons>
             <IonTitle onClick={() => setShowDesc(!showDesc)}>
-              {data ? data.name : `Room ${match.params.roomId}`}{' '}
-              {showDesc ? '▲' : '▼'}
+              {data ? data.name : `Room ${roomId}`} {showDesc ? '▲' : '▼'}
             </IonTitle>
             <IonButtons slot="primary">
               <Sharer
