@@ -69,6 +69,11 @@ const Home: React.FC = () => {
                   onIonChange={event =>
                     setRoomId((event.target as HTMLInputElement).value)
                   }
+                  type="text"
+                  minlength={5}
+                  maxlength={5}
+                  placeholder="Enter the 5-character room ID here"
+                  autofocus
                 />
               </IonItem>
               <IonButton
@@ -95,8 +100,8 @@ const Home: React.FC = () => {
                   </IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
-                  Perfect for parties, gatherings, bars, coffee shops, clubs,
-                  workplaces, events, weddings, gyms and more.
+                  Don't know what music to play at your party or gathering? Let
+                  your guests choose the music for you!
                 </IonCardContent>
               </IonCard>
             </IonCol>
@@ -107,8 +112,8 @@ const Home: React.FC = () => {
                   <IonCardTitle>Everyone's invited to the party</IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
-                  Join any room straight from the web. Share a web link that
-                  lets anyone join the fun in seconds.
+                  Share a web link that lets anyone join the party in seconds.
+                  No need to download an app - Jukemonster works in the browser.
                 </IonCardContent>
               </IonCard>
             </IonCol>
@@ -116,7 +121,7 @@ const Home: React.FC = () => {
               <IonCard>
                 <IonCardHeader>
                   <IonCardSubtitle>For guests</IonCardSubtitle>
-                  <IonCardTitle>Influence the song order</IonCardTitle>
+                  <IonCardTitle>Influence the songs played</IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
                   Request from millions of tracks on Spotify. Vote songs up or

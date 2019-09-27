@@ -175,14 +175,14 @@ const Room: React.FC<RouteComponentProps> = ({
         </IonFab>
       </IonContent>
       <IonFooter>
-        <Devices />
+        {isHost ? <Devices /> : null}
         {onlineStatus ? null : (
-          <IonToolbar color="danger">
+          <IonToolbar color="warning">
             <IonTitle>You are offline</IonTitle>
           </IonToolbar>
         )}
         {isAlive ? null : (
-          <IonToolbar color="warning" onClick={() => history.push(`/`)}>
+          <IonToolbar color="danger" onClick={() => history.push(`/`)}>
             <IonTitle>Room closed. Tap to exit.</IonTitle>
           </IonToolbar>
         )}
