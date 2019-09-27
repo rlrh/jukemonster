@@ -14,7 +14,7 @@ import {
 } from '@ionic/react';
 import { useOurApi, useSpotifyApi } from '../apis';
 
-interface Device {
+export interface Device {
   id: string;
   type: string;
   name: string;

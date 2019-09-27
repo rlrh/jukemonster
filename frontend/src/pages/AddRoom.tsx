@@ -20,7 +20,7 @@ import {
   IonGrid,
   useIonViewDidEnter,
 } from '@ionic/react';
-import Devices from '../components/Devices';
+import Devices, { Device } from '../components/Devices';
 import { useAuth } from '../state/useAuth';
 import { useSignInRedirect } from '../hooks/useSignInRedirect';
 
@@ -44,15 +44,14 @@ const AddRoom = ({ history }) => {
         `https://api.spotify.com/v1/me/player/devices`,
       );
       if (res && res.data && res.data.devices) {
-        const devices = res.data.devices;
-        if (devices.filter(x => x.is_active).length !== 0) {
-          return true;
-        }
+        const devices: [Device] = res.data.devices;
+        const activeDevices = devices.filter(x => x.is_active);
+        return activeDevices[0];
       }
-      return false;
+      return null;
     } catch (e) {
       console.log(e);
-      return false;
+      return null;
     }
   };
   const { signInRedirect } = useSignInRedirect();
@@ -64,7 +63,11 @@ const AddRoom = ({ history }) => {
       return;
     }
     try {
-      const res = await postApi('rooms/', { name, description });
+      const res = await postApi('rooms/', {
+        name,
+        description,
+        device_id: chosen.id,
+      });
       const value = res.data;
       const roomId = value['unique_identifier'];
       history.push(`/room/${roomId}`);

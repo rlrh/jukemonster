@@ -11,7 +11,7 @@ import {
 import { useAuth } from '../state/useAuth';
 import * as queryString from 'query-string';
 
-const SignInCallback: React.FC = props => {
+const SignInCallback: React.FC<RouteComponentProps> = props => {
   const { signIn } = useAuth();
   return <SignInCallbackChild {...props} onSignIn={signIn} />;
 };
