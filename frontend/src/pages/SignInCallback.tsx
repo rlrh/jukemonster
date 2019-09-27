@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router';
+import { Redirect, RouteComponentProps } from 'react-router';
 import {
   IonPage,
   IonHeader,
@@ -9,6 +9,7 @@ import {
   IonProgressBar,
 } from '@ionic/react';
 import { useAuth } from '../state/useAuth';
+import * as queryString from 'query-string';
 
 const SignInCallback = props => {
   const { signIn } = useAuth();
@@ -24,14 +25,19 @@ interface IState {
   data: {} | null;
   isLoading: boolean;
   error: string | null;
+  redirectTo: string;
 }
-class SignInCallbackChild extends Component<IProps, IState> {
+class SignInCallbackChild extends Component<
+  RouteComponentProps & IProps,
+  IState
+> {
   constructor(props) {
     super(props);
     this.state = {
       data: null,
       isLoading: false,
       error: null,
+      redirectTo: '/',
     };
   }
 
@@ -49,18 +55,23 @@ class SignInCallbackChild extends Component<IProps, IState> {
         }
       })
       .then(data => {
-        this.setState({ data, isLoading: false });
-        console.log('Your token is: ' + data.access_token);
         (this.props as any).onSignIn(data);
+        this.setState({
+          redirectTo: queryString.parse(this.props.location.search)[
+            'state'
+          ] as string,
+          isLoading: false,
+          data: data,
+        });
       })
       .catch(error => this.setState({ error, isLoading: false }));
   }
 
   render() {
-    const { data, error } = this.state;
+    const { data, error, redirectTo } = this.state;
 
     if (data) {
-      return <Redirect to="/" />;
+      return <Redirect to={redirectTo || '/'} />;
     }
 
     if (error) {

@@ -22,6 +22,7 @@ import {
 } from '@ionic/react';
 import Devices from '../components/Devices';
 import { useAuth } from '../state/useAuth';
+import { useSignInRedirect } from '../hooks/useSignInRedirect';
 
 const AddRoom = ({ history }) => {
   const [name, setName] = useState('');
@@ -54,6 +55,7 @@ const AddRoom = ({ history }) => {
       return false;
     }
   };
+  const { signInRedirect } = useSignInRedirect();
 
   const submit = async () => {
     const chosen = await deviceChosen();
@@ -103,7 +105,7 @@ const AddRoom = ({ history }) => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/rooms" />
+            <IonBackButton defaultHref="/" />
           </IonButtons>
           <IonTitle>Add Room</IonTitle>
         </IonToolbar>
@@ -175,9 +177,7 @@ const AddRoom = ({ history }) => {
                   },
                   {
                     text: 'Sign In',
-                    handler: () => {
-                      history.push(`/signin`);
-                    },
+                    handler: signInRedirect,
                   },
                 ]
               : [

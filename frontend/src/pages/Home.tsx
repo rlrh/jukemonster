@@ -23,13 +23,14 @@ import {
 } from '@ionic/react';
 import { useAuth } from '../state/useAuth';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
+import { useSignInRedirect } from '../hooks/useSignInRedirect';
 
 const Home: React.FC<RouteComponentProps> = ({
   match,
   history,
 }: RouteComponentProps) => {
   const { isAuthenticated } = useAuth();
-
+  const { signInRedirect } = useSignInRedirect();
   const [roomId, setRoomId] = useState('');
 
   useIonViewWillEnter(() => setRoomId(''));
@@ -45,7 +46,7 @@ const Home: React.FC<RouteComponentProps> = ({
               {isAuthenticated ? (
                 <IonButton href="/signout">Sign Out</IonButton>
               ) : (
-                <IonButton href="/signin">Sign In</IonButton>
+                <IonButton onClick={signInRedirect}>Sign In</IonButton>
               )}
             </IonButtons>
           </IonToolbar>
