@@ -230,7 +230,7 @@ const useRoomState = (roomId: string) => {
       },
     };
     console.log('Outgoing action: ' + JSON.stringify(message));
-    sendMessage(message);
+    sendWebSocketMessage(JSON.stringify(message));
   }
 
   // Handler for track upvote
