@@ -98,10 +98,10 @@ export type Track = {
   imageSource: string;
   trackDuration: number;
   votes?: number;
-  voteDirection?: 'up' | 'down';
+  voteDirection?: 'up' | 'down' | 'neutral';
 };
 
 export type Vote = {
   id: string;
-  voteDirection: 'up' | 'down';
+  voteDirection: 'up' | 'down' | 'neutral';
 };
