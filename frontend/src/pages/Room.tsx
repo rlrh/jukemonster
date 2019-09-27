@@ -43,17 +43,23 @@ const Room: React.FC<RouteComponentProps> = ({
   const { signInRedirect } = useSignInRedirect();
   const onlineStatus = useOnlineStatus();
 
+  const PATH = `rooms/${roomId}`;
+  const [path, setPath] = useState(PATH);
   const { data, isLoading, isError } = useDeclarativeDataFetching(
     getApi,
-    `rooms/${roomId}`,
+    path,
     isAuthenticated ? false : true,
   );
+  useEffect(() => setPath(PATH), [onlineStatus]);
   const [isHost, setIsHost] = useState(false);
   useEffect(() => {
     if (data) setIsHost(data.isHost);
   }, [data]);
 
   const {
+    error,
+    reopenSocket,
+    offlineToOnline,
     nowPlayingTrack,
     queuedTracks,
     addTrack,
@@ -175,14 +181,14 @@ const Room: React.FC<RouteComponentProps> = ({
         </IonFab>
       </IonContent>
       <IonFooter>
-        <Devices />
+        {isHost ? <Devices /> : null}
         {onlineStatus ? null : (
           <IonToolbar color="danger">
-            <IonTitle>You are offline</IonTitle>
+            <IonTitle>You are offline.</IonTitle>
           </IonToolbar>
         )}
         {isAlive ? null : (
-          <IonToolbar color="warning" onClick={() => history.push(`/`)}>
+          <IonToolbar color="danger" onClick={() => history.push(`/`)}>
             <IonTitle>Room closed. Tap to exit.</IonTitle>
           </IonToolbar>
         )}
@@ -191,6 +197,11 @@ const Room: React.FC<RouteComponentProps> = ({
             <IonTitle>Device stopped. Tap to sync.</IonTitle>
           </IonToolbar>
         )}
+        {offlineToOnline ? (
+          <IonToolbar color="danger" onClick={reopenSocket}>
+            <IonTitle>Out of sync. Tap to resync.</IonTitle>
+          </IonToolbar>
+        ) : null}
       </IonFooter>
       <AddModal
         isOpen={showAddTrackModal}

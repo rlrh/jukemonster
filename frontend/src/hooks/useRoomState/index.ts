@@ -3,6 +3,7 @@ import useWebSocket from 'react-use-websocket';
 import { produce } from 'immer';
 import { useAuth } from '../../state/useAuth';
 import useOnlineStatus from '@rehooks/online-status';
+import { ReadyStateEnum } from 'react-use-websocket/dist/lib/use-websocket';
 import { getItem, setItem, removeItem } from '../../utils/localStorage';
 import {
   RoomState,
@@ -14,7 +15,6 @@ import {
   Message,
   StopEvent,
 } from './types';
-import { ReadyStateEnum } from 'react-use-websocket/dist/lib/use-websocket';
 
 const useRoomState = (roomId: string) => {
   const ROOM_STATE_KEY = roomId + '-state';
@@ -118,7 +118,6 @@ const useRoomState = (roomId: string) => {
     return nextState;
   };
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [error, setError] = useState(false);
 
   // Setup WebSocket connection hook
   const { isAuthenticated, access_token } = useAuth();
@@ -131,7 +130,7 @@ const useRoomState = (roomId: string) => {
       onOpen: handleOpen,
       onError: handleError,
       onMessage: handleMessage,
-      onClose: console.log,
+      onClose: handleClose,
       queryParams: auth ? { access_token: token } : null,
     }),
     [],
@@ -140,6 +139,8 @@ const useRoomState = (roomId: string) => {
     socketUrl,
     STATIC_OPTIONS,
   );
+
+  const [error, setError] = useState(false);
 
   // Let reducer handle state update
   function handleMessage(rawMessage: any) {
@@ -159,15 +160,34 @@ const useRoomState = (roomId: string) => {
     setError(true);
   }
 
+  function handleClose(event) {
+    console.log(event);
+    dispatch({ type: EventType.Invalidate });
+  }
+
   const onlineStatus = useOnlineStatus();
+  const [offlineToOnline, setOfflineToOnline] = useState(false);
+  const [wasOffline, setWasOffline] = useState(false);
   useEffect(() => {
-    if (onlineStatus && readyState == ReadyStateEnum.Open) {
-      sendCachedMessages();
+    if (onlineStatus) {
       console.log('Now online');
+      if (wasOffline) {
+        setWasOffline(false);
+        setOfflineToOnline(true);
+      }
     } else {
       console.log('Now offline');
+      setWasOffline(true);
+      setOfflineToOnline(false);
     }
+    if (onlineStatus && readyState == ReadyStateEnum.Open) sendCachedMessages();
   }, [onlineStatus, readyState]);
+
+  const reopenSocket = () => {
+    setOfflineToOnline(false);
+    setSocketUrl(process.env.REACT_APP_WEBSOCKET_URL);
+    setTimeout(() => setSocketUrl(SOCKET_URL), 1000);
+  };
 
   // Caches message if offline else sends it
   function sendMessage(message) {
@@ -210,7 +230,7 @@ const useRoomState = (roomId: string) => {
       },
     };
     console.log('Outgoing action: ' + JSON.stringify(message));
-    sendMessage(message);
+    sendWebSocketMessage(JSON.stringify(message));
   }
 
   // Handler for track upvote
@@ -272,6 +292,9 @@ const useRoomState = (roomId: string) => {
 
   return {
     error,
+    reopenSocket,
+    offlineToOnline,
+    setOfflineToOnline,
     nowPlayingTrack: state.nowPlayingTrack,
     queuedTracks: state.queuedTracks,
     isAlive: state.isAlive,

@@ -192,7 +192,7 @@ const AddRoom = ({ history }) => {
             isOpen={showToast}
             position="middle"
             onDidDismiss={() => setShowToast(false)}
-            message="Open spotify on your device"
+            message="Please open Spotify on your device and retry."
             duration={1000}
           />
         </IonContent>
