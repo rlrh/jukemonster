@@ -42,7 +42,9 @@ const Home: React.FC = () => {
               {isAuthenticated ? (
                 <IonButton href="/signout">Sign Out</IonButton>
               ) : (
-                <IonButton onClick={signInRedirect}>Sign In</IonButton>
+                <IonButton href="/signin" onClick={signInRedirect}>
+                  Sign In
+                </IonButton>
               )}
             </IonButtons>
           </IonToolbar>

@@ -26,7 +26,7 @@ const AddModal: React.FC<AddModalProps> = ({
   const handleChange = event => setQuery(event.target.value);
 
   const handleClose = () => {
-    setQuery('');
+    // setQuery('');
     onClose();
   };
 

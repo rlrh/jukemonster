@@ -49,14 +49,16 @@ const QueueTrack: React.FC<QueueTrackProps> = ({
       {renderVotes()}
       <IonButton
         onClick={() => onUpvote()}
-        fill={voteDirection == 'up' ? 'outline' : 'clear'}
+        color={voteDirection == 'up' ? 'success' : 'medium'}
+        fill="clear"
         slot="end"
       >
         <IonIcon slot="icon-only" icon={arrowUp} />
       </IonButton>
       <IonButton
         onClick={() => onDownvote()}
-        fill={voteDirection == 'down' ? 'outline' : 'clear'}
+        color={voteDirection == 'down' ? 'danger' : 'medium'}
+        fill="clear"
         slot="end"
       >
         <IonIcon slot="icon-only" icon={arrowDown} />

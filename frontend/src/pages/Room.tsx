@@ -11,7 +11,6 @@ import {
   IonButtons,
   IonButton,
   IonFooter,
-  IonBackButton,
   IonGrid,
   IonRow,
   IonCol,
@@ -20,7 +19,7 @@ import {
 } from '@ionic/react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import useOnlineStatus from '@rehooks/online-status';
-import { add } from 'ionicons/icons';
+import { add, closeCircle, shareAlt } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
 import { useSignInRedirect } from '../hooks/useSignInRedirect';
 import useRoomState from '../hooks/useRoomState';
@@ -34,12 +33,7 @@ const Room: React.FC<RouteComponentProps> = ({
   match,
   history,
 }: RouteComponentProps) => {
-  const {
-    isAuthenticated,
-    value,
-    spotify_access_token,
-    ensureTokenValidity,
-  } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { signInRedirect } = useSignInRedirect();
   const onlineStatus = useOnlineStatus();
 
@@ -78,22 +72,23 @@ const Room: React.FC<RouteComponentProps> = ({
       <IonPage>
         <IonHeader>
           <IonToolbar>
-            <IonButtons slot="start">
-              <IonBackButton defaultHref="/" text="Home" />
+            <IonButtons slot="secondary">
+              <IonButton href="/" color="danger">
+                <IonIcon slot="start" icon={closeCircle} />
+                Leave
+              </IonButton>
             </IonButtons>
             <IonTitle>{`Room ${match.params.roomId}`}</IonTitle>
             <IonButtons slot="primary">
               <Sharer
                 render={handleClick => (
-                  <IonButton onClick={handleClick}>Invite</IonButton>
+                  <IonButton onClick={handleClick}>
+                    <IonIcon slot="start" icon={shareAlt} />
+                    Invite
+                  </IonButton>
                 )}
                 {...{ roomId, shareUrl, shareTitle, shareText, shareMessage }}
               />
-              {isAuthenticated ? (
-                <IonButton href="/signout">Sign Out</IonButton>
-              ) : (
-                <IonButton onClick={signInRedirect}>Sign In</IonButton>
-              )}
             </IonButtons>
           </IonToolbar>
         </IonHeader>
