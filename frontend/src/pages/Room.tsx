@@ -45,7 +45,6 @@ const Room: React.FC<RouteComponentProps> = ({
   const { isLoading, isError, data } = useDeclarativeDataFetching(
     getApi,
     `rooms/${roomId}`,
-    true,
   );
 
   const {
