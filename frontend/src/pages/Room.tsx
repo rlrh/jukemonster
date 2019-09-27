@@ -21,6 +21,8 @@ import { Redirect, RouteComponentProps } from 'react-router-dom';
 import useOnlineStatus from '@rehooks/online-status';
 import { add, closeCircle, shareAlt } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
+import { useOurApi } from '../apis';
+import useDeclarativeDataFetching from '../hooks/useDeclarativeDataFetching';
 import { useSignInRedirect } from '../hooks/useSignInRedirect';
 import useRoomState from '../hooks/useRoomState';
 import Queue from '../components/Queue';
@@ -34,8 +36,15 @@ const Room: React.FC<RouteComponentProps> = ({
   history,
 }: RouteComponentProps) => {
   const { isAuthenticated } = useAuth();
+  const { getApi } = useOurApi();
   const { signInRedirect } = useSignInRedirect();
   const onlineStatus = useOnlineStatus();
+
+  const { isLoading, isError, data } = useDeclarativeDataFetching(
+    getApi,
+    `rooms/${match.params.roomId}`,
+    true,
+  );
 
   const {
     error,
@@ -48,6 +57,8 @@ const Room: React.FC<RouteComponentProps> = ({
     isAlive,
     deviceConnected,
   } = useRoomState(match.params.roomId);
+
+  const [showDesc, setShowDesc] = useState(false);
 
   const [showAddTrackModal, setShowAddTrackModal] = useState(false);
   const handleSearchResultClick = args => {
@@ -78,7 +89,10 @@ const Room: React.FC<RouteComponentProps> = ({
                 Leave
               </IonButton>
             </IonButtons>
-            <IonTitle>{`Room ${match.params.roomId}`}</IonTitle>
+            <IonTitle onClick={() => setShowDesc(!showDesc)}>
+              {data ? data.name : `Room ${match.params.roomId}`}{' '}
+              {showDesc ? '▲' : '▼'}
+            </IonTitle>
             <IonButtons slot="primary">
               <Sharer
                 render={handleClick => (
@@ -91,6 +105,13 @@ const Room: React.FC<RouteComponentProps> = ({
               />
             </IonButtons>
           </IonToolbar>
+          {showDesc ? (
+            <IonToolbar>
+              <IonTitle color="medium">
+                {data ? data.description : 'No description'}
+              </IonTitle>
+            </IonToolbar>
+          ) : null}
         </IonHeader>
         <IonContent>
           <IonGrid class="no-padding ion-hide-lg-up">
