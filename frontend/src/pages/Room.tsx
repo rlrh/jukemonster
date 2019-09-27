@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -16,10 +16,11 @@ import {
   IonCol,
   IonAlert,
   useIonViewWillEnter,
+  useIonViewWillLeave,
 } from '@ionic/react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import useOnlineStatus from '@rehooks/online-status';
-import { add, closeCircle, shareAlt } from 'ionicons/icons';
+import { add, trash, closeCircle, shareAlt } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
 import { useOurApi } from '../apis';
 import useDeclarativeDataFetching from '../hooks/useDeclarativeDataFetching';
@@ -42,10 +43,17 @@ const Room: React.FC<RouteComponentProps> = ({
   const { signInRedirect } = useSignInRedirect();
   const onlineStatus = useOnlineStatus();
 
-  const { data } = useDeclarativeDataFetching(getApi, `rooms/${roomId}`);
+  const { data, isLoading, isError } = useDeclarativeDataFetching(
+    getApi,
+    `rooms/${roomId}`,
+    isAuthenticated ? false : true,
+  );
+  const [isHost, setIsHost] = useState(false);
+  useEffect(() => {
+    if (data) setIsHost(data.isHost);
+  }, [data]);
 
   const {
-    error,
     nowPlayingTrack,
     queuedTracks,
     addTrack,
@@ -55,8 +63,6 @@ const Room: React.FC<RouteComponentProps> = ({
     isAlive,
     deviceConnected,
   } = useRoomState(roomId);
-
-  const [showDesc, setShowDesc] = useState(false);
 
   const [showAddTrackModal, setShowAddTrackModal] = useState(false);
   const handleSearchResultClick = args => {
@@ -68,132 +74,146 @@ const Room: React.FC<RouteComponentProps> = ({
   useIonViewWillEnter(() => {
     if (!isAuthenticated) setShowAlertViewRoom(true);
   });
+  useIonViewWillLeave(() => setShowAlertViewRoom(false));
+
+  const [showDesc, setShowDesc] = useState(false);
 
   const shareUrl = window.location.href;
   const shareTitle = `Join ${data ? data.name : `room ${roomId}`}`;
   const shareText = 'Choose your music here!';
   const shareMessage = `${shareTitle} - ${shareText}`;
 
-  if (!error) {
-    return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonButtons slot="secondary">
-              <IonButton href="/" color="danger">
-                <IonIcon slot="start" icon={closeCircle} />
-                Leave
-              </IonButton>
-            </IonButtons>
-            <IonTitle onClick={() => setShowDesc(!showDesc)}>
-              {data ? data.name : `Room ${roomId}`} {showDesc ? '▲' : '▼'}
-            </IonTitle>
-            <IonButtons slot="primary">
-              <Sharer
-                render={handleClick => (
-                  <IonButton onClick={handleClick}>
-                    <IonIcon slot="start" icon={shareAlt} />
-                    Invite
-                  </IonButton>
-                )}
-                {...{ roomId, shareUrl, shareTitle, shareText, shareMessage }}
-              />
-            </IonButtons>
+  const renderExitButton = () => {
+    if (isHost) {
+      return (
+        <IonButton href="/" color="danger">
+          <IonIcon slot="start" icon={trash} />
+          Delete Room
+        </IonButton>
+      );
+    } else {
+      return (
+        <IonButton href="/" color="danger">
+          <IonIcon slot="start" icon={closeCircle} />
+          Leave
+        </IonButton>
+      );
+    }
+  };
+
+  if (isError) {
+    return <Redirect to="/roomNotFound" />;
+  }
+
+  return (
+    <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot="secondary">{renderExitButton()}</IonButtons>
+          <IonTitle onClick={() => setShowDesc(!showDesc)}>
+            {data ? data.name : `Room ${roomId}`} {showDesc ? '▲' : '▼'}
+          </IonTitle>
+          <IonButtons slot="primary">
+            <Sharer
+              render={handleClick => (
+                <IonButton onClick={handleClick}>
+                  <IonIcon slot="start" icon={shareAlt} />
+                  Invite
+                </IonButton>
+              )}
+              {...{ roomId, shareUrl, shareTitle, shareText, shareMessage }}
+            />
+          </IonButtons>
+        </IonToolbar>
+        {showDesc ? (
+          <IonToolbar class="ion-padding-horizontal ion-padding-bottom">
+            <small>{data ? data.description : 'No description'}</small>
           </IonToolbar>
-          {showDesc ? (
-            <IonToolbar class="ion-padding-horizontal ion-padding-bottom">
-              <small>{data ? data.description : 'No description'}</small>
-            </IonToolbar>
-          ) : null}
-        </IonHeader>
-        <IonContent>
-          <IonGrid class="no-padding ion-hide-lg-up">
-            <IonRow>
-              <IonCol size="12">
+        ) : null}
+      </IonHeader>
+      <IonContent>
+        <IonGrid class="no-padding ion-hide-lg-up">
+          <IonRow>
+            <IonCol size="12">
+              <NowPlaying track={nowPlayingTrack} />
+            </IonCol>
+            <IonCol size="12">
+              <Queue
+                tracks={queuedTracks}
+                onTrackUpvote={upvoteTrack}
+                onTrackDownvote={downvoteTrack}
+              />
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+        <IonGrid class="full-height no-padding ion-hide-md-down">
+          <IonRow class="full-height">
+            <IonCol size="6">
+              <IonContent>
                 <NowPlaying track={nowPlayingTrack} />
-              </IonCol>
-              <IonCol size="12">
+              </IonContent>
+            </IonCol>
+            <IonCol size="6">
+              <IonContent>
                 <Queue
                   tracks={queuedTracks}
                   onTrackUpvote={upvoteTrack}
                   onTrackDownvote={downvoteTrack}
                 />
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-          <IonGrid class="full-height no-padding ion-hide-md-down">
-            <IonRow class="full-height">
-              <IonCol size="6">
-                <IonContent>
-                  <NowPlaying track={nowPlayingTrack} />
-                </IonContent>
-              </IonCol>
-              <IonCol size="6">
-                <IonContent>
-                  <Queue
-                    tracks={queuedTracks}
-                    onTrackUpvote={upvoteTrack}
-                    onTrackDownvote={downvoteTrack}
-                  />
-                </IonContent>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
-          <IonFab vertical="bottom" horizontal="end" slot="fixed">
-            <IonFabButton onClick={() => setShowAddTrackModal(true)}>
-              <IonIcon icon={add} />
-            </IonFabButton>
-          </IonFab>
-        </IonContent>
-        <IonFooter>
-          <Devices />
-          {onlineStatus ? null : (
-            <IonToolbar color="danger">
-              <IonTitle>You are offline</IonTitle>
-            </IonToolbar>
-          )}
-          {isAlive ? null : (
-            <IonToolbar color="warning" onClick={() => history.push(`/`)}>
-              <IonTitle>Room closed. Tap to exit.</IonTitle>
-            </IonToolbar>
-          )}
-          {deviceConnected ? null : (
-            <IonToolbar color="danger" onClick={sync}>
-              <IonTitle>Device stopped. Tap to sync.</IonTitle>
-            </IonToolbar>
-          )}
-        </IonFooter>
-        <AddModal
-          isOpen={showAddTrackModal}
-          onClose={() => setShowAddTrackModal(false)}
-          onSearchResultClick={handleSearchResultClick}
-        />
-        <IonAlert
-          isOpen={showAlertViewRoom}
-          onDidDismiss={() => history.push(`/`)}
-          header="You need to sign in with Spotify to join the room."
-          buttons={[
-            {
-              text: 'Cancel',
-              role: 'cancel',
-              cssClass: 'secondary',
-              handler: () => {
-                history.push(`/`);
-              },
+              </IonContent>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+        <IonFab vertical="bottom" horizontal="end" slot="fixed">
+          <IonFabButton onClick={() => setShowAddTrackModal(true)}>
+            <IonIcon icon={add} />
+          </IonFabButton>
+        </IonFab>
+      </IonContent>
+      <IonFooter>
+        <Devices />
+        {onlineStatus ? null : (
+          <IonToolbar color="danger">
+            <IonTitle>You are offline</IonTitle>
+          </IonToolbar>
+        )}
+        {isAlive ? null : (
+          <IonToolbar color="warning" onClick={() => history.push(`/`)}>
+            <IonTitle>Room closed. Tap to exit.</IonTitle>
+          </IonToolbar>
+        )}
+        {deviceConnected ? null : (
+          <IonToolbar color="danger" onClick={sync}>
+            <IonTitle>Device stopped. Tap to sync.</IonTitle>
+          </IonToolbar>
+        )}
+      </IonFooter>
+      <AddModal
+        isOpen={showAddTrackModal}
+        onClose={() => setShowAddTrackModal(false)}
+        onSearchResultClick={handleSearchResultClick}
+      />
+      <IonAlert
+        isOpen={showAlertViewRoom}
+        onDidDismiss={() => history.push(`/`)}
+        header="You need to sign in with Spotify to join the room."
+        buttons={[
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            cssClass: 'secondary',
+            handler: () => {
+              history.push(`/`);
             },
-            {
-              text: 'Sign In',
-              handler: signInRedirect,
-            },
-          ]}
-        />
-      </IonPage>
-    );
-  }
-
-  if (error) {
-    return <Redirect to="/roomNotFound" />;
-  }
+          },
+          {
+            text: 'Sign In',
+            handler: signInRedirect,
+          },
+        ]}
+      />
+    </IonPage>
+  );
 };
 
 export default Room;

@@ -103,7 +103,7 @@ const AddRoom = ({ history }) => {
       <IonGrid fixed class="no-padding">
         <IonHeader>
           <IonToolbar class="transparent">
-            <IonButtons slot="start">
+            <IonButtons slot="secondary">
               <IonBackButton defaultHref="/" />
             </IonButtons>
             <IonTitle>Jukemonster</IonTitle>
@@ -118,7 +118,7 @@ const AddRoom = ({ history }) => {
               }}
             >
               <IonCardContent>
-                <IonCardTitle>Host Room</IonCardTitle>
+                <IonCardTitle>Host A Room</IonCardTitle>
                 <IonItem>
                   <IonLabel position="floating">Name</IonLabel>
                   <IonInput

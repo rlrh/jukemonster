@@ -43,7 +43,7 @@ const Home: React.FC = () => {
                 <IonButton href="/signout">Sign Out</IonButton>
               ) : (
                 <IonButton href="/signin" onClick={signInRedirect}>
-                  Sign In
+                  Sign In With Spotify
                 </IonButton>
               )}
             </IonButtons>
