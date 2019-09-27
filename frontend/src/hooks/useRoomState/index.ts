@@ -14,6 +14,7 @@ import {
   Message,
   StopEvent,
 } from './types';
+import { ReadyStateEnum } from 'react-use-websocket/dist/lib/use-websocket';
 
 const useRoomState = (roomId: string) => {
   const ROOM_STATE_KEY = roomId + '-state';
@@ -160,13 +161,13 @@ const useRoomState = (roomId: string) => {
 
   const onlineStatus = useOnlineStatus();
   useEffect(() => {
-    if (onlineStatus) {
+    if (onlineStatus && readyState == ReadyStateEnum.Open) {
       sendCachedMessages();
       console.log('Now online');
     } else {
       console.log('Now offline');
     }
-  }, [onlineStatus]);
+  }, [onlineStatus, readyState]);
 
   // Caches message if offline else sends it
   function sendMessage(message) {
