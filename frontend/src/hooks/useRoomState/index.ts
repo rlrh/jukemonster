@@ -3,6 +3,7 @@ import useWebSocket from 'react-use-websocket';
 import { produce } from 'immer';
 import { useAuth } from '../../state/useAuth';
 import useOnlineStatus from '@rehooks/online-status';
+import { ReadyStateEnum } from 'react-use-websocket/dist/lib/use-websocket';
 import { getItem, setItem, removeItem } from '../../utils/localStorage';
 import {
   RoomState,
@@ -14,7 +15,6 @@ import {
   Message,
   StopEvent,
 } from './types';
-import { ReadyStateEnum } from 'react-use-websocket/dist/lib/use-websocket';
 
 const useRoomState = (roomId: string) => {
   const ROOM_STATE_KEY = roomId + '-state';
