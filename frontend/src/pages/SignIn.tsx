@@ -1,10 +1,10 @@
 import { Redirect } from 'react-router';
 import React from 'react';
-
 import { useAuth } from '../state/useAuth';
 
-const SignIn = () => {
+const SignIn: React.FC = () => {
   const { isAuthenticated } = useAuth();
+
   if (isAuthenticated) {
     return <Redirect to="/" />;
   }

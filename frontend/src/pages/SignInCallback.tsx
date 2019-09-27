@@ -11,13 +11,12 @@ import {
 import { useAuth } from '../state/useAuth';
 import * as queryString from 'query-string';
 
-const SignInCallback = props => {
+const SignInCallback: React.FC = props => {
   const { signIn } = useAuth();
   return <SignInCallbackChild {...props} onSignIn={signIn} />;
 };
 
 interface IProps {
-  location: Location;
   onSignIn: (data: {}) => void;
 }
 
@@ -27,6 +26,7 @@ interface IState {
   error: string | null;
   redirectTo: string;
 }
+
 class SignInCallbackChild extends Component<
   RouteComponentProps & IProps,
   IState
@@ -55,7 +55,7 @@ class SignInCallbackChild extends Component<
         }
       })
       .then(data => {
-        (this.props as any).onSignIn(data);
+        this.props.onSignIn(data);
         this.setState({
           redirectTo: queryString.parse(this.props.location.search)[
             'state'

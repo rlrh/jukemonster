@@ -16,12 +16,13 @@ import {
   IonRow,
   IonCol,
   IonAlert,
-  useIonViewDidEnter,
+  useIonViewWillEnter,
 } from '@ionic/react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import useOnlineStatus from '@rehooks/online-status';
 import { add } from 'ionicons/icons';
 import { useAuth } from '../state/useAuth';
+import { useSignInRedirect } from '../hooks/useSignInRedirect';
 import useRoomState from '../hooks/useRoomState';
 import Queue from '../components/Queue';
 import NowPlaying from '../components/NowPlaying';
@@ -39,6 +40,7 @@ const Room: React.FC<RouteComponentProps> = ({
     spotify_access_token,
     ensureTokenValidity,
   } = useAuth();
+  const { signInRedirect } = useSignInRedirect();
   const onlineStatus = useOnlineStatus();
 
   const {
@@ -54,11 +56,15 @@ const Room: React.FC<RouteComponentProps> = ({
   } = useRoomState(match.params.roomId);
 
   const [showAddTrackModal, setShowAddTrackModal] = useState(false);
-  const [showAlertViewRoom, setShowAlertViewRoom] = useState(false);
   const handleSearchResultClick = args => {
     addTrack(args);
     setShowAddTrackModal(false);
   };
+
+  const [showAlertViewRoom, setShowAlertViewRoom] = useState(false);
+  useIonViewWillEnter(() => {
+    if (!isAuthenticated) setShowAlertViewRoom(true);
+  });
 
   // TODO: use room title in share message
   const roomId = match.params.roomId;
@@ -66,22 +72,6 @@ const Room: React.FC<RouteComponentProps> = ({
   const shareTitle = `Join room ${match.params.roomId}`;
   const shareText = 'Choose your music here!';
   const shareMessage = `${shareTitle} - ${shareText}`;
-
-  const handleViewRoom = async () => {
-    if (isAuthenticated && typeof value !== 'string') {
-      const headers = {
-        Accept: 'application/json',
-        Authorization: `Bearer ${spotify_access_token}`,
-      };
-    } else {
-      setShowAlertViewRoom(false);
-      setShowAlertViewRoom(true);
-    }
-  };
-
-  useIonViewDidEnter(() => {
-    handleViewRoom();
-  });
 
   if (!error) {
     return (
@@ -102,7 +92,7 @@ const Room: React.FC<RouteComponentProps> = ({
               {isAuthenticated ? (
                 <IonButton href="/signout">Sign Out</IonButton>
               ) : (
-                <IonButton href="/signin">Sign In</IonButton>
+                <IonButton onClick={signInRedirect}>Sign In</IonButton>
               )}
             </IonButtons>
           </IonToolbar>
@@ -145,27 +135,6 @@ const Room: React.FC<RouteComponentProps> = ({
               <IonIcon icon={add} />
             </IonFabButton>
           </IonFab>
-          <IonAlert
-            isOpen={showAlertViewRoom}
-            onDidDismiss={() => history.push(`/`)}
-            header="You need to sign in to view the room"
-            buttons={[
-              {
-                text: 'Cancel',
-                role: 'cancel',
-                cssClass: 'secondary',
-                handler: () => {
-                  history.push(`/`);
-                },
-              },
-              {
-                text: 'Sign In',
-                handler: () => {
-                  history.push(`/signin`);
-                },
-              },
-            ]}
-          />
         </IonContent>
         <IonFooter>
           <Devices />
@@ -189,6 +158,25 @@ const Room: React.FC<RouteComponentProps> = ({
           isOpen={showAddTrackModal}
           onClose={() => setShowAddTrackModal(false)}
           onSearchResultClick={handleSearchResultClick}
+        />
+        <IonAlert
+          isOpen={showAlertViewRoom}
+          onDidDismiss={() => history.push(`/`)}
+          header="You need to sign in with Spotify to join the room."
+          buttons={[
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              cssClass: 'secondary',
+              handler: () => {
+                history.push(`/`);
+              },
+            },
+            {
+              text: 'Sign In',
+              handler: signInRedirect,
+            },
+          ]}
         />
       </IonPage>
     );

@@ -24,7 +24,6 @@ import './theme/variables.css';
 
 /* Authentication context */
 import { AuthProvider } from './state/useAuth';
-import { QueueProvider } from './state/useGlobalLocalQueue';
 
 /* Pages */
 import Home from './pages/Home';
@@ -32,10 +31,8 @@ import SignIn from './pages/SignIn';
 import SignOut from './pages/SignOut';
 import Room from './pages/Room';
 import RoomNotFound from './pages/RoomNotFound';
-import Rooms from './pages/Rooms';
 import AddRoom from './pages/AddRoom';
 import SignInCallback from './pages/SignInCallback';
-import { SocketProvider } from './hooks/useWebSocket';
 
 /* Google Analytics higher order component */
 import withTracker from './withTracker';
@@ -47,36 +44,28 @@ const App = () => {
 
   return (
     <AuthProvider>
-      <SocketProvider>
-        <QueueProvider>
-          <IonApp>
-            <IonReactRouter>
-              <IonRouterOutlet>
-                <Route exact path="/" component={withTracker(Home)} />
-                {/*<Route exact path="/rooms" component={withTracker(Rooms)} />*/}
-                <Route exact path="/host" component={withTracker(AddRoom)} />
-                <Route exact path="/signin" component={withTracker(SignIn)} />
-                <Route
-                  exact
-                  path="/signin/callback"
-                  component={withTracker(SignInCallback)}
-                />
-                <Route exact path="/signout" component={withTracker(SignOut)} />
-                <Route
-                  exact
-                  path="/room/:roomId"
-                  component={withTracker(Room)}
-                />
-                <Route
-                  exact
-                  path="/roomNotFound"
-                  component={withTracker(RoomNotFound)}
-                />
-              </IonRouterOutlet>
-            </IonReactRouter>
-          </IonApp>
-        </QueueProvider>
-      </SocketProvider>
+      <IonApp>
+        <IonReactRouter>
+          <IonRouterOutlet>
+            <Route exact path="/" component={withTracker(Home)} />
+            {/*<Route exact path="/rooms" component={withTracker(Rooms)} />*/}
+            <Route exact path="/host" component={withTracker(AddRoom)} />
+            <Route exact path="/signin" component={withTracker(SignIn)} />
+            <Route
+              exact
+              path="/signin/callback"
+              component={withTracker(SignInCallback)}
+            />
+            <Route exact path="/signout" component={withTracker(SignOut)} />
+            <Route exact path="/room/:roomId" component={withTracker(Room)} />
+            <Route
+              exact
+              path="/roomNotFound"
+              component={withTracker(RoomNotFound)}
+            />
+          </IonRouterOutlet>
+        </IonReactRouter>
+      </IonApp>
     </AuthProvider>
   );
 };

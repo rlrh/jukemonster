@@ -87,7 +87,11 @@ function useProvideAuth(key: string, persistOnWindowClosed = true) {
 
   return {
     value,
-    isAuthenticated: typeof value === 'object' && value !== null,
+    isAuthenticated:
+      value &&
+      typeof value === 'object' &&
+      'access_token' in value &&
+      'spotify_access_token' in value,
     spotify_access_token:
       value && (typeof value === 'string' ? value : value.spotify_access_token),
     access_token:

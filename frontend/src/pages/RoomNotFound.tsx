@@ -9,8 +9,6 @@ import {
   IonButton,
   IonBackButton,
   IonGrid,
-  IonRow,
-  IonCol,
 } from '@ionic/react';
 import { useAuth } from '../state/useAuth';
 

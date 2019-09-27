@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router';
-import { useAuth } from '../state';
+import { useAuth } from '../state/useAuth';
 
 export const useSignInRedirect = () => {
   const location = useLocation();
