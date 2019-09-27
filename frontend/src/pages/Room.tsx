@@ -43,11 +43,14 @@ const Room: React.FC<RouteComponentProps> = ({
   const { signInRedirect } = useSignInRedirect();
   const onlineStatus = useOnlineStatus();
 
+  const PATH = `rooms/${roomId}`;
+  const [path, setPath] = useState(PATH);
   const { data, isLoading, isError } = useDeclarativeDataFetching(
     getApi,
-    `rooms/${roomId}`,
+    path,
     isAuthenticated ? false : true,
   );
+  useEffect(() => setPath(PATH), [onlineStatus]);
   const [isHost, setIsHost] = useState(false);
   useEffect(() => {
     if (data) setIsHost(data.isHost);
