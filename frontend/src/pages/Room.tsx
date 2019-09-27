@@ -57,6 +57,9 @@ const Room: React.FC<RouteComponentProps> = ({
   }, [data]);
 
   const {
+    error,
+    reopenSocket,
+    offlineToOnline,
     nowPlayingTrack,
     queuedTracks,
     addTrack,
@@ -180,8 +183,8 @@ const Room: React.FC<RouteComponentProps> = ({
       <IonFooter>
         {isHost ? <Devices /> : null}
         {onlineStatus ? null : (
-          <IonToolbar color="warning">
-            <IonTitle>You are offline</IonTitle>
+          <IonToolbar color="danger">
+            <IonTitle>You are offline.</IonTitle>
           </IonToolbar>
         )}
         {isAlive ? null : (
@@ -194,6 +197,11 @@ const Room: React.FC<RouteComponentProps> = ({
             <IonTitle>Device stopped. Tap to sync.</IonTitle>
           </IonToolbar>
         )}
+        {offlineToOnline ? (
+          <IonToolbar color="danger" onClick={reopenSocket}>
+            <IonTitle>Out of sync. Tap to resync.</IonTitle>
+          </IonToolbar>
+        ) : null}
       </IonFooter>
       <AddModal
         isOpen={showAddTrackModal}
