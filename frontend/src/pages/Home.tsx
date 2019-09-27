@@ -61,6 +61,7 @@ const Home: React.FC = () => {
             </IonCol>
             <IonCol size="12" sizeMd="6">
               <br />
+              <br />
               <IonItem>
                 <IonLabel position="floating">Room ID</IonLabel>
                 <IonInput

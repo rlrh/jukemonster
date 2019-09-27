@@ -1,4 +1,5 @@
 export type SharerProps = {
+  render: (handleClick: (event: any) => void) => React.ReactElement;
   roomId: string;
   shareUrl: string;
   shareTitle: string;

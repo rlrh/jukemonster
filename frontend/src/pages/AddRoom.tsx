@@ -17,7 +17,7 @@ import {
   IonButton,
   IonAlert,
   IonToast,
-  IonCardSubtitle,
+  IonGrid,
   useIonViewDidEnter,
 } from '@ionic/react';
 import Devices from '../components/Devices';
@@ -45,7 +45,7 @@ const AddRoom = ({ history }) => {
       );
       if (res && res.data && res.data.devices) {
         const devices = res.data.devices;
-        if (devices.filter(x => x.is_active).length != 0) {
+        if (devices.filter(x => x.is_active).length !== 0) {
           return true;
         }
       }
@@ -102,101 +102,103 @@ const AddRoom = ({ history }) => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/" />
-          </IonButtons>
-          <IonTitle>Add Room</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent>
-        <IonCard>
-          <form
-            onSubmit={e => {
-              e.preventDefault();
-              submit();
-            }}
-          >
-            <IonCardContent>
-              <IonCardTitle>Create room</IonCardTitle>
-              <IonItem>
-                <IonLabel position="floating">Description</IonLabel>
-                <IonInput
-                  required={true}
-                  name="description"
-                  type="text"
-                  value={description}
-                  onIonChange={e =>
-                    setdescription((e.target as HTMLInputElement).value)
-                  }
-                />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="floating">Name</IonLabel>
-                <IonInput
-                  required={true}
-                  name="name"
-                  type="text"
-                  value={name}
-                  onIonChange={e =>
-                    setName((e.target as HTMLInputElement).value)
-                  }
-                />
-              </IonItem>
-              <br />
-              <IonItem>
-                <IonCardSubtitle>Playback Device: </IonCardSubtitle>
-              </IonItem>
-              <IonItem>
-                <Devices />
-              </IonItem>
-              <br />
-              <IonButton expand="block" type="submit">
-                Create
-              </IonButton>
-            </IonCardContent>
-
-            <IonCardContent></IonCardContent>
-          </form>
-        </IonCard>
-        <IonAlert
-          isOpen={showAlertCreateRoom}
-          onDidDismiss={() => history.push(`/`)}
-          header="You need to sign in with a Spotify Premium account"
-          buttons={
-            !isAuthenticated
-              ? [
-                  {
-                    text: 'Cancel',
-                    role: 'cancel',
-                    cssClass: 'secondary',
-                    handler: () => {
-                      history.push(`/`);
+      <IonGrid fixed class="no-padding">
+        <IonHeader>
+          <IonToolbar class="transparent">
+            <IonButtons slot="start">
+              <IonBackButton defaultHref="/" />
+            </IonButtons>
+            <IonTitle>Jukemonster</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent>
+          <IonCard>
+            <form
+              onSubmit={e => {
+                e.preventDefault();
+                submit();
+              }}
+            >
+              <IonCardContent>
+                <IonCardTitle>Host Room</IonCardTitle>
+                <IonItem>
+                  <IonLabel position="floating">Name</IonLabel>
+                  <IonInput
+                    required={true}
+                    name="name"
+                    type="text"
+                    maxlength={70}
+                    value={name}
+                    onIonChange={e =>
+                      setName((e.target as HTMLInputElement).value)
+                    }
+                  />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="floating">Description</IonLabel>
+                  <IonInput
+                    required={true}
+                    name="description"
+                    type="text"
+                    maxlength={280}
+                    value={description}
+                    onIonChange={e =>
+                      setdescription((e.target as HTMLInputElement).value)
+                    }
+                  />
+                </IonItem>
+                <br />
+                <IonItem>
+                  <IonLabel>Select a Spotify Connect playback device</IonLabel>
+                </IonItem>
+                <IonItem>
+                  <Devices />
+                </IonItem>
+                <br />
+                <IonButton type="submit" expand="full" color="google">
+                  Host!
+                </IonButton>
+              </IonCardContent>
+            </form>
+          </IonCard>
+          <IonAlert
+            isOpen={showAlertCreateRoom}
+            onDidDismiss={() => history.push(`/`)}
+            header="You need to sign in with a Spotify Premium account"
+            buttons={
+              !isAuthenticated
+                ? [
+                    {
+                      text: 'Cancel',
+                      role: 'cancel',
+                      cssClass: 'secondary',
+                      handler: () => {
+                        history.push(`/`);
+                      },
                     },
-                  },
-                  {
-                    text: 'Sign In',
-                    handler: signInRedirect,
-                  },
-                ]
-              : [
-                  {
-                    text: 'Cancel',
-                    role: 'cancel',
-                    cssClass: 'secondary',
-                  },
-                ]
-          }
-        />
-        <IonToast
-          isOpen={showToast}
-          position="middle"
-          onDidDismiss={() => setShowToast(false)}
-          message="Open spotify on your device"
-          duration={1000}
-        />
-      </IonContent>
+                    {
+                      text: 'Sign In',
+                      handler: signInRedirect,
+                    },
+                  ]
+                : [
+                    {
+                      text: 'Cancel',
+                      role: 'cancel',
+                      cssClass: 'secondary',
+                    },
+                  ]
+            }
+          />
+          <IonToast
+            isOpen={showToast}
+            position="middle"
+            onDidDismiss={() => setShowToast(false)}
+            message="Open spotify on your device"
+            duration={1000}
+          />
+        </IonContent>
+      </IonGrid>
     </IonPage>
   );
 };

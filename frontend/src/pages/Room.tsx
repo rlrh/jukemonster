@@ -105,10 +105,8 @@ const Room: React.FC<RouteComponentProps> = ({
             </IonButtons>
           </IonToolbar>
           {showDesc ? (
-            <IonToolbar>
-              <IonTitle color="medium">
-                {data ? data.description : 'No description'}
-              </IonTitle>
+            <IonToolbar class="ion-padding-horizontal ion-padding-bottom">
+              <small>{data ? data.description : 'No description'}</small>
             </IonToolbar>
           ) : null}
         </IonHeader>

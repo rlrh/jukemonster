@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react';
 import ShareModal from './ShareModal';
 import { SharerProps, NavigatorWithPossibleWebShare } from './types';
 
-const Sharer = ({
+const Sharer: React.FC<SharerProps> = ({
   render,
   roomId,
   shareUrl,
