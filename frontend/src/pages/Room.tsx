@@ -42,10 +42,7 @@ const Room: React.FC<RouteComponentProps> = ({
   const { signInRedirect } = useSignInRedirect();
   const onlineStatus = useOnlineStatus();
 
-  const { isLoading, isError, data } = useDeclarativeDataFetching(
-    getApi,
-    `rooms/${roomId}`,
-  );
+  const { data } = useDeclarativeDataFetching(getApi, `rooms/${roomId}`);
 
   const {
     error,

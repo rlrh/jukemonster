@@ -29,12 +29,7 @@ const AddRoom = ({ history }) => {
   const [description, setdescription] = useState('');
   const [showAlertCreateRoom, setShowAlertCreateRoom] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const {
-    isAuthenticated,
-    value,
-    spotify_access_token,
-    ensureTokenValidity,
-  } = useAuth();
+  const { isAuthenticated, value, spotify_access_token } = useAuth();
   const { postApi } = useOurApi();
   const spotify = useSpotifyApi();
 

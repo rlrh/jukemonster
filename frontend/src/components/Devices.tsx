@@ -47,13 +47,17 @@ const Devices = () => {
   }, []);
 
   const setDevice = async (id: string) => {
-    spotify.putApi(`https://api.spotify.com/v1/me/player`, {
-      device_ids: [id],
-    });
-    ours.putApi(`users/device/`, { device_id: id });
-    setTimeout(function() {
-      getDevices();
-    }, 500);
+    try {
+      spotify.putApi(`https://api.spotify.com/v1/me/player`, {
+        device_ids: [id],
+      });
+      ours.putApi(`users/device/`, { device_id: id });
+      setTimeout(function() {
+        getDevices();
+      }, 500);
+    } catch (e) {
+      setError(e);
+    }
   };
 
   if (isLoading || error)
@@ -86,7 +90,7 @@ const Devices = () => {
             </IonToolbar>
           </IonHeader>
           <IonContent class="item-background">
-            {data.devices.length == 0 ? (
+            {data.devices.length === 0 ? (
               <IonCard>
                 <IonCardHeader>
                   <IonCardSubtitle>No Devices Available</IonCardSubtitle>
@@ -114,7 +118,7 @@ const Devices = () => {
         </IonModal>
 
         <IonToolbar>
-          {data.devices.filter(x => x.is_active).length == 0 ? (
+          {data.devices.filter(x => x.is_active).length === 0 ? (
             <IonTitle>No active devices</IonTitle>
           ) : null}
           {data.devices
