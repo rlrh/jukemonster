@@ -13,7 +13,7 @@
     "axios": "^0.19.0",
     "clipboard-copy": "^3.1.0",
     "dotenv": "^8.1.0",
-    "immer": "^4.0.0",
+    "immer": "^8.0.1",
     "ionicons": "^4.6.3",
     "qrcode.react": "^0.9.3",
     "query-string": "^6.8.3",
