@@ -1,4 +1,4 @@
-# [juke.monster](juke.monster)
+# [juke.monster](https://www.juke.monster/)
 ### Spotify social jukebox
 
 ![photo6084456482507696526](https://user-images.githubusercontent.com/29230362/108665859-da759e80-7510-11eb-88de-4cf3ac07fb68.jpg)
